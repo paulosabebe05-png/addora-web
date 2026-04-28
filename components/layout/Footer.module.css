@@ -1,0 +1,125 @@
+.footer {
+  background: var(--navy);
+  color: rgba(255,255,255,0.7);
+  margin-top: 80px;
+  width: 100%;
+}
+
+/* FIXED */
+.inner {
+  max-width: 1400px; /* changed from 1200 */
+  margin: 0 auto;
+  padding: 56px 24px 40px; /* better alignment */
+  display: grid;
+  grid-template-columns: 1.4fr 2fr;
+  gap: 60px;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
+
+.brand p {
+  font-size: 14px;
+  line-height: 1.7;
+  max-width: 260px;
+}
+
+.codBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(231, 85, 37, 0.2);
+  border: 1px solid rgba(231, 85, 37, 0.4);
+  color: #FF8A65;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 100px;
+  width: fit-content;
+}
+
+.links {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.col h4 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: white;
+  margin-bottom: 4px;
+}
+
+.col a, .col p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.col a:hover { color: var(--orange); }
+
+/* FIXED */
+.bottom {
+  max-width: 1400px; /* changed from 1200 */
+  margin: 0 auto;
+  padding: 20px 24px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.bottomLinks {
+  display: flex;
+  gap: 20px;
+}
+
+.bottomLinks a {
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.bottomLinks a:hover { color: white; }
+
+@media (max-width: 768px) {
+  .inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 40px 20px;
+  }
+  .links { grid-template-columns: 1fr 1fr; }
+  .bottom {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .links { grid-template-columns: 1fr; }
+}
