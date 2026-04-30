@@ -1,4 +1,4 @@
-/* ===== LAYOUT WRAPPER (IMPORTANT) ===== */
+/* ===== LAYOUT WRAPPER ===== */
 .sectionInner {
   max-width: 1400px;
   margin: 0 auto;
@@ -19,7 +19,6 @@
   overflow: hidden;
 }
 
-/* FIX: glow background */
 .hero::before {
   content: '';
   position: absolute;
@@ -31,12 +30,11 @@
   pointer-events: none;
 }
 
-/* LEFT CONTENT */
 .heroContent {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 560px; /* FIX: more balanced */
+  max-width: 560px;
 }
 
 .heroBadge {
@@ -139,10 +137,9 @@
 
 /* ===== PRODUCTS ===== */
 .products {
-  padding: 48px 24px 80px; /* FIXED spacing */
+  padding: 48px 24px 80px;
 }
 
-/* FIX: same alignment as hero */
 .products .sectionInner {
   display: block;
 }
@@ -214,7 +211,7 @@
 /* GRID */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* FIXED */
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 24px;
 }
 
@@ -229,30 +226,171 @@
   gap: 12px;
 }
 
-/* ===== MOBILE ===== */
+/* ===========================
+   MOBILE — full redesign
+   =========================== */
 @media (max-width: 768px) {
+
+  /* Collapse the 2-col hero layout */
   .sectionInner {
     grid-template-columns: 1fr;
   }
 
+  /* ----- HERO: short banner, not full-screen ----- */
   .hero {
-    padding: 40px 20px;
+    min-height: unset;
+    padding: 68px 16px 22px; /* 68px top = 58px header + 10px breathing */
   }
 
   .heroVisual {
     display: none;
   }
 
-  .heroTitle {
-    font-size: 34px;
+  .heroContent {
+    gap: 8px;
   }
 
+  .heroBadge {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .heroTitle {
+    font-size: 25px;
+    letter-spacing: -0.4px;
+    line-height: 1.2;
+  }
+
+  .heroSub {
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.5);
+    /* cap to 2 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .heroCod {
+    gap: 10px;
+  }
+
+  .heroFeature {
+    font-size: 11px;
+    color: rgba(255,255,255,0.65);
+  }
+
+  /* ----- PRODUCTS: dark background carries from hero ----- */
+  .products {
+    padding: 0 0 60px;
+    background: var(--navy);
+  }
+
+  .products .sectionInner {
+    padding: 0;
+  }
+
+  /* Filter bar sticky, dark themed */
   .filterBar {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 0;
+    position: sticky;
+    top: 58px; /* height of mobile header */
+    z-index: 100;
+    background: var(--navy);
+    padding: 10px 0 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
+  /* Search bar — dark, full width with horizontal padding */
   .searchWrap {
-    width: 100%;
+    order: -1;
+    width: calc(100% - 24px);
+    min-width: unset;
+    margin: 0 12px 8px;
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 9px 13px;
+    color: rgba(255,255,255,0.35);
+    box-sizing: border-box;
   }
+
+  .searchWrap:focus-within {
+    border-color: var(--orange);
+    color: var(--orange);
+  }
+
+  .search {
+    color: white;
+    font-size: 13px;
+  }
+
+  .search::placeholder {
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* Category pills — horizontal scroll, no wrap */
+  .categories {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0 12px 2px;
+    gap: 7px;
+  }
+
+  .categories::-webkit-scrollbar {
+    display: none;
+  }
+
+  .catBtn {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+    min-height: 30px;
+  }
+
+  .catBtn:hover {
+    border-color: rgba(231,85,37,0.5);
+    color: #FF8A65;
+  }
+
+  .catActive {
+    background: var(--orange) !important;
+    color: white !important;
+    border-color: var(--orange) !important;
+  }
+
+  /* ----- GRID: AliExpress-style tight 2-col ----- */
+  /* The grid background IS the gap color — no rounded cards, edge-to-edge */
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    background: rgba(0,0,0,0.4);
+    margin-top: 2px;
+  }
+
+  /*
+   * NOTE for ProductCard component:
+   * On mobile each card should:
+   *   - background: var(--navy-mid) or white
+   *   - border-radius: 0  (the gap acts as the divider)
+   *   - Image fills full card width, aspect-ratio: 1 / 1.15
+   *   - Price + title in compact padding: 8px
+   *   - Badge (discount) absolute top-left
+   * This matches AliExpress / Temu mobile grid UX.
+   */
+}
+
+@media (max-width: 400px) {
+  .heroTitle { font-size: 22px; }
 }

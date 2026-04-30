@@ -8,51 +8,67 @@ const adminSupabase = createClient(
 
 export async function POST(request) {
   try {
-    const body = await request.json()
-    const { user_id, items, name, phone, address, notes, subtotal, delivery_fee } = body
+    // ── Verify auth via Authorization header ──────────────────────────────────
+    const authHeader = request.headers.get('Authorization')
+    const token = authHeader?.replace('Bearer ', '')
 
-    if (!user_id || !items?.length || !phone || !address) {
+    if (!token) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    }
+
+    const { data: { user }, error: authError } = await adminSupabase.auth.getUser(token)
+
+    if (authError || !user) {
+      console.error('Auth error:', authError)
+      return NextResponse.json({ error: 'Invalid session' }, { status: 401 })
+    }
+
+    const user_id = user.id
+
+    // ── Parse body ────────────────────────────────────────────────────────────
+    const body = await request.json()
+    const { items, phone, address, notes, subtotal, delivery_fee } = body
+
+    if (!items?.length || !phone || !address) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    const { data: user, error: userErr } = await adminSupabase
-      .from('users').select('id').eq('id', user_id).single()
+    const total = Number(subtotal) + Number(delivery_fee)
 
-    if (userErr || !user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 401 })
-    }
-
-    const total = subtotal + delivery_fee
-
+    // ── Create order ──────────────────────────────────────────────────────────
     const { data: order, error: orderErr } = await adminSupabase
       .from('orders')
       .insert({
-        user_id, subtotal, delivery_fee, total,
-        delivery_option: 'standard',
-        payment_method: 'cod',
-        payment_status: 'pending',
-        status: 'pending',
-        delivery_address: address,
+        user_id,
+        subtotal:          Number(subtotal),
+        delivery_fee:      Number(delivery_fee),
+        total,
+        delivery_option:   'standard',
+        payment_method:    'cod',
+        payment_status:    'pending',
+        status:            'pending',
+        delivery_address:  address,
         phone,
         shipping_provider: 'Addora Delivery',
-        current_location: 'Warehouse',
+        current_location:  'Warehouse',
       })
-      .select().single()
+      .select()
+      .single()
 
     if (orderErr) {
-      console.error('Order insert error:', orderErr)
+      console.error('[order insert]', orderErr)
       return NextResponse.json({ error: 'Failed to create order' }, { status: 500 })
     }
 
-    // Build order items — include variant_id, size, color when present
+    // ── Create order items ────────────────────────────────────────────────────
     const orderItems = items.map(item => {
       const row = {
-        order_id: order.id,
-        product_id: item.id,
-        product_name: item.name,
-        product_image: item.image_url || null,
-        quantity: item.qty,
-        price: item.price,
+        order_id:      order.id,
+        product_id:    item.id,
+        product_name:  item.name,
+        product_image: item.image_url ?? null,
+        quantity:      item.qty,
+        price:         item.price,
       }
       if (item.variant_id) row.variant_id = item.variant_id
       if (item.size)       row.size       = item.size
@@ -60,13 +76,20 @@ export async function POST(request) {
       return row
     })
 
-    const { error: itemsErr } = await adminSupabase.from('order_items').insert(orderItems)
-    if (itemsErr) console.error('Order items insert error:', itemsErr)
+    const { error: itemsErr } = await adminSupabase
+      .from('order_items')
+      .insert(orderItems)
+
+    if (itemsErr) {
+      console.error('[order_items insert]', itemsErr)
+      await adminSupabase.from('orders').delete().eq('id', order.id)
+      return NextResponse.json({ error: 'Failed to create order items' }, { status: 500 })
+    }
 
     return NextResponse.json({ order }, { status: 201 })
 
   } catch (err) {
-    console.error('API error:', err)
+    console.error('[orders API]', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }

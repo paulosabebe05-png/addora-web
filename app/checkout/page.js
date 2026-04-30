@@ -5,6 +5,7 @@ import { useAuth } from '../../lib/auth'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import styles from './checkout.module.css'
+import { supabase } from '../../lib/supabase'
 
 export default function CheckoutPage() {
   const { items, total, clearCart } = useCart()
@@ -42,42 +43,46 @@ export default function CheckoutPage() {
   const grandTotal = total + deliveryFee
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    if (!form.name || !form.phone || !form.address) {
-      setError('Please fill in all required fields')
-      return
-    }
-    setLoading(true)
-
-    try {
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: user.id,
-          items,
-          name: form.name,
-          phone: form.phone,
-          address: form.address,
-          notes: form.notes,
-          subtotal: total,
-          delivery_fee: deliveryFee,
-        }),
-      })
-
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to place order')
-
-      clearCart()
-      router.push(`/orders/${data.order.id}?success=1`)
-    } catch (err) {
-      setError(err.message || 'Failed to place order. Please try again.')
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
+  e.preventDefault()
+  setError('')
+  if (!form.name || !form.phone || !form.address) {
+    setError('Please fill in all required fields')
+    return
   }
+  setLoading(true)
+
+  try {
+    const { data: { session } } = await supabase.auth.getSession()
+
+    const res = await fetch('/api/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session?.access_token}`,
+      },
+      body: JSON.stringify({
+        items,
+        name: form.name,
+        phone: form.phone,
+        address: form.address,
+        notes: form.notes,
+        subtotal: total,
+        delivery_fee: deliveryFee,
+      }),
+    })
+
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Failed to place order')
+
+    clearCart()
+    router.push(`/orders/${data.order.id}?success=1`)
+  } catch (err) {
+    setError(err.message || 'Failed to place order. Please try again.')
+    console.error(err)
+  } finally {
+    setLoading(false)
+  }
+}
 
   return (
     <div className={styles.page}>

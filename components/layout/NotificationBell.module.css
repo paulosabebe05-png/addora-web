@@ -1,0 +1,184 @@
+/* ── Bell button ── */
+.wrap { position: relative; }
+
+.bell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.bellTransparent { color: rgba(255,255,255,0.85); }
+.bellTransparent:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+.bellSolid { color: #4a5568; }
+.bellSolid:hover { background: rgba(231,85,37,0.08); color: #E75525; }
+
+.badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 17px;
+  height: 17px;
+  background: #E75525;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 1.5px solid white;
+}
+
+/* ── Dropdown ── */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 320px;
+  background: white;
+  border: 1px solid rgba(16,24,43,0.1);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(16,24,43,0.15), 0 4px 16px rgba(16,24,43,0.08);
+  overflow: hidden;
+  animation: dropIn 0.18s cubic-bezier(0.34,1.56,0.64,1);
+  z-index: 300;
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.dropHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid rgba(16,24,43,0.07);
+}
+
+.dropTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #10182B;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.dropBadge {
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(231,85,37,0.1);
+  color: #E75525;
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+
+/* ── List ── */
+.dropList {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dropItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(16,24,43,0.05);
+  cursor: pointer;
+  transition: background 0.14s;
+}
+.dropItem:last-child { border-bottom: none; }
+.dropItem:hover { background: #fafaf9; }
+
+.dropItemUnread { background: rgba(231,85,37,0.025); }
+.dropItemUnread:hover { background: rgba(231,85,37,0.05); }
+
+.dropItemContent { flex: 1; min-width: 0; }
+
+.dropItemTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #10182B;
+  line-height: 1.4;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropItemBody {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropItemMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.dropItemTime {
+  font-size: 11px;
+  font-weight: 500;
+  color: #9ca3af;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  background: #E75525;
+  border-radius: 50%;
+}
+
+/* ── Empty ── */
+.empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: #9ca3af;
+}
+.empty p {
+  font-size: 13px;
+  margin: 8px 0 0;
+}
+
+/* ── Footer ── */
+.dropFooter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #E75525;
+  text-decoration: none;
+  border-top: 1px solid rgba(16,24,43,0.07);
+  transition: background 0.15s;
+  background: rgba(231,85,37,0.02);
+}
+.dropFooter:hover { background: rgba(231,85,37,0.06); }
+
+/* ── Mobile ── */
+@media (max-width: 400px) {
+  .dropdown {
+    right: -40px;
+    width: 290px;
+  }
+}
