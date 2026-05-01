@@ -239,7 +239,7 @@
   /* HERO: compact banner */
   .hero {
     min-height: unset;
-    padding: 74px 16px 24px; /* 58px mobile header + 16px breathing room */
+    padding: 70px 16px 24px; /* 54px header + 16px breathing room */
     box-sizing: border-box;
     overflow: hidden;
   }
@@ -303,7 +303,7 @@
     gap: 0;
     margin-bottom: 0;
     position: sticky;
-    top: 58px;
+    top: 54px; /* matches mobile header height */
     z-index: 100;
     background: var(--navy);
     padding: 10px 0 8px;
