@@ -12,5 +12,6 @@ export async function GET(request) {
     await supabase.auth.exchangeCodeForSession(code)
   }
 
-  return NextResponse.redirect(requestUrl.origin)
+  // ✅ Always redirect to production, never trust requestUrl.origin
+  return NextResponse.redirect('https://addora.com.et')
 }
