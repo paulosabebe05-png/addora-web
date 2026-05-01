@@ -137,8 +137,9 @@
   transition: background 0.2s, transform 0.1s;
   white-space: nowrap;
   flex-shrink: 0;
-  border: none;
   cursor: pointer;
+  border: none;
+  font-family: inherit;
 }
 
 .addBtn:hover:not(.disabled) {
@@ -156,12 +157,13 @@
   cursor: not-allowed;
 }
 
-/* ── Mobile card: AliExpress-style tight grid ── */
+/* ===== MOBILE: AliExpress / Temu style ===== */
 @media (max-width: 768px) {
   .card {
     border-radius: 0;
     box-shadow: none;
-    background: #1C2B4A; /* navy-mid — dark themed to match page */
+    background: #1C2B4A; /* navy-mid for dark theme grid */
+    animation: fadeUp 0.4s ease both;
   }
 
   .card:hover {
@@ -169,13 +171,21 @@
     box-shadow: none;
   }
 
-  /* Square-ish image */
+  /* Square-ish image for compact grid */
   .imageWrap {
     aspect-ratio: 1 / 1.1;
+    background: #263659;
   }
 
-  .card:hover .image {
-    transform: none;
+  .noImage {
+    background: linear-gradient(135deg, #1C2B4A, #263659);
+  }
+
+  .discountBadge {
+    top: 6px;
+    left: 6px;
+    font-size: 10px;
+    padding: 2px 6px;
   }
 
   .body {
@@ -188,50 +198,53 @@
     font-weight: 600;
     color: rgba(255,255,255,0.9);
     -webkit-line-clamp: 2;
+    line-height: 1.35;
   }
 
-  /* Hide description on mobile — not enough space */
+  /* Hide description on mobile to save space */
   .desc {
     display: none;
   }
 
   .footer {
+    padding-top: 6px;
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
-    padding-top: 6px;
   }
 
   .price {
     font-size: 14px;
     font-weight: 800;
+    color: #FF6B3D;
   }
 
   .originalPrice {
     font-size: 11px;
-  }
-
-  /* Full-width "Add to Cart" button */
-  .addBtn {
-    width: 100%;
-    justify-content: center;
-    padding: 7px 10px;
-    font-size: 11px;
-    border-radius: 6px;
-    background: var(--orange);
-    gap: 4px;
-  }
-
-  .addBtn.disabled {
-    background: rgba(255,255,255,0.1);
     color: rgba(255,255,255,0.35);
   }
 
-  /* Discount badge */
-  .discountBadge {
-    top: 6px;
-    left: 6px;
-    font-size: 10px;
-    padding: 2px 6px;
+  /* Full-width add to cart button on mobile */
+  .addBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    background: var(--orange);
+  }
+
+  .addBtn:hover:not(.disabled) {
+    background: #ff6b3d;
+    transform: none;
+  }
+
+  .addBtn.added {
+    background: #16a34a;
+  }
+
+  .addBtn.disabled {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.3);
   }
 }
