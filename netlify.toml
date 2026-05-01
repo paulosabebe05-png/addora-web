@@ -4,3 +4,10 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# 🔴 FORCE all traffic to your real domain
+[[redirects]]
+  from = "https://*.netlify.app/*"
+  to = "https://addora.com.et/:splat"
+  status = 301
+  force = true
