@@ -307,18 +307,29 @@
 
 /* ── Mobile ── */
 @media (max-width: 768px) {
+
+  /* Force dark solid header always — no transparent on mobile */
+  .header {
+    background: rgba(16, 24, 43, 0.97) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: none !important;
+  }
+
   .inner {
     padding: 0 14px;
-    height: 58px;
+    height: 54px; /* compact app-like height */
     gap: 6px;
   }
 
   /* Hide desktop nav */
   .nav { display: none; }
 
-  /* Logo: keep text visible but slightly smaller */
+  /* Logo smaller */
   .logoText {
     font-size: 17px;
+    color: #ffffff !important;
   }
 
   .logoMark {
@@ -327,62 +338,65 @@
     border-radius: 8px;
   }
 
-  /* Actions: tighter */
+  /* Actions: tighter gap */
   .actions {
-    gap: 4px;
+    gap: 6px;
   }
 
-  /* Hide username text — show avatar only */
+  /* 🔥 Hide auth buttons entirely — clean up clutter */
+  .authBtns {
+    display: none;
+  }
+
+  /* Hide username text */
   .userName { display: none; }
 
-  /* Tighter user button — just the avatar circle */
+  /* User button: just the avatar, no border/bg */
   .userBtn {
     padding: 0;
-    border: none;
+    border: none !important;
     background: transparent !important;
+    color: white !important;
   }
 
-  /* Avatar slightly smaller */
+  /* Avatar */
   .avatar {
     width: 30px;
     height: 30px;
     font-size: 12px;
   }
 
-  /* Auth buttons — smaller, hide "Sign In" text on very small screens */
-  .signinBtn {
-    padding: 6px 10px;
-    font-size: 12px;
-  }
-
-  .signupBtn {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-
-  /* Cart */
+  /* Cart button: tap-friendly */
   .cartBtn {
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
     border-radius: 8px;
+    color: rgba(255, 255, 255, 0.85) !important;
   }
 
-  /* Dropdown: ensure it doesn't overflow viewport */
+  .cartBtn:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #fff !important;
+  }
+
+  /* Cart badge: tighter */
+  .cartBadge {
+    top: 2px;
+    right: 2px;
+    font-size: 9px;
+    min-width: 15px;
+    height: 15px;
+    border-width: 1px;
+  }
+
+  /* Dropdown */
   .dropdown {
     right: -4px;
     min-width: 200px;
   }
 }
 
-/* Hide "Sign In" label on very small screens, keep just Sign Up */
 @media (max-width: 380px) {
   .inner { padding: 0 10px; }
-
-  .signinBtn {
-    display: none;
-  }
-
-  .logoText {
-    font-size: 16px;
-  }
+  .logoText { font-size: 16px; }
 }
