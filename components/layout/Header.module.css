@@ -37,16 +37,16 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   text-decoration: none;
   flex-shrink: 0;
 }
 
 .logoMark {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   background: #E75525;
-  border-radius: 8px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,7 +55,7 @@
 
 .logoText {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.4px;
   transition: color 0.3s;
@@ -64,7 +64,7 @@
 .transparent .logoText { color: #ffffff; }
 .solid .logoText       { color: #10182B; }
 
-/* ── Desktop Nav ── */
+/* ── Center nav ── */
 .nav {
   display: flex;
   align-items: center;
@@ -83,18 +83,15 @@
 }
 
 .transparent .navLink { color: rgba(255,255,255,0.75); }
-.transparent .navLink:hover { color: #fff; background: rgba(255,255,255,0.1); }
+.transparent .navLink:hover { color: #ffffff; background: rgba(255,255,255,0.1); }
 .solid .navLink { color: #4a5568; }
 .solid .navLink:hover { color: #10182B; background: rgba(16,24,43,0.05); }
 
-/* ── Mobile search — hidden on desktop ── */
-.mobileSearch { display: none; }
-
-/* ── Right Actions ── */
+/* ── Right actions ── */
 .actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -134,11 +131,7 @@
   border: 1.5px solid white;
 }
 
-/* Desktop auth */
-.desktopAuth { display: flex; }
-.mobileAuth  { display: none; }
-
-/* Auth buttons */
+/* Auth */
 .authBtns {
   display: flex;
   align-items: center;
@@ -198,20 +191,9 @@
 .solid .userBtn { border-color: rgba(16,24,43,0.12); color: #4a5568; }
 .solid .userBtn:hover { border-color: rgba(231,85,37,0.4); color: #10182B; }
 
-/* Mobile avatar-only button */
-.avatarBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
-
 .avatar {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   background: #E75525;
   color: white;
   font-size: 13px;
@@ -232,20 +214,6 @@
   white-space: nowrap;
 }
 
-/* Mobile sign in icon */
-.mobileSignIn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  color: rgba(255,255,255,0.85);
-  text-decoration: none;
-  transition: background 0.18s;
-}
-.mobileSignIn:hover { background: rgba(255,255,255,0.1); }
-
 /* Dropdown panel */
 .dropdown {
   position: absolute;
@@ -258,12 +226,11 @@
   min-width: 220px;
   overflow: hidden;
   animation: dropIn 0.18s cubic-bezier(0.34,1.56,0.64,1);
-  z-index: 300;
 }
 
 @keyframes dropIn {
   from { opacity: 0; transform: translateY(-8px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
 }
 
 .dropdownHead {
@@ -288,7 +255,7 @@
   flex-shrink: 0;
 }
 
-.dropdownName  { font-size: 14px; font-weight: 700; color: #10182B; }
+.dropdownName { font-size: 14px; font-weight: 700; color: #10182B; }
 .dropdownPhone { font-size: 12px; color: #8a8f9e; margin-top: 1px; }
 
 .dropdownItem {
@@ -338,106 +305,84 @@
 }
 .dropdownSignOut:hover { background: #fff5f5; }
 
-/* ═══════════════════════════════════
-   MOBILE — AliExpress style header
-   ═══════════════════════════════════ */
+/* ── Mobile ── */
 @media (max-width: 768px) {
-
-  /* Always dark on mobile */
-  .header {
-    background: var(--navy) !important;
-    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
-    backdrop-filter: none !important;
-    box-shadow: none !important;
-  }
-
   .inner {
-    padding: 0 10px;
-    height: 54px;
-    gap: 8px;
-  }
-
-  /* Logo — smaller, white always */
-  .logoMark {
-    width: 28px;
-    height: 28px;
-    border-radius: 7px;
-  }
-
-  .logoText {
-    font-size: 16px;
-    color: white !important;
+    padding: 0 14px;
+    height: 58px;
+    gap: 6px;
   }
 
   /* Hide desktop nav */
   .nav { display: none; }
 
-  /* Show mobile search bar — takes all middle space */
-  .mobileSearch {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    gap: 8px;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.12);
+  /* Logo: keep text visible but slightly smaller */
+  .logoText {
+    font-size: 17px;
+  }
+
+  .logoMark {
+    width: 30px;
+    height: 30px;
     border-radius: 8px;
-    padding: 7px 11px;
-    min-width: 0;
   }
 
-  .mobileSearch:focus-within {
-    background: rgba(255,255,255,0.14);
-    border-color: var(--orange);
+  /* Actions: tighter */
+  .actions {
+    gap: 4px;
   }
 
-  .searchIcon {
-    color: rgba(255,255,255,0.4);
-    flex-shrink: 0;
-  }
+  /* Hide username text — show avatar only */
+  .userName { display: none; }
 
-  .searchInput {
-    background: none;
+  /* Tighter user button — just the avatar circle */
+  .userBtn {
+    padding: 0;
     border: none;
-    outline: none;
-    font-size: 13px;
-    color: white;
-    width: 100%;
-    font-family: inherit;
+    background: transparent !important;
   }
 
-  .searchInput::placeholder {
-    color: rgba(255,255,255,0.3);
+  /* Avatar slightly smaller */
+  .avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
   }
 
-  /* Cart always white on mobile */
+  /* Auth buttons — smaller, hide "Sign In" text on very small screens */
+  .signinBtn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .signupBtn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  /* Cart */
   .cartBtn {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     border-radius: 8px;
-    color: rgba(255,255,255,0.9) !important;
   }
 
-  .cartBtn:hover {
-    background: rgba(255,255,255,0.1) !important;
-    color: white !important;
+  /* Dropdown: ensure it doesn't overflow viewport */
+  .dropdown {
+    right: -4px;
+    min-width: 200px;
   }
-
-  .cartBadge {
-    border-color: var(--navy);
-    top: 2px;
-    right: 2px;
-  }
-
-  /* Hide desktop auth, show mobile auth */
-  .desktopAuth { display: none; }
-  .mobileAuth  { display: flex; }
-
-  /* Notification bell — white on mobile */
-  /* (NotificationBell component handles its own color,
-     but we ensure its wrapper adapts) */
 }
 
-@media (max-width: 400px) {
-  .inner { padding: 0 8px; gap: 6px; }
-  .logoText { display: none; }
+/* Hide "Sign In" label on very small screens, keep just Sign Up */
+@media (max-width: 380px) {
+  .inner { padding: 0 10px; }
+
+  .signinBtn {
+    display: none;
+  }
+
+  .logoText {
+    font-size: 16px;
+  }
 }
