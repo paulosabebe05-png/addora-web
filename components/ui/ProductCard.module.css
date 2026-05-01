@@ -1,4 +1,3 @@
-/* ===== CARD — Desktop (default) ===== */
 .card {
   background: white;
   border-radius: var(--radius);
@@ -17,11 +16,10 @@
   box-shadow: var(--shadow-lg);
 }
 
-/* ── Image ── */
 .imageWrap {
   position: relative;
-  aspect-ratio: 1 / 1.1;
-  background: #f2f2f2;
+  aspect-ratio: 4/3;
+  background: var(--gray-light);
   overflow: hidden;
 }
 
@@ -30,7 +28,6 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.4s ease;
-  display: block;
 }
 
 .card:hover .image {
@@ -46,36 +43,32 @@
   background: linear-gradient(135deg, #f0f0f0, #e5e5e5);
 }
 
-/* ── Badges ── */
 .discountBadge {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 10px;
+  left: 10px;
   background: var(--orange);
   color: white;
   font-size: 11px;
-  font-weight: 800;
-  padding: 2px 7px;
-  border-radius: 4px;
-  letter-spacing: 0.02em;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 100px;
 }
 
 .outOfStock {
   position: absolute;
   inset: 0;
-  background: rgba(16, 24, 43, 0.55);
+  background: rgba(16, 24, 43, 0.5);
   color: white;
   font-size: 13px;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  letter-spacing: 0.04em;
 }
 
-/* ── Body ── */
 .body {
-  padding: 10px 12px 12px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -83,68 +76,78 @@
 }
 
 .name {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--navy);
-  line-height: 1.35;
+  line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.priceRow {
+.desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+.footer {
+  margin-top: auto;
+  padding-top: 10px;
   display: flex;
-  align-items: baseline;
-  gap: 6px;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pricing {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .price {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
   color: var(--orange);
   font-family: 'Space Grotesk', sans-serif;
-  letter-spacing: -0.3px;
 }
 
 .originalPrice {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--gray);
   text-decoration: line-through;
 }
 
-/* ── Add to Cart button ── */
 .addBtn {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 5px;
-  padding: 8px 0;
-  width: 100%;
+  padding: 8px 14px;
   background: var(--navy);
   color: white;
   font-size: 12px;
   font-weight: 700;
-  border-radius: 7px;
+  border-radius: 8px;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+  flex-shrink: 0;
   border: none;
   cursor: pointer;
-  transition: background 0.18s;
-  white-space: nowrap;
-  margin-top: auto;
-  font-family: inherit;
 }
 
 .addBtn:hover:not(.disabled) {
   background: var(--orange);
+  transform: scale(1.03);
 }
 
 .addBtn.added {
   background: #16a34a;
-}
-
-.addBtn.pressed {
-  transform: scale(0.97);
 }
 
 .addBtn.disabled {
@@ -153,13 +156,12 @@
   cursor: not-allowed;
 }
 
-/* ===== MOBILE — AliExpress style ===== */
+/* ── Mobile card: AliExpress-style tight grid ── */
 @media (max-width: 768px) {
   .card {
     border-radius: 0;
     box-shadow: none;
-    background: var(--navy-mid, #1C2B4A);
-    animation: fadeUp 0.3s ease both;
+    background: #1C2B4A; /* navy-mid — dark themed to match page */
   }
 
   .card:hover {
@@ -167,97 +169,69 @@
     box-shadow: none;
   }
 
-  /* Square-ish image — taller for clothing */
+  /* Square-ish image */
   .imageWrap {
-    aspect-ratio: 1 / 1.2;
-    background: #263659;
-  }
-
-  .image {
-    object-fit: cover;
+    aspect-ratio: 1 / 1.1;
   }
 
   .card:hover .image {
     transform: none;
   }
 
-  /* Discount badge — AliExpress red pill style */
-  .discountBadge {
-    top: 6px;
-    left: 6px;
-    font-size: 10px;
-    font-weight: 800;
-    padding: 2px 6px;
-    border-radius: 3px;
-    background: #ff4747;
-  }
-
-  /* Body — dark theme, tight padding */
   .body {
-    padding: 7px 8px 9px;
+    padding: 8px 8px 10px;
     gap: 4px;
-    background: var(--navy-mid, #1C2B4A);
   }
 
   .name {
     font-size: 12px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.9);
-    line-height: 1.3;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
     -webkit-line-clamp: 2;
   }
 
-  .priceRow {
-    gap: 4px;
-    align-items: baseline;
+  /* Hide description on mobile — not enough space */
+  .desc {
+    display: none;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding-top: 6px;
   }
 
   .price {
     font-size: 14px;
     font-weight: 800;
-    color: #FF6B3D;
-    letter-spacing: -0.2px;
   }
 
   .originalPrice {
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.3);
+    font-size: 11px;
   }
 
-  /* Add to Cart — full width, orange, compact */
+  /* Full-width "Add to Cart" button */
   .addBtn {
-    padding: 7px 0;
+    width: 100%;
+    justify-content: center;
+    padding: 7px 10px;
     font-size: 11px;
-    font-weight: 700;
-    border-radius: 5px;
+    border-radius: 6px;
     background: var(--orange);
     gap: 4px;
-    margin-top: 2px;
-  }
-
-  .addBtn:hover:not(.disabled) {
-    background: #ff6b3d;
-  }
-
-  .addBtn.added {
-    background: #16a34a;
   }
 
   .addBtn.disabled {
-    background: rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.35);
   }
 
-  /* Out of stock */
-  .outOfStock {
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+  /* Discount badge */
+  .discountBadge {
+    top: 6px;
+    left: 6px;
+    font-size: 10px;
+    padding: 2px 6px;
   }
-}
-
-@media (max-width: 400px) {
-  .name { font-size: 11px; }
-  .price { font-size: 13px; }
-  .addBtn { font-size: 10.5px; padding: 6px 0; }
 }
