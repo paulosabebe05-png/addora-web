@@ -31,9 +31,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  /* CRITICAL: prevent any child from pushing width beyond viewport */
-  box-sizing: border-box;
-  overflow: hidden;
 }
 
 /* ── Logo ── */
@@ -217,6 +214,7 @@
   white-space: nowrap;
 }
 
+/* Dropdown panel */
 .dropdown {
   position: absolute;
   top: calc(100% + 10px);
@@ -232,7 +230,7 @@
 
 @keyframes dropIn {
   from { opacity: 0; transform: translateY(-8px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
 }
 
 .dropdownHead {
@@ -307,45 +305,98 @@
 }
 .dropdownSignOut:hover { background: #fff5f5; }
 
-/* ════════════════════════════
-   MOBILE
-════════════════════════════ */
+/* ── Mobile ── */
 @media (max-width: 768px) {
-  .inner {
-    padding: 0 14px;
-    height: 56px;
-    gap: 0;
+
+  /* Force dark solid header always — no transparent on mobile */
+  .header {
+    background: rgba(16, 24, 43, 0.97) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: none !important;
   }
 
+  .inner {
+    padding: 0 14px;
+    height: 54px; /* compact app-like height */
+    gap: 6px;
+  }
+
+  /* Hide desktop nav */
   .nav { display: none; }
+
+  /* Logo smaller */
+  .logoText {
+    font-size: 17px;
+    color: #ffffff !important;
+  }
+
+  .logoMark {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+  }
+
+  /* Actions: tighter gap */
+  .actions {
+    gap: 6px;
+  }
+
+  /* 🔥 Hide auth buttons entirely — clean up clutter */
+  .authBtns {
+    display: none;
+  }
+
+  /* Hide username text */
   .userName { display: none; }
 
-  /* Logo stays left */
-  .logo { gap: 7px; }
-  .logoMark { width: 30px; height: 30px; border-radius: 7px; }
-  .logoText { font-size: 17px; }
+  /* User button: just the avatar, no border/bg */
+  .userBtn {
+    padding: 0;
+    border: none !important;
+    background: transparent !important;
+    color: white !important;
+  }
 
-  /* Actions push fully to right with auto gap */
-  .actions { gap: 4px; margin-left: auto; }
+  /* Avatar */
+  .avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
 
-  /* Tighter cart */
-  .cartBtn { width: 34px; height: 34px; border-radius: 7px; }
+  /* Cart button: tap-friendly */
+  .cartBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.85) !important;
+  }
 
-  /* User button — avatar circle only, no border, no padding */
-  .userBtn { padding: 0; border: none !important; background: transparent !important; gap: 0; }
+  .cartBtn:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #fff !important;
+  }
 
-  .avatar { width: 30px; height: 30px; font-size: 12px; }
-
-  /* Auth buttons — compact */
-  .authBtns { gap: 5px; }
-  .signinBtn { padding: 6px 11px; font-size: 12px; }
-  .signupBtn { padding: 6px 13px; font-size: 12px; }
+  /* Cart badge: tighter */
+  .cartBadge {
+    top: 2px;
+    right: 2px;
+    font-size: 9px;
+    min-width: 15px;
+    height: 15px;
+    border-width: 1px;
+  }
 
   /* Dropdown */
-  .dropdown { right: -2px; min-width: 190px; }
+  .dropdown {
+    right: -4px;
+    min-width: 200px;
+  }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 380px) {
   .inner { padding: 0 10px; }
   .logoText { font-size: 16px; }
 }
