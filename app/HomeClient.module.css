@@ -104,8 +104,8 @@
 }
 
 .heroOrb {
-  width: 180px;
-  height: 180px;
+  width: 140px;
+  height: 140px;
   background: radial-gradient(circle, rgba(231, 85, 37, 0.3) 0%, rgba(231, 85, 37, 0.05) 70%);
   border-radius: 50%;
   position: absolute;
@@ -115,32 +115,32 @@
   background: rgba(255,255,255,0.06);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 20px;
-  padding: 20px 28px;
+  border-radius: 16px;
+  padding: 16px 24px;
   text-align: center;
   position: relative;
   z-index: 1;
 }
 
 .heroCardLabel {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--orange);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .heroCardTitle {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
   color: white;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .heroCardSub {
-  font-size: 14px;
+  font-size: 12px;
   color: rgba(255,255,255,0.5);
 }
 
