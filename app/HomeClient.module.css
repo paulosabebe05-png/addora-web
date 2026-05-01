@@ -12,8 +12,8 @@
 /* ===== HERO ===== */
 .hero {
   background: var(--navy);
-  min-height: 420px;
-  padding: 60px 24px;
+  min-height: unset;
+  padding: 84px 24px 48px; /* 84px = 64px header + 20px breathing */
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -33,7 +33,7 @@
 .heroContent {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
   max-width: 560px;
 }
 
@@ -53,7 +53,7 @@
 
 .heroTitle {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 48px;
+  font-size: 40px;
   font-weight: 700;
   color: white;
   line-height: 1.15;
@@ -95,8 +95,8 @@
 }
 
 .heroOrb {
-  width: 240px;
-  height: 240px;
+  width: 180px;
+  height: 180px;
   background: radial-gradient(circle, rgba(231, 85, 37, 0.3) 0%, rgba(231, 85, 37, 0.05) 70%);
   border-radius: 50%;
   position: absolute;
@@ -107,7 +107,7 @@
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 20px;
-  padding: 28px 36px;
+  padding: 20px 28px;
   text-align: center;
   position: relative;
   z-index: 1;
