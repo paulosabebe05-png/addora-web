@@ -7,7 +7,8 @@
 
 # 🔴 FORCE all traffic to your real domain
 [[redirects]]
-  from = "https://*.netlify.app/*"
+  from = "/*"
   to = "https://addora.com.et/:splat"
   status = 301
   force = true
+  conditions = {Host = ["addoraweb.netlify.app", "master--addoraweb.netlify.app"]}
