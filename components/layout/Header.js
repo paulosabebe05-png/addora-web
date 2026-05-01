@@ -51,7 +51,7 @@ export default function Header() {
       <header className={`${styles.header} ${transparent ? styles.transparent : styles.solid}`}>
         <div className={styles.inner}>
 
-          {/* ── Logo ── */}
+          {/* ── Logo — always shows mark + text on all screen sizes ── */}
           <Link href="/" className={styles.logo}>
             <div className={styles.logoMark}>
               <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
@@ -64,7 +64,7 @@ export default function Header() {
             <span className={styles.logoText}>Addora</span>
           </Link>
 
-          {/* ── Nav links (center) ── */}
+          {/* ── Nav links (center, desktop only) ── */}
           <nav className={styles.nav}>
             <Link href="/" className={styles.navLink}>Home</Link>
             <Link href="/#products" className={styles.navLink}>Shop</Link>
@@ -91,6 +91,7 @@ export default function Header() {
               <div className={styles.userMenu} onClick={e => e.stopPropagation()}>
                 <button className={styles.userBtn} onClick={() => setMenuOpen(!menuOpen)}>
                   <span className={styles.avatar}>{user.name[0].toUpperCase()}</span>
+                  {/* ✅ userName is now visible on mobile too */}
                   <span className={styles.userName}>{user.name.split(' ')[0]}</span>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
                     style={{ transform: menuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
@@ -135,6 +136,7 @@ export default function Header() {
               </div>
             ) : (
               <div className={styles.authBtns}>
+                {/* Sign In hidden on mobile via CSS */}
                 <Link href="/auth/signin" className={styles.signinBtn}>Sign In</Link>
                 <Link href="/auth/signup" className={styles.signupBtn}>Sign Up</Link>
               </div>
@@ -142,32 +144,34 @@ export default function Header() {
           </div>
         </div>
 
-        {/* ── Mobile search row (visible only on mobile) ── */}
-        <div className={styles.mobileSearchRow}>
-          <div style={{ position: 'relative', flex: 1 }}>
-            <span className={styles.mobileSearchIcon} style={{
-              position: 'absolute',
-              left: '10px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              zIndex: 1,
-              color: 'rgba(255,255,255,0.4)'
-            }}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"/>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-            </span>
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={mobileSearch}
-              onChange={e => setMobileSearch(e.target.value)}
-              onKeyDown={handleMobileSearch}
-              className={styles.mobileSearchInput}
-            />
+        {/* ── Mobile search row — only on home page ── */}
+        {isHome && (
+          <div className={styles.mobileSearchRow}>
+            <div style={{ position: 'relative', flex: 1 }}>
+              <span className={styles.mobileSearchIcon} style={{
+                position: 'absolute',
+                left: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                zIndex: 1,
+                color: 'rgba(255,255,255,0.4)'
+              }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+              </span>
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={mobileSearch}
+                onChange={e => setMobileSearch(e.target.value)}
+                onKeyDown={handleMobileSearch}
+                className={styles.mobileSearchInput}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </header>
     </>
   )
