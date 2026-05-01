@@ -1,3 +1,14 @@
+/* ===== LAYOUT WRAPPER ===== */
+.sectionInner {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
 /* ===== HERO ===== */
 .hero {
   background: var(--navy);
@@ -17,17 +28,6 @@
   height: 400px;
   background: radial-gradient(circle, rgba(231, 85, 37, 0.2) 0%, transparent 70%);
   pointer-events: none;
-}
-
-/* Desktop: 2-col grid */
-.heroInner {
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: center;
 }
 
 .heroContent {
@@ -60,7 +60,9 @@
   letter-spacing: -1px;
 }
 
-.heroTitle span { color: var(--orange); }
+.heroTitle span {
+  color: var(--orange);
+}
 
 .heroSub {
   font-size: 16px;
@@ -84,6 +86,7 @@
   color: rgba(255,255,255,0.8);
 }
 
+/* RIGHT SIDE */
 .heroVisual {
   display: flex;
   justify-content: center;
@@ -137,13 +140,11 @@
   padding: 48px 24px 80px;
 }
 
-.productsInner {
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
+.products .sectionInner {
+  display: block;
 }
 
-/* FILTER BAR */
+/* FILTER */
 .filterBar {
   display: flex;
   align-items: center;
@@ -182,7 +183,7 @@
   border-color: var(--orange) !important;
 }
 
-/* SEARCH — desktop only */
+/* SEARCH */
 .searchWrap {
   display: flex;
   align-items: center;
@@ -226,27 +227,28 @@
   gap: 12px;
 }
 
-/* ======================
-   MOBILE
-   ====================== */
+/* ===========================
+   MOBILE — full redesign
+   =========================== */
 @media (max-width: 768px) {
 
-  /* ── Hero: single column, full width, no overflow ── */
+  /* Collapse the 2-col hero layout */
+  .sectionInner {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  /* ----- HERO: compact banner ----- */
   .hero {
     min-height: unset;
-    padding: 70px 16px 20px; /* top = header height + breathing */
-    overflow: hidden;
-  }
-
-  .heroInner {
-    grid-template-columns: 1fr; /* single column */
-    gap: 0;
+    padding: 72px 16px 24px; /* 54px header + 18px breathing room */
     width: 100%;
-    max-width: 100%;
+    box-sizing: border-box;
   }
 
-  /* Hide right side card on mobile */
-  .heroVisual { display: none; }
+  .heroVisual {
+    display: none;
+  }
 
   .heroContent {
     gap: 10px;
@@ -260,78 +262,93 @@
 
   .heroTitle {
     font-size: 26px;
-    letter-spacing: -0.4px;
+    letter-spacing: -0.5px;
     line-height: 1.2;
   }
 
   .heroSub {
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.55;
     color: rgba(255,255,255,0.55);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-  }
-
-  .heroCod { gap: 10px; }
-
-  .heroFeature {
-    font-size: 11px;
-    color: rgba(255,255,255,0.65);
-  }
-
-  /* ── Products: dark, no padding ── */
-  .products {
-    padding: 0 0 60px;
-    background: var(--navy);
-  }
-
-  .productsInner {
-    padding: 0;
     max-width: 100%;
   }
 
-  /* ── Filter bar: sticky, dark, categories only ── */
+  .heroCod {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .heroFeature {
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.7);
+    gap: 5px;
+  }
+
+  /* ----- PRODUCTS: dark bg carries from hero ----- */
+  .products {
+    padding: 0 0 60px;
+    background: var(--navy);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .products .sectionInner {
+    padding: 0;
+    width: 100%;
+  }
+
+  /* Filter bar sticky, dark themed */
   .filterBar {
     flex-direction: column;
     align-items: stretch;
     gap: 0;
     margin-bottom: 0;
     position: sticky;
-    top: 54px; /* match mobile header height */
+    top: 54px; /* matches mobile header height */
     z-index: 100;
     background: var(--navy);
-    padding: 8px 0 6px;
+    padding: 10px 0 6px;
     border-bottom: 1px solid rgba(255,255,255,0.06);
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  /* Hide desktop search on mobile — header has it */
-  .searchWrap { display: none; }
+  /* Hide the desktop search in filter bar on mobile
+     (search is shown in the header's mobileSearchRow instead) */
+  .searchWrap {
+    display: none;
+  }
 
-  /* Category pills — horizontal scroll */
+  /* Category pills — horizontal scroll, no wrap */
   .categories {
     flex-wrap: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    padding: 0 12px 2px;
+    padding: 0 12px 4px;
     gap: 7px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .categories::-webkit-scrollbar { display: none; }
+  .categories::-webkit-scrollbar {
+    display: none;
+  }
 
   .catBtn {
     flex-shrink: 0;
     white-space: nowrap;
-    padding: 5px 14px;
+    padding: 6px 14px;
     font-size: 12px;
     font-weight: 600;
     background: rgba(255,255,255,0.07);
     color: rgba(255,255,255,0.6);
     border: 1px solid rgba(255,255,255,0.1);
-    min-height: 30px;
-    border-radius: 100px;
+    min-height: 32px;
   }
 
   .catBtn:hover {
@@ -345,14 +362,16 @@
     border-color: var(--orange) !important;
   }
 
-  /* ── Grid: tight 2-col, AliExpress style ── */
+  /* ----- GRID: AliExpress-style tight 2-col ----- */
   .grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
     background: rgba(0,0,0,0.35);
     margin-top: 2px;
+    width: 100%;
   }
 
+  /* Empty state dark themed */
   .empty {
     color: rgba(255,255,255,0.4);
     padding: 60px 20px;
@@ -361,5 +380,5 @@
 
 @media (max-width: 400px) {
   .heroTitle { font-size: 22px; }
-  .hero { padding: 66px 12px 18px; }
+  .hero { padding: 70px 14px 20px; }
 }
