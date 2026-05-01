@@ -312,7 +312,6 @@
 
 /* ── Mobile ── */
 @media (max-width: 768px) {
-  /* Fix overall overflow */
   .header {
     overflow: visible;
   }
@@ -320,36 +319,51 @@
   .inner {
     padding: 0 12px;
     height: 54px;
-    gap: 8px;
+    gap: 10px;
   }
 
   /* Hide desktop nav */
   .nav { display: none; }
 
-  /* Hide username text — show avatar only */
-  .userName { display: none; }
-
-  /* Logo text smaller */
-  .logoText { font-size: 17px; }
-  .logoMark { width: 30px; height: 30px; border-radius: 8px; }
-  .logoMark svg { width: 15px; height: 15px; }
-
-  /* Tighter user button — just the avatar circle */
-  .userBtn {
-    padding: 0;
-    border: none;
-    background: transparent !important;
+  /* ✅ Keep logo text visible on mobile — same as desktop */
+  .logoText {
+    font-size: 18px;
+    display: block; /* ensure it's never hidden */
   }
 
-  /* Auth buttons — smaller, sign up only shows icon on very small screens */
-  .signinBtn {
-    padding: 6px 10px;
+  .logoMark {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+  }
+
+  .logoMark svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  /* ✅ Keep username visible on mobile */
+  .userName {
+    display: block;
     font-size: 12px;
+    max-width: 60px;
+  }
+
+  /* Tighter user button on mobile */
+  .userBtn {
+    padding: 4px 8px 4px 4px;
+    gap: 5px;
+  }
+
+  /* Auth buttons — hide Sign In to save space, keep Sign Up */
+  .signinBtn {
+    display: none;
   }
 
   .signupBtn {
-    padding: 6px 12px;
+    padding: 7px 14px;
     font-size: 12px;
+    font-weight: 700;
   }
 
   /* Cart */
@@ -407,5 +421,17 @@
 
 @media (max-width: 400px) {
   .inner { padding: 0 10px; }
-  .logoText { display: none; }
+
+  /* Keep logo text even on very small screens */
+  .logoText {
+    font-size: 16px;
+    display: block;
+  }
+
+  .signinBtn { display: none; }
+
+  .signupBtn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
 }
