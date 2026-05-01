@@ -27,6 +27,9 @@
 
 html {
   scroll-behavior: smooth;
+  /* Prevent horizontal scroll on mobile */
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
@@ -34,6 +37,10 @@ body {
   background: var(--off-white);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
+  /* Prevent horizontal scroll/overflow on all devices */
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
 }
 
 a { text-decoration: none; color: inherit; }
