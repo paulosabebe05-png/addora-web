@@ -1,6 +1,6 @@
 /* ===== LAYOUT WRAPPER ===== */
 .sectionInner {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
   display: grid;
@@ -12,8 +12,8 @@
 /* ===== HERO ===== */
 .hero {
   background: var(--navy);
-  min-height: 420px;
-  padding: 60px 24px;
+  min-height: 520px;
+  padding: 124px 60px 60px; /* 64px header + 60px top breathing room */
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -239,7 +239,7 @@
   /* HERO: compact banner */
   .hero {
     min-height: unset;
-    padding: 80px 16px 24px; /* 64px header + 16px breathing room */
+    padding: 74px 16px 24px; /* 58px mobile header + 16px breathing room */
     box-sizing: border-box;
     overflow: hidden;
   }
