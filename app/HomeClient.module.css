@@ -1,19 +1,8 @@
-/* ===== LAYOUT WRAPPER ===== */
-.sectionInner {
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: center;
-}
-
 /* ===== HERO ===== */
 .hero {
   background: var(--navy);
-  min-height: 520px;
-  padding: 124px 60px 60px; /* 64px header + 60px top breathing room */
+  min-height: 420px;
+  padding: 60px 24px;
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -28,6 +17,17 @@
   height: 400px;
   background: radial-gradient(circle, rgba(231, 85, 37, 0.2) 0%, transparent 70%);
   pointer-events: none;
+}
+
+/* Desktop: 2-col grid */
+.heroInner {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
 }
 
 .heroContent {
@@ -60,9 +60,7 @@
   letter-spacing: -1px;
 }
 
-.heroTitle span {
-  color: var(--orange);
-}
+.heroTitle span { color: var(--orange); }
 
 .heroSub {
   font-size: 16px;
@@ -86,7 +84,6 @@
   color: rgba(255,255,255,0.8);
 }
 
-/* RIGHT SIDE */
 .heroVisual {
   display: flex;
   justify-content: center;
@@ -140,11 +137,13 @@
   padding: 48px 24px 80px;
 }
 
-.products .sectionInner {
-  display: block;
+.productsInner {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-/* FILTER */
+/* FILTER BAR */
 .filterBar {
   display: flex;
   align-items: center;
@@ -169,6 +168,7 @@
   color: var(--text-muted);
   border: 1.5px solid var(--gray-light);
   transition: all 0.2s;
+  cursor: pointer;
 }
 
 .catBtn:hover {
@@ -182,7 +182,7 @@
   border-color: var(--orange) !important;
 }
 
-/* SEARCH */
+/* SEARCH — desktop only */
 .searchWrap {
   display: flex;
   align-items: center;
@@ -226,31 +226,30 @@
   gap: 12px;
 }
 
-/* ===========================
+/* ======================
    MOBILE
-   =========================== */
+   ====================== */
 @media (max-width: 768px) {
 
-  /* Collapse the 2-col hero layout */
-  .sectionInner {
-    grid-template-columns: 1fr;
-  }
-
-  /* HERO: compact banner */
+  /* ── Hero: single column, full width, no overflow ── */
   .hero {
     min-height: unset;
-    padding: 70px 16px 24px; /* 54px header + 16px breathing room */
-    box-sizing: border-box;
+    padding: 70px 16px 20px; /* top = header height + breathing */
     overflow: hidden;
   }
 
-  .heroVisual {
-    display: none;
+  .heroInner {
+    grid-template-columns: 1fr; /* single column */
+    gap: 0;
+    width: 100%;
+    max-width: 100%;
   }
+
+  /* Hide right side card on mobile */
+  .heroVisual { display: none; }
 
   .heroContent {
     gap: 10px;
-    width: 100%;
     max-width: 100%;
   }
 
@@ -263,7 +262,6 @@
     font-size: 26px;
     letter-spacing: -0.4px;
     line-height: 1.2;
-    word-break: break-word;
   }
 
   .heroSub {
@@ -276,69 +274,42 @@
     overflow: hidden;
   }
 
-  .heroCod {
-    gap: 10px;
-    flex-wrap: wrap;
-  }
+  .heroCod { gap: 10px; }
 
   .heroFeature {
     font-size: 11px;
     color: rgba(255,255,255,0.65);
   }
 
-  /* PRODUCTS section */
+  /* ── Products: dark, no padding ── */
   .products {
     padding: 0 0 60px;
     background: var(--navy);
   }
 
-  .products .sectionInner {
+  .productsInner {
     padding: 0;
+    max-width: 100%;
   }
 
-  /* Filter bar: sticky, dark */
+  /* ── Filter bar: sticky, dark, categories only ── */
   .filterBar {
     flex-direction: column;
     align-items: stretch;
     gap: 0;
     margin-bottom: 0;
     position: sticky;
-    top: 54px; /* matches mobile header height */
+    top: 54px; /* match mobile header height */
     z-index: 100;
     background: var(--navy);
-    padding: 10px 0 8px;
+    padding: 8px 0 6px;
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
-  /* Search bar dark, full width */
-  .searchWrap {
-    order: -1;
-    width: calc(100% - 24px);
-    min-width: unset;
-    margin: 0 12px 8px;
-    background: rgba(255,255,255,0.07);
-    border: 1.5px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    padding: 9px 13px;
-    color: rgba(255,255,255,0.35);
-    box-sizing: border-box;
-  }
+  /* Hide desktop search on mobile — header has it */
+  .searchWrap { display: none; }
 
-  .searchWrap:focus-within {
-    border-color: var(--orange);
-    color: var(--orange);
-  }
-
-  .search {
-    color: white;
-    font-size: 13px;
-  }
-
-  .search::placeholder {
-    color: rgba(255,255,255,0.3);
-  }
-
-  /* Category pills: horizontal scroll */
+  /* Category pills — horizontal scroll */
   .categories {
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -348,9 +319,7 @@
     gap: 7px;
   }
 
-  .categories::-webkit-scrollbar {
-    display: none;
-  }
+  .categories::-webkit-scrollbar { display: none; }
 
   .catBtn {
     flex-shrink: 0;
@@ -362,6 +331,7 @@
     color: rgba(255,255,255,0.6);
     border: 1px solid rgba(255,255,255,0.1);
     min-height: 30px;
+    border-radius: 100px;
   }
 
   .catBtn:hover {
@@ -375,18 +345,21 @@
     border-color: var(--orange) !important;
   }
 
-  /* GRID: tight 2-col */
+  /* ── Grid: tight 2-col, AliExpress style ── */
   .grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0,0,0,0.35);
     margin-top: 2px;
+  }
+
+  .empty {
+    color: rgba(255,255,255,0.4);
+    padding: 60px 20px;
   }
 }
 
 @media (max-width: 400px) {
-  .hero {
-    padding: 76px 14px 20px;
-  }
   .heroTitle { font-size: 22px; }
+  .hero { padding: 66px 12px 18px; }
 }
