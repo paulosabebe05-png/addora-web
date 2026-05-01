@@ -80,15 +80,6 @@
 .heroFeature {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  font-weight: 600;
-  color: rgba(255,255,255,0.75);
-}
-
-.heroFeature {
-  display: flex;
-  align-items: center;
   gap: 6px;
   font-size: 13px;
   font-weight: 600;
@@ -241,7 +232,7 @@
    =========================== */
 @media (max-width: 768px) {
 
-  /* Collapse the 2-col hero layout */
+  /* Collapse the 2-col hero layout to single column */
   .sectionInner {
     grid-template-columns: 1fr;
     gap: 0;
@@ -250,11 +241,13 @@
   /* ----- HERO: compact banner ----- */
   .hero {
     min-height: unset;
-    padding: 72px 16px 24px; /* 54px header + 18px breathing room */
+    /* 54px mobile header + mobileSearchRow (~50px) + 16px breathing room = ~120px */
+    padding: 120px 16px 20px;
     width: 100%;
     box-sizing: border-box;
   }
 
+  /* Hide the decorative right-side card on mobile */
   .heroVisual {
     display: none;
   }
@@ -279,15 +272,11 @@
     font-size: 13px;
     line-height: 1.55;
     color: rgba(255,255,255,0.55);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
     max-width: 100%;
   }
 
   .heroCod {
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
   }
 
@@ -308,6 +297,7 @@
   .products .sectionInner {
     padding: 0;
     width: 100%;
+    display: block;
   }
 
   /* Filter bar sticky, dark themed */
@@ -389,5 +379,5 @@
 
 @media (max-width: 400px) {
   .heroTitle { font-size: 22px; }
-  .hero { padding: 70px 14px 20px; }
+  .hero { padding: 115px 14px 20px; }
 }
