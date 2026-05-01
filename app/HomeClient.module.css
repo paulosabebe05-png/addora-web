@@ -240,7 +240,7 @@
   /*
    * Hero top padding:
    *   54px  = mobile header bar
-   *   52px  = mobileSearchRow (8px padding top + 36px input + 8px padding bottom)
+   *   52px  = mobileSearchRow (8px top + ~36px input + 8px bottom)
    *   10px  = breathing room
    * = 116px total
    */
@@ -305,7 +305,7 @@
 
   /*
    * STICKY FILTER BAR
-   * Must sit just below the combined header height:
+   * Sits just below the combined header height:
    *   54px header + 52px mobileSearchRow = 106px
    */
   .filterBar {
