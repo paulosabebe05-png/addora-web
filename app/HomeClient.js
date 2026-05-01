@@ -5,68 +5,62 @@ import styles from './HomeClient.module.css'
 
 const CATEGORIES = ['All', 'Kids', 'Boys', 'Girls', 'Newborn', 'School']
 
-export default function HomeClient({ products, initialSearch = '' }) {
+export default function HomeClient({ products }) {
   const [activeCategory, setActiveCategory] = useState('All')
-  const [search, setSearch] = useState(initialSearch)
+  const [search, setSearch] = useState('')
 
   const filtered = products.filter(p => {
     const matchCat =
       activeCategory === 'All' ||
       p.name.toLowerCase().includes(activeCategory.toLowerCase())
+
     const matchSearch =
       p.name.toLowerCase().includes(search.toLowerCase())
+
     return matchCat && matchSearch
   })
 
   return (
     <>
-      {/* Hero Banner */}
+      {/* Slim Hero Banner */}
       <section className={styles.hero}>
         <div className={styles.heroInner}>
-          <div className={styles.heroContent}>
-            <div className={styles.heroBadge}>
-              <span>🚚</span> Free delivery in Addis
-            </div>
-
+          {/* Left: text */}
+          <div className={styles.heroLeft}>
             <h1 className={styles.heroTitle}>
-              Shop Smart,<br />
-              <span>Pay on Delivery</span>
+              Shop Smart, <span>Pay on Delivery</span>
             </h1>
-
             <p className={styles.heroSub}>
-              Ethiopia's trusted local store. Browse kids clothing and more — pay cash when it arrives at your door.
+              Ethiopia's trusted store — cash on delivery, 1–3 day shipping.
             </p>
-
-            <div className={styles.heroCod}>
-              <div className={styles.heroFeature}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
-                Cash on Delivery
-              </div>
-              <div className={styles.heroFeature}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
-                </svg>
-                1–3 Day Delivery
-              </div>
-              <div className={styles.heroFeature}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                Quality Guaranteed
-              </div>
-            </div>
           </div>
 
-          {/* Right side — desktop only */}
-          <div className={styles.heroVisual}>
-            <div className={styles.heroOrb}></div>
-            <div className={styles.heroCard}>
-              <div className={styles.heroCardLabel}>Kids Collection</div>
-              <div className={styles.heroCardTitle}>New Arrivals 🎉</div>
-              <div className={styles.heroCardSub}>Sizes 0–14 years</div>
+          {/* Right: feature pills */}
+          <div className={styles.heroRight}>
+            <div className={styles.heroPill}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              Cash on Delivery
+            </div>
+            <div className={styles.heroPill}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              1–3 Day Delivery
+            </div>
+            <div className={styles.heroPill}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Quality Guaranteed
+            </div>
+            <div className={styles.heroPill}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+              Free Delivery in Addis
             </div>
           </div>
         </div>
@@ -75,8 +69,7 @@ export default function HomeClient({ products, initialSearch = '' }) {
       {/* Product Section */}
       <section className={styles.products}>
         <div className={styles.productsInner}>
-
-          {/* Filter bar — categories + desktop search */}
+          {/* Filter bar */}
           <div className={styles.filterBar}>
             <div className={styles.categories}>
               {CATEGORIES.map(cat => (
@@ -90,9 +83,8 @@ export default function HomeClient({ products, initialSearch = '' }) {
               ))}
             </div>
 
-            {/* Desktop search only — hidden on mobile (header has it) */}
             <div className={styles.searchWrap}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="11" cy="11" r="8"/>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
