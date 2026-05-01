@@ -228,26 +228,29 @@
 }
 
 /* ===========================
-   MOBILE — full redesign
+   MOBILE
    =========================== */
 @media (max-width: 768px) {
 
-  /* Collapse the 2-col hero layout to single column */
   .sectionInner {
     grid-template-columns: 1fr;
     gap: 0;
   }
 
-  /* ----- HERO: compact banner ----- */
+  /*
+   * Hero top padding:
+   *   54px  = mobile header bar
+   *   52px  = mobileSearchRow (8px padding top + 36px input + 8px padding bottom)
+   *   10px  = breathing room
+   * = 116px total
+   */
   .hero {
     min-height: unset;
-    /* 54px mobile header + mobileSearchRow (~50px) + 16px breathing room = ~120px */
-    padding: 120px 16px 20px;
+    padding: 116px 16px 24px;
     width: 100%;
     box-sizing: border-box;
   }
 
-  /* Hide the decorative right-side card on mobile */
   .heroVisual {
     display: none;
   }
@@ -286,7 +289,7 @@
     gap: 5px;
   }
 
-  /* ----- PRODUCTS: dark bg carries from hero ----- */
+  /* Dark background continues from hero into products */
   .products {
     padding: 0 0 60px;
     background: var(--navy);
@@ -300,24 +303,27 @@
     display: block;
   }
 
-  /* Filter bar sticky, dark themed */
+  /*
+   * STICKY FILTER BAR
+   * Must sit just below the combined header height:
+   *   54px header + 52px mobileSearchRow = 106px
+   */
   .filterBar {
     flex-direction: column;
     align-items: stretch;
     gap: 0;
     margin-bottom: 0;
     position: sticky;
-    top: 54px; /* matches mobile header height */
+    top: 106px;
     z-index: 100;
     background: var(--navy);
-    padding: 10px 0 6px;
+    padding: 8px 0 6px;
     border-bottom: 1px solid rgba(255,255,255,0.06);
     width: 100%;
     box-sizing: border-box;
   }
 
-  /* Hide the desktop search in filter bar on mobile
-     (search is shown in the header's mobileSearchRow instead) */
+  /* Hide desktop search — mobile uses header search row */
   .searchWrap {
     display: none;
   }
@@ -350,7 +356,8 @@
     min-height: 32px;
   }
 
-  .catBtn:hover {
+  .catBtn:hover,
+  .catBtn:active {
     border-color: rgba(231,85,37,0.5);
     color: #FF8A65;
   }
@@ -361,7 +368,7 @@
     border-color: var(--orange) !important;
   }
 
-  /* ----- GRID: AliExpress-style tight 2-col ----- */
+  /* 2-col tight grid — AliExpress style */
   .grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
@@ -370,7 +377,6 @@
     width: 100%;
   }
 
-  /* Empty state dark themed */
   .empty {
     color: rgba(255,255,255,0.4);
     padding: 60px 20px;
@@ -379,5 +385,5 @@
 
 @media (max-width: 400px) {
   .heroTitle { font-size: 22px; }
-  .hero { padding: 115px 14px 20px; }
+  .hero { padding: 112px 14px 20px; }
 }
