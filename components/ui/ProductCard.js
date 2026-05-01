@@ -128,13 +128,15 @@ export default function ProductCard({ product }) {
             className={`${styles.addBtn} ${added ? styles.added : ''} ${product.stock === 0 ? styles.disabled : ''}`}
             onClick={handleAddToCart}
             disabled={product.stock === 0}
+            aria-label="Add to cart"
           >
             {added ? (
               <>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
-                Added
+                {/* ✅ Text hidden on mobile via .addBtnText class */}
+                <span className={styles.addBtnText}>Added</span>
               </>
             ) : (
               <>
@@ -142,7 +144,8 @@ export default function ProductCard({ product }) {
                   <line x1="12" y1="5" x2="12" y2="19"/>
                   <line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
-                Add to Cart
+                {/* ✅ Text hidden on mobile via .addBtnText class */}
+                <span className={styles.addBtnText}>Add to Cart</span>
               </>
             )}
           </button>
