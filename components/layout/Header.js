@@ -14,6 +14,7 @@ export default function Header() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [searchVal, setSearchVal] = useState('')
 
   const isHome = pathname === '/'
 
@@ -36,6 +37,11 @@ export default function Header() {
     setMenuOpen(false)
   }
 
+  const handleSearch = (e) => {
+    e.preventDefault()
+    if (searchVal.trim()) router.push(`/?search=${encodeURIComponent(searchVal.trim())}`)
+  }
+
   const transparent = isHome && !scrolled
 
   return (
@@ -45,7 +51,7 @@ export default function Header() {
         {/* ── Logo ── */}
         <Link href="/" className={styles.logo}>
           <div className={styles.logoMark}>
-            <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+            <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
               <path d="M8 24 Q16 8 24 24" stroke="white" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
               <circle cx="8"  cy="24" r="2.8" fill="white"/>
               <circle cx="16" cy="13" r="2.8" fill="white"/>
@@ -55,14 +61,28 @@ export default function Header() {
           <span className={styles.logoText}>Addora</span>
         </Link>
 
-        {/* ── Nav links (center) ── */}
+        {/* ── Desktop Nav ── */}
         <nav className={styles.nav}>
           <Link href="/" className={styles.navLink}>Home</Link>
           <Link href="/#products" className={styles.navLink}>Shop</Link>
           <Link href="/orders" className={styles.navLink}>Orders</Link>
         </nav>
 
-        {/* ── Right actions ── */}
+        {/* ── Mobile Search Bar ── */}
+        <form className={styles.mobileSearch} onSubmit={handleSearch}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.searchIcon}>
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchVal}
+            onChange={e => setSearchVal(e.target.value)}
+            className={styles.searchInput}
+          />
+        </form>
+
+        {/* ── Right Actions ── */}
         <div className={styles.actions}>
 
           <NotificationBell />
@@ -77,59 +97,113 @@ export default function Header() {
             {count > 0 && <span className={styles.cartBadge}>{count > 9 ? '9+' : count}</span>}
           </Link>
 
-          {/* Auth */}
-          {user ? (
-            <div className={styles.userMenu} onClick={e => e.stopPropagation()}>
-              <button className={styles.userBtn} onClick={() => setMenuOpen(!menuOpen)}>
-                <span className={styles.avatar}>{user.name[0].toUpperCase()}</span>
-                <span className={styles.userName}>{user.name.split(' ')[0]}</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-                  style={{ transform: menuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
-                  <polyline points="6 9 12 15 18 9"/>
-                </svg>
-              </button>
-
-              {menuOpen && (
-                <div className={styles.dropdown}>
-                  <div className={styles.dropdownHead}>
-                    <div className={styles.dropdownAvatar}>{user.name[0].toUpperCase()}</div>
-                    <div>
-                      <div className={styles.dropdownName}>{user.name}</div>
-                      <div className={styles.dropdownPhone}>{user.email || ''}</div>
+          {/* Auth — desktop */}
+          <div className={styles.desktopAuth}>
+            {user ? (
+              <div className={styles.userMenu} onClick={e => e.stopPropagation()}>
+                <button className={styles.userBtn} onClick={() => setMenuOpen(!menuOpen)}>
+                  <span className={styles.avatar}>{user.name[0].toUpperCase()}</span>
+                  <span className={styles.userName}>{user.name.split(' ')[0]}</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                    style={{ transform: menuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+                {menuOpen && (
+                  <div className={styles.dropdown}>
+                    <div className={styles.dropdownHead}>
+                      <div className={styles.dropdownAvatar}>{user.name[0].toUpperCase()}</div>
+                      <div>
+                        <div className={styles.dropdownName}>{user.name}</div>
+                        <div className={styles.dropdownPhone}>{user.email || ''}</div>
+                      </div>
                     </div>
+                    <Link href="/orders" className={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                      </svg>
+                      My Orders
+                    </Link>
+                    <Link href="/cart" className={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                      </svg>
+                      My Cart {count > 0 && <span className={styles.inlineCount}>{count}</span>}
+                    </Link>
+                    <div className={styles.dropdownDivider} />
+                    <button className={styles.dropdownSignOut} onClick={handleSignOut}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                      </svg>
+                      Sign Out
+                    </button>
                   </div>
-                  <Link href="/orders" className={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                      <polyline points="14 2 14 8 20 8"/>
-                    </svg>
-                    My Orders
-                  </Link>
-                  <Link href="/cart" className={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-                      <line x1="3" y1="6" x2="21" y2="6"/>
-                    </svg>
-                    My Cart {count > 0 && <span className={styles.inlineCount}>{count}</span>}
-                  </Link>
-                  <div className={styles.dropdownDivider} />
-                  <button className={styles.dropdownSignOut} onClick={handleSignOut}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
-                      <polyline points="16 17 21 12 16 7"/>
-                      <line x1="21" y1="12" x2="9" y2="12"/>
-                    </svg>
-                    Sign Out
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className={styles.authBtns}>
-              <Link href="/auth/signin" className={styles.signinBtn}>Sign In</Link>
-              <Link href="/auth/signup" className={styles.signupBtn}>Sign Up</Link>
-            </div>
-          )}
+                )}
+              </div>
+            ) : (
+              <div className={styles.authBtns}>
+                <Link href="/auth/signin" className={styles.signinBtn}>Sign In</Link>
+                <Link href="/auth/signup" className={styles.signupBtn}>Sign Up</Link>
+              </div>
+            )}
+          </div>
+
+          {/* Auth — mobile avatar only */}
+          <div className={styles.mobileAuth}>
+            {user ? (
+              <div className={styles.userMenu} onClick={e => e.stopPropagation()}>
+                <button className={styles.avatarBtn} onClick={() => setMenuOpen(!menuOpen)}>
+                  <span className={styles.avatar}>{user.name[0].toUpperCase()}</span>
+                </button>
+                {menuOpen && (
+                  <div className={styles.dropdown}>
+                    <div className={styles.dropdownHead}>
+                      <div className={styles.dropdownAvatar}>{user.name[0].toUpperCase()}</div>
+                      <div>
+                        <div className={styles.dropdownName}>{user.name}</div>
+                        <div className={styles.dropdownPhone}>{user.email || ''}</div>
+                      </div>
+                    </div>
+                    <Link href="/orders" className={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                      </svg>
+                      My Orders
+                    </Link>
+                    <Link href="/cart" className={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                      </svg>
+                      My Cart {count > 0 && <span className={styles.inlineCount}>{count}</span>}
+                    </Link>
+                    <div className={styles.dropdownDivider} />
+                    <button className={styles.dropdownSignOut} onClick={handleSignOut}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                      </svg>
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link href="/auth/signin" className={styles.mobileSignIn}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </Link>
+            )}
+          </div>
+
         </div>
       </div>
     </header>
