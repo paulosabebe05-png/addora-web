@@ -13,7 +13,7 @@
 .hero {
   background: var(--navy);
   min-height: unset;
-  padding: 84px 24px 48px; /* 84px = 64px header + 20px breathing */
+  padding: 80px 24px 20px;
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -33,7 +33,7 @@
 .heroContent {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   max-width: 560px;
 }
 
@@ -44,20 +44,20 @@
   background: rgba(231, 85, 37, 0.15);
   border: 1px solid rgba(231, 85, 37, 0.3);
   color: #FF8A65;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 6px 14px;
+  padding: 4px 12px;
   border-radius: 100px;
   width: fit-content;
 }
 
 .heroTitle {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 40px;
+  font-size: 32px;
   font-weight: 700;
   color: white;
   line-height: 1.15;
-  letter-spacing: -1px;
+  letter-spacing: -0.8px;
 }
 
 .heroTitle span {
@@ -65,16 +65,25 @@
 }
 
 .heroSub {
-  font-size: 16px;
-  color: rgba(255,255,255,0.65);
-  line-height: 1.7;
-  max-width: 460px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.55;
+  max-width: 420px;
 }
 
 .heroCod {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
+}
+
+.heroFeature {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
 }
 
 .heroFeature {
