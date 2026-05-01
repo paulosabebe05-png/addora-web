@@ -1,3 +1,4 @@
+/* ── Card ── */
 .card {
   background: white;
   border-radius: var(--radius);
@@ -16,6 +17,7 @@
   box-shadow: var(--shadow-lg);
 }
 
+/* ── Image area ── */
 .imageWrap {
   position: relative;
   aspect-ratio: 4/3;
@@ -43,6 +45,7 @@
   background: linear-gradient(135deg, #f0f0f0, #e5e5e5);
 }
 
+/* ── Badges ── */
 .discountBadge {
   position: absolute;
   top: 10px;
@@ -53,30 +56,82 @@
   font-weight: 700;
   padding: 3px 8px;
   border-radius: 100px;
+  z-index: 2;
+}
+
+.hotBadge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #1a1a2e;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 100px;
+  z-index: 2;
+}
+
+/* If both badges, offset hotBadge below discount */
+.discountBadge + .hotBadge {
+  top: 34px;
 }
 
 .outOfStock {
   position: absolute;
   inset: 0;
-  background: rgba(16, 24, 43, 0.5);
+  background: rgba(16, 24, 43, 0.55);
   color: white;
   font-size: 13px;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 3;
 }
 
+/* ── Wishlist button ── */
+.wishBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  z-index: 4;
+  transition: background 0.18s, transform 0.15s, color 0.18s;
+  backdrop-filter: blur(4px);
+}
+
+.wishBtn:hover {
+  background: white;
+  transform: scale(1.12);
+  color: #ef4444;
+}
+
+.wishBtn.wishlisted {
+  background: #fff1f1;
+  color: #ef4444;
+}
+
+/* ── Body ── */
 .body {
   padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   flex: 1;
 }
 
 .name {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--navy);
   line-height: 1.3;
@@ -86,16 +141,28 @@
   overflow: hidden;
 }
 
-.desc {
-  font-size: 12px;
-  color: var(--text-muted);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-height: 1.5;
+/* ── Stars ── */
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
 
+.reviewCount {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-left: 4px;
+  font-weight: 400;
+}
+
+/* ── Sold count ── */
+.soldCount {
+  font-size: 11px;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* ── Footer ── */
 .footer {
   margin-top: auto;
   padding-top: 10px;
@@ -112,18 +179,19 @@
 }
 
 .price {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
   color: var(--orange);
   font-family: 'Space Grotesk', sans-serif;
 }
 
 .originalPrice {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--gray);
   text-decoration: line-through;
 }
 
+/* ── Add to Cart button ── */
 .addBtn {
   display: flex;
   align-items: center;
@@ -134,11 +202,11 @@
   font-size: 12px;
   font-weight: 700;
   border-radius: 8px;
+  border: none;
+  cursor: pointer;
   transition: background 0.2s, transform 0.1s;
   white-space: nowrap;
   flex-shrink: 0;
-  cursor: pointer;
-  border: none;
   font-family: inherit;
 }
 
@@ -157,13 +225,13 @@
   cursor: not-allowed;
 }
 
-/* ===== MOBILE: AliExpress / Temu style ===== */
+/* ── Mobile: AliExpress-style compact card ── */
 @media (max-width: 768px) {
   .card {
     border-radius: 0;
     box-shadow: none;
-    background: #1C2B4A; /* navy-mid for dark theme grid */
-    animation: fadeUp 0.4s ease both;
+    border: none;
+    animation: none;
   }
 
   .card:hover {
@@ -171,80 +239,64 @@
     box-shadow: none;
   }
 
-  /* Square-ish image for compact grid */
   .imageWrap {
-    aspect-ratio: 1 / 1.1;
-    background: #263659;
-  }
-
-  .noImage {
-    background: linear-gradient(135deg, #1C2B4A, #263659);
-  }
-
-  .discountBadge {
-    top: 6px;
-    left: 6px;
-    font-size: 10px;
-    padding: 2px 6px;
+    aspect-ratio: 1/1;
   }
 
   .body {
-    padding: 8px 8px 10px;
-    gap: 4px;
+    padding: 10px 8px 12px;
+    gap: 3px;
   }
 
   .name {
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 600;
-    color: rgba(255,255,255,0.9);
     -webkit-line-clamp: 2;
-    line-height: 1.35;
   }
 
-  /* Hide description on mobile to save space */
-  .desc {
-    display: none;
+  .stars {
+    gap: 1px;
+  }
+
+  .reviewCount {
+    font-size: 10px;
+  }
+
+  .soldCount {
+    font-size: 10px;
   }
 
   .footer {
-    padding-top: 6px;
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
+    gap: 8px;
+    padding-top: 6px;
   }
 
   .price {
     font-size: 14px;
-    font-weight: 800;
-    color: #FF6B3D;
   }
 
   .originalPrice {
     font-size: 11px;
-    color: rgba(255,255,255,0.35);
   }
 
-  /* Full-width add to cart button on mobile */
   .addBtn {
     width: 100%;
     justify-content: center;
     padding: 8px 10px;
     font-size: 12px;
     border-radius: 6px;
-    background: var(--orange);
   }
 
-  .addBtn:hover:not(.disabled) {
-    background: #ff6b3d;
-    transform: none;
+  .discountBadge,
+  .hotBadge {
+    font-size: 10px;
+    padding: 2px 6px;
   }
 
-  .addBtn.added {
-    background: #16a34a;
-  }
-
-  .addBtn.disabled {
-    background: rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.3);
+  .wishBtn {
+    width: 26px;
+    height: 26px;
   }
 }
