@@ -1,15 +1,15 @@
-.page { padding: 40px 0 80px; }
+.page { padding: 0 0 80px; }
 
 .title {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 28px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--navy);
-  margin-bottom: 32px;
+  padding: 16px 16px 12px;
 }
 
 .guestWrap, .empty {
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - 58px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,12 +20,12 @@
 }
 
 .guestWrap h2, .empty h2 {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--navy);
 }
 
-.empty p { color: var(--text-muted); font-size: 15px; }
+.empty p { color: var(--text-muted); font-size: 14px; }
 
 .signInBtn {
   margin-top: 8px;
@@ -41,41 +41,45 @@
 .loading, .list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0;
+  background: white;
 }
 
+/* Mobile card: horizontal strip, no box shadow, edge-to-edge */
 .orderCard {
   background: white;
-  border-radius: var(--radius);
-  padding: 20px 24px;
+  padding: 14px 16px;
   display: flex;
   align-items: center;
-  gap: 24px;
-  box-shadow: var(--shadow);
+  gap: 12px;
   text-decoration: none;
   color: inherit;
-  transition: transform 0.2s, box-shadow 0.2s;
-  border: 1.5px solid transparent;
+  border-bottom: 1px solid var(--gray-light);
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
 }
 
-.orderCard:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--orange);
-}
+.orderCard:last-child { border-bottom: none; }
+.orderCard:active { background: var(--off-white); }
 
-.orderLeft { flex: 1; }
+.orderLeft {
+  flex: 1;
+  min-width: 0;
+}
 
 .orderId {
   font-family: 'Space Grotesk', monospace;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--navy);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .orderDate {
-  font-size: 13px;
+  font-size: 11px;
   color: var(--text-muted);
 }
 
@@ -83,36 +87,63 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 .statusBadge {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 4px 12px;
+  padding: 4px 10px;
   border-radius: 100px;
+  white-space: nowrap;
 }
 
 .payMethod {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .orderRight {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   color: var(--gray);
+  flex-shrink: 0;
 }
 
 .orderTotal {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 800;
   color: var(--orange);
+  white-space: nowrap;
 }
 
-@media (max-width: 480px) {
-  .orderCard { flex-wrap: wrap; gap: 12px; }
-  .orderMid { align-items: flex-start; }
+/* Desktop overrides */
+@media (min-width: 769px) {
+  .page { padding: 40px 0 80px; }
+  .title { padding: 0; margin-bottom: 32px; font-size: 28px; }
+  .list { gap: 12px; background: transparent; }
+  .orderCard {
+    border-bottom: none;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    gap: 24px;
+    box-shadow: var(--shadow);
+    border: 1.5px solid transparent;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .orderCard:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--orange);
+    background: white;
+  }
+  .orderId { font-size: 15px; white-space: normal; }
+  .orderDate { font-size: 13px; }
+  .statusBadge { font-size: 12px; }
+  .payMethod { font-size: 11px; }
+  .orderTotal { font-size: 18px; }
 }
