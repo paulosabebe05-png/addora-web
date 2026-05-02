@@ -15,6 +15,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [search, setSearch] = useState('')
+  const [isMobile, setIsMobile] = useState(false)
 
   const isHome = pathname === '/'
 
@@ -22,6 +23,13 @@ export default function Header() {
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
   }, [])
 
   useEffect(() => {
@@ -44,6 +52,14 @@ export default function Header() {
   }
 
   const transparent = isHome && !scrolled
+
+  // Announcement items — duplicated for seamless ticker loop
+  const announcements = [
+    { icon: '✓', text: 'Cash on Delivery' },
+    { icon: '⏱', text: '1–3 Day Delivery' },
+    { icon: '→', text: 'Free in Addis' },
+  ]
+  const tickerItems = [...announcements, ...announcements] // duplicate for loop
 
   return (
     <>
@@ -79,7 +95,27 @@ export default function Header() {
             />
           </div>
 
-          {/* ── Nav links (desktop only — moved to right of search) ── */}
+          {/* ── Mobile search bar — inline in header bar ── */}
+          <div className={styles.mobileSearchRow}>
+            <div className={styles.mobileSearchWrap}>
+              <span className={styles.mobileSearchIcon}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+              </span>
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                onKeyDown={handleSearch}
+                className={styles.mobileSearchInput}
+              />
+            </div>
+          </div>
+
+          {/* ── Nav links (desktop only) ── */}
           <nav className={styles.nav}>
             <Link href="/" className={styles.navLink}>Home</Link>
             <Link href="/#products" className={styles.navLink}>Shop</Link>
@@ -88,7 +124,8 @@ export default function Header() {
 
           {/* ── Right actions ── */}
           <div className={styles.actions}>
-            <NotificationBell />
+            {/* Notification bell — hide on mobile if not needed */}
+            {!isMobile && <NotificationBell />}
 
             {/* Cart */}
             <Link href="/cart" className={styles.cartBtn}>
@@ -100,7 +137,7 @@ export default function Header() {
               {count > 0 && <span className={styles.cartBadge}>{count > 9 ? '9+' : count}</span>}
             </Link>
 
-            {/* Auth */}
+            {/* Auth — desktop only (mobile uses bottom nav) */}
             {user ? (
               <div className={styles.userMenu} onClick={e => e.stopPropagation()}>
                 <button className={styles.userBtn} onClick={() => setMenuOpen(!menuOpen)}>
@@ -156,34 +193,18 @@ export default function Header() {
           </div>
         </div>
 
-        {/* ── Mobile search row — only on home page ── */}
-        {isHome && (
-          <div className={styles.mobileSearchRow}>
-            <div style={{ position: 'relative', flex: 1 }}>
-              <span className={styles.mobileSearchIcon} style={{
-                position: 'absolute',
-                left: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                zIndex: 1,
-                color: 'rgba(255,255,255,0.4)'
-              }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="8"/>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
+        {/* ── Orange announcement strip — mobile only ── */}
+        <div className={styles.announcementStrip}>
+          <div className={styles.announcementInner}>
+            {tickerItems.map((item, i) => (
+              <span key={i} className={styles.announcementItem}>
+                <span>{item.icon}</span>
+                <span>{item.text}</span>
+                {i < tickerItems.length - 1 && <span className={styles.announcementDot} />}
               </span>
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                onKeyDown={handleSearch}
-                className={styles.mobileSearchInput}
-              />
-            </div>
+            ))}
           </div>
-        )}
+        </div>
       </header>
     </>
   )
