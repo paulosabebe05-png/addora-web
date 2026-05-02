@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import NotificationBell from './NotificationBell'
 import styles from './Header.module.css'
-import Image from 'next/image'
+
 export default function Header() {
   const { user, signOut } = useAuth()
   const { count } = useCart()
@@ -65,18 +65,17 @@ export default function Header() {
         <div className={styles.inner}>
 
           {/* ── Logo ── */}
-<Link href="/" className={styles.logo}>
-  <div className={styles.logoMark}>
-    <Image
-      src="/logo.png"
-      alt="Addora logo"
-      width={34}
-      height={34}
-      className={styles.logoImg}
-    />
-  </div>
-  <span className={styles.logoText}>Addora</span>
-</Link>
+          <Link href="/" className={styles.logo}>
+            <div className={styles.logoMark}>
+              <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+                <path d="M8 24 Q16 8 24 24" stroke="white" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
+                <circle cx="8"  cy="24" r="2.8" fill="white"/>
+                <circle cx="16" cy="13" r="2.8" fill="white"/>
+                <circle cx="24" cy="24" r="2.8" fill="white"/>
+              </svg>
+            </div>
+            <span className={styles.logoText}>Addora</span>
+          </Link>
 
           {/* ── Desktop search bar — pill with Search button ── */}
           <div className={styles.desktopSearch}>
