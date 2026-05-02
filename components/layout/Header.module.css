@@ -46,12 +46,12 @@
 .logoMark {
   width: 34px;
   height: 34px;
+  background: #E75525;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  overflow: hidden;
-  border-radius: 9px;
 }
 
 .logoText {
@@ -171,12 +171,21 @@
   transition: background 0.18s, color 0.18s;
   white-space: nowrap;
   color: #5a4030;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .transparent .navLink { color: #5a4030; }
 .transparent .navLink:hover { color: #1a1208; background: rgba(120,60,20,0.07); }
 .solid .navLink { color: #5a4030; }
 .solid .navLink:hover { color: #1a1208; background: rgba(120,60,20,0.07); }
+
+.navLinkActive {
+  color: #E75525 !important;
+  background: rgba(231,85,37,0.08) !important;
+  font-weight: 600 !important;
+}
 
 /* ── Right actions ── */
 .actions {
