@@ -1,5 +1,4 @@
 'use client'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useAuth } from '../../lib/auth'
 import { useCart } from '../../lib/cart'
@@ -68,14 +67,12 @@ export default function Header() {
           {/* ── Logo ── */}
           <Link href="/" className={styles.logo}>
             <div className={styles.logoMark}>
-              <Image
-                src="/logo.png"
-                alt="Addora logo"
-                width={34}
-                height={34}
-                style={{ borderRadius: '9px', display: 'block' }}
-                priority
-              />
+              <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+                <path d="M8 24 Q16 8 24 24" stroke="white" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
+                <circle cx="8"  cy="24" r="2.8" fill="white"/>
+                <circle cx="16" cy="13" r="2.8" fill="white"/>
+                <circle cx="24" cy="24" r="2.8" fill="white"/>
+              </svg>
             </div>
             <span className={styles.logoText}>Addora</span>
           </Link>
@@ -129,6 +126,15 @@ export default function Header() {
           <nav className={styles.nav}>
             <Link href="/" className={styles.navLink}>Home</Link>
             <Link href="/#products" className={styles.navLink}>Shop</Link>
+            <Link href="/categories" className={`${styles.navLink} ${pathname === '/categories' ? styles.navLinkActive : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+              </svg>
+              Categories
+            </Link>
             <Link href="/orders" className={styles.navLink}>Orders</Link>
           </nav>
 
