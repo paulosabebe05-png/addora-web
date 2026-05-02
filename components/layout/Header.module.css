@@ -412,6 +412,9 @@
   .signupBtn   { display: none; }
   .userMenu    { display: none; } /* hide on mobile — account tab in bottom nav handles this */
 
+  /* Tighten actions gap so bell + cart fit neatly */
+  .actions { gap: 2px; }
+
   /* Logo */
   .logoMark {
     width: 32px;
