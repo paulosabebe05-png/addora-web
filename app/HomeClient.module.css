@@ -9,7 +9,7 @@
   align-items: center;
 }
 
-/* ===== HERO ===== */
+/* ===== DESKTOP HERO ===== */
 .hero {
   background: var(--navy);
   min-height: unset;
@@ -86,7 +86,6 @@
   color: rgba(255,255,255,0.8);
 }
 
-/* ── Hero right: stats grid ── */
 .heroVisual {
   display: flex;
   justify-content: center;
@@ -161,6 +160,11 @@
   color: rgba(255,255,255,0.45);
 }
 
+/* ===== MOBILE HERO (mockup card) — hidden on desktop ===== */
+.mobileHero {
+  display: none;
+}
+
 /* ===== FLASH SALE BANNER ===== */
 .flashBanner {
   background: var(--navy);
@@ -190,9 +194,7 @@
   padding-right: 24px;
 }
 
-.flashIcon {
-  font-size: 20px;
-}
+.flashIcon { font-size: 20px; }
 
 .flashTitle {
   font-family: 'Space Grotesk', sans-serif;
@@ -269,7 +271,6 @@
   display: block;
 }
 
-/* FILTER */
 .filterBar {
   display: flex;
   align-items: center;
@@ -308,7 +309,6 @@
   border-color: var(--orange) !important;
 }
 
-/* SEARCH */
 .searchWrap {
   display: flex;
   align-items: center;
@@ -335,14 +335,12 @@
   outline: none;
 }
 
-/* GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 24px;
 }
 
-/* EMPTY */
 .empty {
   text-align: center;
   padding: 80px 20px;
@@ -353,69 +351,201 @@
   gap: 12px;
 }
 
-/* ===========================
-   MOBILE
-   =========================== */
+/* Mobile section header — hidden on desktop */
+.mobileSectionHeader {
+  display: none;
+}
+
+/* ══════════════════════════════════════════
+   MOBILE  (≤ 768px)
+   ══════════════════════════════════════════ */
 @media (max-width: 768px) {
 
+  /* ── Hide desktop hero & flash banner ── */
+  .hero        { display: none; }
+  .flashBanner { display: none; }
+
+  /* ── Show mobile hero ── */
+  .mobileHero {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 12px 12px 0;
+    /* sits right below the fixed header (56px) + announcement strip (~34px) */
+    padding-top: 102px;
+    background: #ffffff;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* ── Dark card ── */
+  .mobileHeroCard {
+    width: 100%;
+    background: #10182B;
+    border-radius: 16px;
+    padding: 18px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+    min-height: 140px;
+  }
+
+  /* subtle dot-grid texture */
+  .mobileHeroCard::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+  }
+
+  /* Left */
+  .mobileHeroLeft {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 1;
+    min-width: 0;
+  }
+
+  .mobileHeroBrand {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 2px;
+  }
+
+  .mobileHeroBrandMark {
+    width: 20px;
+    height: 20px;
+    background: rgba(231,85,37,0.15);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .mobileHeroBrandName {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: #E75525;
+    letter-spacing: -0.2px;
+  }
+
+  .mobileHeroTitle {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.2;
+    letter-spacing: -0.3px;
+    margin: 0;
+  }
+
+  .mobileHeroSub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .mobileHeroPills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 4px;
+  }
+
+  .mobileHeroPill {
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 100px;
+    padding: 3px 9px;
+    background: rgba(255,255,255,0.06);
+    white-space: nowrap;
+  }
+
+  /* Right decor box */
+  .mobileHeroRight {
+    flex-shrink: 0;
+    z-index: 1;
+  }
+
+  .mobileHeroDecorBox {
+    width: 68px;
+    height: 68px;
+    border: 2px solid #E75525;
+    border-radius: 13px;
+    position: relative;
+    background: rgba(231,85,37,0.06);
+  }
+
+  .mobileHeroDot {
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    background: #E75525;
+    border-radius: 50%;
+  }
+
+  /* ── Category pills row ── */
+  .mobileCategoryRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 2px;
+  }
+
+  .mobileCategoryRow::-webkit-scrollbar { display: none; }
+
+  .mobileCatBtn {
+    flex-shrink: 0;
+    padding: 7px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    border: 1.5px solid rgba(16,24,43,0.12);
+    background: #ffffff;
+    color: #4a5568;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+
+  .mobileCatBtn:hover {
+    border-color: rgba(231,85,37,0.35);
+    color: #E75525;
+  }
+
+  .mobileCatActive {
+    background: #10182B !important;
+    color: #ffffff !important;
+    border-color: #10182B !important;
+  }
+
+  /* ── Products section ── */
   .sectionInner {
     grid-template-columns: 1fr;
     gap: 0;
   }
 
-  .hero {
-    min-height: unset;
-    padding: 116px 16px 20px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .heroVisual {
-    display: none;
-  }
-
-  .heroContent {
-    gap: 10px;
-    max-width: 100%;
-  }
-
-  .heroBadge {
-    font-size: 11px;
-    padding: 4px 10px;
-  }
-
-  .heroTitle {
-    font-size: 26px;
-    letter-spacing: -0.5px;
-    line-height: 1.2;
-  }
-
-  .heroSub {
-    font-size: 13px;
-    line-height: 1.55;
-    color: rgba(255,255,255,0.55);
-    max-width: 100%;
-  }
-
-  .heroCod {
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .heroFeature {
-    font-size: 11.5px;
-    color: rgba(255,255,255,0.7);
-    gap: 5px;
-  }
-
-  /* Flash banner — hide on mobile (already tight on space) */
-  .flashBanner {
-    display: none;
-  }
-
   .products {
-    padding: 0 0 60px;
-    background: var(--navy);
+    padding: 0 0 80px;
+    background: #ffffff;
     width: 100%;
     box-sizing: border-box;
   }
@@ -426,79 +556,48 @@
     display: block;
   }
 
-  .filterBar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    margin-bottom: 0;
-    position: sticky;
-    top: 106px;
-    z-index: 100;
-    background: var(--navy);
-    padding: 8px 0 6px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    width: 100%;
-    box-sizing: border-box;
+  /* Hide desktop filter bar on mobile */
+  .filterBar { display: none; }
+
+  /* "Featured products" heading */
+  .mobileSectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 14px 10px;
   }
 
-  .searchWrap {
-    display: none;
+  .mobileSectionTitle {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #10182B;
   }
 
-  .categories {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding: 0 12px 4px;
-    gap: 7px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .categories::-webkit-scrollbar {
-    display: none;
-  }
-
-  .catBtn {
-    flex-shrink: 0;
-    white-space: nowrap;
-    padding: 6px 14px;
-    font-size: 12px;
+  .mobileSeeAll {
+    font-size: 13px;
     font-weight: 600;
-    background: rgba(255,255,255,0.07);
-    color: rgba(255,255,255,0.6);
-    border: 1px solid rgba(255,255,255,0.1);
-    min-height: 32px;
-  }
-
-  .catBtn:hover,
-  .catBtn:active {
-    border-color: rgba(231,85,37,0.5);
-    color: #FF8A65;
-  }
-
-  .catActive {
-    background: var(--orange) !important;
-    color: white !important;
-    border-color: var(--orange) !important;
+    color: #E75525;
+    text-decoration: none;
   }
 
   .grid {
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2px;
-    background: rgba(0,0,0,0.35);
-    margin-top: 2px;
+    gap: 1px;
+    background: #e8eaf0;
     width: 100%;
   }
 
   .empty {
-    color: rgba(255,255,255,0.4);
+    color: #8a8f9e;
     padding: 60px 20px;
   }
 }
 
 @media (max-width: 400px) {
-  .heroTitle { font-size: 22px; }
-  .hero { padding: 112px 14px 20px; }
+  .mobileHero { padding-top: 98px; }
+  .mobileHeroTitle { font-size: 16px; }
+  .mobileHeroDecorBox { width: 58px; height: 58px; }
+  .mobileHeroDot { width: 11px; height: 11px; }
 }
