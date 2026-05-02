@@ -1,0 +1,84 @@
+/* Only visible on mobile */
+.nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 300;
+    background: white;
+    border-top: 1px solid rgba(16, 24, 43, 0.08);
+    padding: 8px 0 max(12px, env(safe-area-inset-bottom));
+    box-shadow: 0 -4px 20px rgba(16, 24, 43, 0.08);
+  }
+
+  .item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-decoration: none;
+    flex: 1;
+    padding: 4px 0;
+  }
+
+  .label {
+    font-size: 10px;
+    font-weight: 500;
+    color: #9ca3af;
+    transition: color 0.2s;
+  }
+
+  .active .label {
+    color: #E75525;
+    font-weight: 600;
+  }
+
+  /* Raised center cart button */
+  .centerBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #E75525;
+    margin-top: -22px;
+    border: 3px solid white;
+    box-shadow: 0 4px 16px rgba(231, 85, 37, 0.45);
+    text-decoration: none;
+    flex-shrink: 0;
+    position: relative;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .centerBtn:hover {
+    transform: scale(1.06);
+    box-shadow: 0 6px 20px rgba(231, 85, 37, 0.55);
+  }
+
+  .centerBadge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 17px;
+    height: 17px;
+    background: #10182B;
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 1.5px solid white;
+  }
+}
