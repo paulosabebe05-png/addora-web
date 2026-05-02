@@ -3,7 +3,7 @@ import { useState } from 'react'
 import ProductCard from '../components/ui/ProductCard'
 import styles from './HomeClient.module.css'
 
-const CATEGORIES = ['All', 'Kids', 'Boys', 'Girls', 'Newborn', 'School']
+const CATEGORIES = ['All', 'Kids', 'Electronics', 'Home & Living', 'Beauty', 'Fashion', 'Watches', 'Sports']
 
 export default function HomeClient({ products }) {
   const [activeCategory, setActiveCategory] = useState('All')
@@ -12,9 +12,11 @@ export default function HomeClient({ products }) {
   const filtered = products.filter(p => {
     const matchCat =
       activeCategory === 'All' ||
+      (p.category && p.category.toLowerCase().includes(activeCategory.toLowerCase())) ||
       p.name.toLowerCase().includes(activeCategory.toLowerCase())
 
     const matchSearch =
+      !search.trim() ||
       p.name.toLowerCase().includes(search.toLowerCase())
 
     return matchCat && matchSearch
@@ -22,23 +24,22 @@ export default function HomeClient({ products }) {
 
   return (
     <>
-      {/* Hero Banner */}
+      {/* ── Hero ── */}
       <section className={styles.hero}>
         <div className={styles.sectionInner}>
-          {/* Left: text */}
           <div className={styles.heroContent}>
             <span className={styles.heroBadge}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>
-              Ethiopia&apos;s #1 Kids Store
+              Ethiopia&apos;s Newest Online Marketplace
             </span>
             <h1 className={styles.heroTitle}>
               Shop Smart,{' '}
               <span>Pay on Delivery</span>
             </h1>
             <p className={styles.heroSub}>
-              Ethiopia&apos;s trusted store — cash on delivery, 1–3 day shipping.
+              Thousands of products from trusted sellers — cash on delivery, 1–3 day shipping across Ethiopia.
             </p>
             <div className={styles.heroCod}>
               <div className={styles.heroFeature}>
@@ -69,22 +70,51 @@ export default function HomeClient({ products }) {
             </div>
           </div>
 
-          {/* Right: visual card */}
+          {/* Right: stats visual */}
           <div className={styles.heroVisual}>
             <div className={styles.heroOrb} />
-            <div className={styles.heroCard}>
-              <div className={styles.heroCardLabel}>Today&apos;s Deals</div>
-              <div className={styles.heroCardTitle}>Up to 50% Off</div>
-              <div className={styles.heroCardSub}>New arrivals every week</div>
+            <div className={styles.heroStats}>
+              <div className={styles.heroStatCard}>
+                <span className={styles.heroStatNum}>5,000+</span>
+                <span className={styles.heroStatLabel}>Products</span>
+              </div>
+              <div className={styles.heroStatCard}>
+                <span className={styles.heroStatNum}>200+</span>
+                <span className={styles.heroStatLabel}>Sellers</span>
+              </div>
+              <div className={`${styles.heroStatCard} ${styles.heroStatAccent}`}>
+                <span className={styles.heroCardLabel}>⚡ Flash Deal</span>
+                <span className={styles.heroCardTitle}>Up to 64% Off</span>
+                <span className={styles.heroCardSub}>New deals every day</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Product Section */}
-      <section className={styles.products}>
+      {/* ── Flash Sale Banner ── */}
+      <div className={styles.flashBanner}>
+        <div className={styles.flashInner}>
+          <div className={styles.flashLeft}>
+            <span className={styles.flashIcon}>⚡</span>
+            <span className={styles.flashTitle}>Flash Sale</span>
+            <span className={styles.flashSub}>Limited time deals — up to 64% off</span>
+          </div>
+          <div className={styles.flashDeals}>
+            {products.filter(p => p.discount >= 30).slice(0, 3).map(p => (
+              <a key={p.id} href={`/products/${p.id}`} className={styles.flashItem}>
+                <span className={styles.flashBadge}>-{p.discount}%</span>
+                <span className={styles.flashName}>{p.name}</span>
+                <span className={styles.flashPrice}>ETB {Math.round(p.price * (1 - p.discount / 100)).toLocaleString()}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Products ── */}
+      <section className={styles.products} id="products">
         <div className={styles.sectionInner}>
-          {/* Filter bar */}
           <div className={styles.filterBar}>
             <div className={styles.categories}>
               {CATEGORIES.map(cat => (
@@ -113,7 +143,6 @@ export default function HomeClient({ products }) {
             </div>
           </div>
 
-          {/* Grid */}
           {filtered.length === 0 ? (
             <div className={styles.empty}>
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.3">
