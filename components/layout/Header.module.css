@@ -9,7 +9,7 @@
   transition: background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease;
 }
 
-/* ── Warm Ivory theme ── */
+/* ── Option 1: Warm Ivory theme ── */
 .transparent {
   background: #FDFAF6;
   border-bottom: 1px solid #E8E0D5;
@@ -38,27 +38,35 @@
 .logo {
   display: flex;
   align-items: center;
+  gap: 9px;
   text-decoration: none;
   flex-shrink: 0;
 }
 
-/*
-  Desktop logo size.
-  Your PNG is square (1080×1080) with the actual artwork centred and
-  ~30% whitespace padding on all sides, so we render it tall enough
-  that the visible artwork looks correct inside a 68px header.
-  height: 56px  →  visible art ≈ 40px  (plenty of room)
-  max-width caps it so it never crowds the search bar on narrow desktops.
-*/
-.logoImg {
-  width: auto;
-  height: 56px;
-  max-width: 200px;
-  object-fit: contain;
-  display: block;
+.logoMark {
+  width: 34px;
+  height: 34px;
+  background: #E75525;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-/* ── Desktop search bar ── */
+.logoText {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  transition: color 0.3s;
+  color: #1a1208;
+}
+
+.transparent .logoText { color: #1a1208; }
+.solid .logoText       { color: #1a1208; }
+
+/* ── Desktop search bar — pill style with Search button ── */
 .desktopSearch {
   flex: 1;
   max-width: 520px;
@@ -76,6 +84,7 @@
   box-shadow: 0 0 0 3px rgba(231, 85, 37, 0.12);
 }
 
+/* remove old transparent/solid overrides for search — ivory is always same */
 .transparent .desktopSearch,
 .solid .desktopSearch {
   background: #ffffff;
@@ -124,7 +133,7 @@
   color: #b0a090;
 }
 
-/* ── Search button ── */
+/* ── Search button (right pill side) ── */
 .desktopSearchBtn {
   flex-shrink: 0;
   background: #E75525;
@@ -395,16 +404,17 @@
   display: none;
 }
 
-/* ── Mobile search row — hidden on desktop ── */
+/* ── Mobile search row ── */
 .mobileSearchRow {
   display: none;
 }
 
 /* ════════════════════════════════════════
-   MOBILE  (≤ 768px)
+   MOBILE ONLY  (≤ 768px)
    ════════════════════════════════════════ */
 @media (max-width: 768px) {
 
+  /* Warm ivory on mobile too */
   .header {
     background: #FDFAF6 !important;
     border-bottom: 1px solid #E8E0D5 !important;
@@ -412,6 +422,18 @@
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     overflow: visible;
+  }
+
+  .header .logoText,
+  .transparent .logoText,
+  .solid .logoText {
+    color: #1a1208 !important;
+  }
+
+  .header .cartBtn,
+  .transparent .cartBtn,
+  .solid .cartBtn {
+    color: #5a4030 !important;
   }
 
   /* ── Inner bar ── */
@@ -430,14 +452,18 @@
 
   .actions { gap: 2px; }
 
-  /*
-    Mobile logo.
-    height: 44px gives the Addora logo (square PNG with padding)
-    a visible artwork height of ~30px — just right for a 56px header.
-  */
-  .logoImg {
-    height: 44px;
-    max-width: 140px;
+  /* Logo */
+  .logoMark {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+  }
+  .logoMark svg { width: 16px; height: 16px; }
+
+  .logoText {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1208;
   }
 
   /* Mobile search pill */
@@ -484,7 +510,7 @@
     color: #b0a090;
   }
 
-  /* Cart button */
+  /* Cart button on mobile */
   .cartBtn {
     width: 38px;
     height: 38px;
@@ -510,11 +536,12 @@
     min-width: 200px;
   }
 
-  /* ── Orange announcement ticker ── */
+  /* ── Orange announcement strip ── */
   .announcementStrip {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 0;
     background: #E75525;
     padding: 7px 14px;
     overflow: hidden;
@@ -553,12 +580,7 @@
   }
 }
 
-/* ── Extra small (≤ 400px) ── */
 @media (max-width: 400px) {
   .inner { padding: 0 10px; }
-
-  .logoImg {
-    height: 36px;
-    max-width: 110px;
-  }
+  .logoText { font-size: 16px; }
 }
