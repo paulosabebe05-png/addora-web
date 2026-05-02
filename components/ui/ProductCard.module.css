@@ -72,7 +72,6 @@
   z-index: 2;
 }
 
-/* If both badges, offset hotBadge below discount */
 .discountBadge + .hotBadge {
   top: 34px;
 }
@@ -225,13 +224,18 @@
   cursor: not-allowed;
 }
 
-/* ── Mobile: AliExpress-style compact card ── */
+/* ══════════════════════════════════════════
+   MOBILE — matches mockup exactly
+   ══════════════════════════════════════════ */
 @media (max-width: 768px) {
+
+  /* Card: flat, white, no shadow, no radius */
   .card {
     border-radius: 0;
     box-shadow: none;
     border: none;
     animation: none;
+    background: #ffffff;
   }
 
   .card:hover {
@@ -239,76 +243,163 @@
     box-shadow: none;
   }
 
+  /* Square image with pastel background */
   .imageWrap {
-    aspect-ratio: 1/1;
+    aspect-ratio: 1 / 1;
+    background: #f0f4f8; /* fallback — JS injects per-card color via inline style */
   }
 
+  /* Image fills the square, object-fit contain so product shows fully (like mockup) */
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+    transition: none;
+  }
+
+  .card:hover .image {
+    transform: none;
+  }
+
+  .noImage {
+    background: #f0f4f8;
+  }
+
+  /* Discount badge — orange pill, top-left */
+  .discountBadge {
+    top: 8px;
+    left: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 100px;
+    background: #E75525;
+    color: white;
+  }
+
+  .hotBadge {
+    font-size: 9px;
+    padding: 2px 6px;
+    top: 8px;
+    left: 8px;
+  }
+
+  .discountBadge + .hotBadge {
+    top: 30px;
+  }
+
+  /* Wishlist heart — top-right, white circle */
+  .wishBtn {
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    color: #c4c9d4;
+  }
+
+  .wishBtn.wishlisted {
+    background: #fff1f1;
+    color: #ef4444;
+  }
+
+  /* Body */
   .body {
     padding: 8px 8px 10px;
-    gap: 3px;
+    gap: 2px;
+    background: #ffffff;
   }
 
+  /* Product name */
   .name {
     font-size: 12px;
     font-weight: 600;
+    color: #10182B;
+    line-height: 1.35;
     -webkit-line-clamp: 2;
   }
 
+  /* Stars */
   .stars {
     gap: 1px;
   }
 
   .reviewCount {
     font-size: 10px;
+    color: #9ca3af;
   }
 
   .soldCount {
     font-size: 10px;
+    color: #9ca3af;
   }
 
-  /* ✅ Footer stays in a row on mobile — price left, button right */
+  /* Footer row: price left, button right */
   .footer {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;
+    gap: 4px;
     padding-top: 6px;
+    margin-top: 4px;
   }
 
+  .pricing {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  /* Orange price — bold, matches mockup */
   .price {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 800;
+    color: #E75525;
+    font-family: 'Space Grotesk', sans-serif;
   }
 
+  /* Strikethrough original price */
   .originalPrice {
     font-size: 10px;
+    color: #9ca3af;
+    text-decoration: line-through;
   }
 
-  /* ✅ Compact icon-only Add button on mobile */
+  /* + button — navy square, icon only */
   .addBtn {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
     padding: 0;
     justify-content: center;
     align-items: center;
-    border-radius: 8px;
+    border-radius: 9px;
+    background: #10182B;
     flex-shrink: 0;
     gap: 0;
   }
 
-  /* Hide text label on mobile — icon only */
+  .addBtn.added {
+    background: #16a34a;
+    border-radius: 9px;
+  }
+
+  .addBtn.disabled {
+    background: #e8eaf0;
+    color: #9ca3af;
+  }
+
+  /* Hide text on mobile — icon only */
   .addBtnText {
     display: none;
   }
+}
 
-  .discountBadge,
-  .hotBadge {
-    font-size: 10px;
-    padding: 2px 6px;
-  }
-
-  .wishBtn {
-    width: 26px;
-    height: 26px;
-  }
+/* ── Very small phones ── */
+@media (max-width: 360px) {
+  .price { font-size: 12px; }
+  .addBtn { width: 30px; height: 30px; min-width: 30px; border-radius: 7px; }
+  .name { font-size: 11px; }
 }
