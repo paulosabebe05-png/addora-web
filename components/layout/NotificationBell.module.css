@@ -182,14 +182,12 @@
      but clamp so it doesn't overflow the screen */
   .dropdown {
     position: fixed;
-    top: auto;
-    /* Anchor below the header (56px header + 28px strip = 84px) */
-    top: 84px;
+    /* 56px header height; strip only on home so we can't rely on 84px */
+    top: 64px;
     right: 8px;
     left: 8px;
     width: auto;
     max-width: 400px;
-    /* Override the absolute positioning from parent */
     margin: 0 auto;
     border-radius: 16px;
     z-index: 500;
