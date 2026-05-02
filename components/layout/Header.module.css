@@ -454,9 +454,14 @@
 
   /* Logo */
   .logoMark {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  background: #E75525;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
   }
   .logoMark svg { width: 16px; height: 16px; }
 
