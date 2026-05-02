@@ -15,7 +15,6 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [search, setSearch] = useState('')
-  const [isMobile, setIsMobile] = useState(false)
 
   const isHome = pathname === '/'
 
@@ -23,13 +22,6 @@ export default function Header() {
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768)
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
   }, [])
 
   useEffect(() => {
@@ -53,13 +45,12 @@ export default function Header() {
 
   const transparent = isHome && !scrolled
 
-  // Announcement items — duplicated for seamless ticker loop
   const announcements = [
     { icon: '✓', text: 'Cash on Delivery' },
     { icon: '⏱', text: '1–3 Day Delivery' },
     { icon: '→', text: 'Free in Addis' },
   ]
-  const tickerItems = [...announcements, ...announcements] // duplicate for loop
+  const tickerItems = [...announcements, ...announcements]
 
   return (
     <>
@@ -124,8 +115,9 @@ export default function Header() {
 
           {/* ── Right actions ── */}
           <div className={styles.actions}>
-            {/* Notification bell — hide on mobile if not needed */}
-            {!isMobile && <NotificationBell />}
+
+            {/* Notification bell — always visible */}
+            <NotificationBell transparent={transparent} />
 
             {/* Cart */}
             <Link href="/cart" className={styles.cartBtn}>
