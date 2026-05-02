@@ -43,6 +43,13 @@ export default function Header() {
     }
   }
 
+  const handleSearchBtn = () => {
+    if (search.trim()) {
+      router.push(`/?search=${encodeURIComponent(search.trim())}`)
+    }
+  }
+
+  // Always use solid/ivory — transparent only on home before scroll
   const transparent = isHome && !scrolled
 
   const announcements = [
@@ -70,27 +77,36 @@ export default function Header() {
             <span className={styles.logoText}>Addora</span>
           </Link>
 
-          {/* ── Desktop search bar (center) ── */}
+          {/* ── Desktop search bar — pill with Search button ── */}
           <div className={styles.desktopSearch}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.desktopSearchIcon}>
-              <circle cx="11" cy="11" r="8"/>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
+            <span className={styles.desktopSearchIcon}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </span>
             <input
               type="text"
-              placeholder="Search products, brands, categories..."
+              placeholder="What are you looking for?"
               value={search}
               onChange={e => setSearch(e.target.value)}
               onKeyDown={handleSearch}
               className={styles.desktopSearchInput}
             />
+            <button
+              className={styles.desktopSearchBtn}
+              onClick={handleSearchBtn}
+              type="button"
+            >
+              Search
+            </button>
           </div>
 
-          {/* ── Mobile search bar — inline in header bar ── */}
+          {/* ── Mobile search bar — pill style ── */}
           <div className={styles.mobileSearchRow}>
             <div className={styles.mobileSearchWrap}>
               <span className={styles.mobileSearchIcon}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
                   <circle cx="11" cy="11" r="8"/>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
@@ -116,7 +132,7 @@ export default function Header() {
           {/* ── Right actions ── */}
           <div className={styles.actions}>
 
-            {/* Notification bell — always visible */}
+            {/* Notification bell */}
             <NotificationBell transparent={transparent} />
 
             {/* Cart */}
@@ -129,7 +145,7 @@ export default function Header() {
               {count > 0 && <span className={styles.cartBadge}>{count > 9 ? '9+' : count}</span>}
             </Link>
 
-            {/* Auth — desktop only (mobile uses bottom nav) */}
+            {/* Auth */}
             {user ? (
               <div className={styles.userMenu} onClick={e => e.stopPropagation()}>
                 <button className={styles.userBtn} onClick={() => setMenuOpen(!menuOpen)}>
