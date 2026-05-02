@@ -9,23 +9,24 @@
   transition: background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease;
 }
 
+/* ── Option 1: Warm Ivory theme ── */
 .transparent {
-  background: transparent;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: #FDFAF6;
+  border-bottom: 1px solid #E8E0D5;
 }
 
 .solid {
-  background: rgba(255,255,255,0.97);
+  background: #FDFAF6;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(16,24,43,0.08);
-  box-shadow: 0 1px 24px rgba(16,24,43,0.06);
+  border-bottom: 1px solid #E8E0D5;
+  box-shadow: 0 1px 24px rgba(120,80,40,0.07);
 }
 
 /* ── Inner ── */
 .inner {
   width: 100%;
-  height: 64px;
+  height: 68px;
   padding: 0 40px;
   display: flex;
   align-items: center;
@@ -59,51 +60,57 @@
   font-weight: 700;
   letter-spacing: -0.4px;
   transition: color 0.3s;
+  color: #1a1208;
 }
 
-.transparent .logoText { color: #ffffff; }
-.solid .logoText       { color: #10182B; }
+.transparent .logoText { color: #1a1208; }
+.solid .logoText       { color: #1a1208; }
 
-/* ── Desktop search bar (center flex) ── */
+/* ── Desktop search bar — pill style with Search button ── */
 .desktopSearch {
   flex: 1;
-  max-width: 480px;
+  max-width: 520px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  border-radius: 10px;
-  padding: 8px 14px;
-  transition: background 0.3s, border-color 0.3s;
-  position: relative;
+  border-radius: 100px;
+  border: 1.5px solid #E75525;
+  background: #ffffff;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+  padding: 0;
 }
 
-.transparent .desktopSearch {
-  background: rgba(255,255,255,0.1);
-  border: 1.5px solid rgba(255,255,255,0.15);
+.desktopSearch:focus-within {
+  box-shadow: 0 0 0 3px rgba(231, 85, 37, 0.12);
 }
 
-.transparent .desktopSearch:focus-within {
-  background: rgba(255,255,255,0.15);
-  border-color: rgba(255,255,255,0.35);
-}
-
+/* remove old transparent/solid overrides for search — ivory is always same */
+.transparent .desktopSearch,
 .solid .desktopSearch {
-  background: #f3f4f6;
-  border: 1.5px solid transparent;
+  background: #ffffff;
+  border: 1.5px solid #E75525;
 }
 
+.transparent .desktopSearch:focus-within,
 .solid .desktopSearch:focus-within {
-  background: white;
+  box-shadow: 0 0 0 3px rgba(231, 85, 37, 0.12);
+  background: #ffffff;
   border-color: #E75525;
 }
 
 .desktopSearchIcon {
   flex-shrink: 0;
-  transition: color 0.3s;
+  color: #E75525;
+  margin-left: 16px;
+  margin-right: 4px;
+  display: flex;
+  align-items: center;
 }
 
-.transparent .desktopSearchIcon { color: rgba(255,255,255,0.5); }
-.solid .desktopSearchIcon { color: #9ca3af; }
+.transparent .desktopSearchIcon,
+.solid .desktopSearchIcon {
+  color: #E75525;
+}
 
 .desktopSearchInput {
   flex: 1;
@@ -112,12 +119,40 @@
   outline: none;
   font-size: 14px;
   font-family: inherit;
+  color: #1a1208;
+  padding: 10px 8px;
 }
 
-.transparent .desktopSearchInput { color: white; }
-.transparent .desktopSearchInput::placeholder { color: rgba(255,255,255,0.4); }
-.solid .desktopSearchInput { color: #10182B; }
-.solid .desktopSearchInput::placeholder { color: #9ca3af; }
+.transparent .desktopSearchInput,
+.solid .desktopSearchInput {
+  color: #1a1208;
+}
+
+.transparent .desktopSearchInput::placeholder,
+.solid .desktopSearchInput::placeholder {
+  color: #b0a090;
+}
+
+/* ── Search button (right pill side) ── */
+.desktopSearchBtn {
+  flex-shrink: 0;
+  background: #E75525;
+  color: #ffffff;
+  border: none;
+  border-radius: 0 100px 100px 0;
+  padding: 0 22px;
+  height: 42px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.18s;
+  white-space: nowrap;
+}
+
+.desktopSearchBtn:hover {
+  background: #ff6b3d;
+}
 
 /* ── Center nav ── */
 .nav {
@@ -135,12 +170,13 @@
   text-decoration: none;
   transition: background 0.18s, color 0.18s;
   white-space: nowrap;
+  color: #5a4030;
 }
 
-.transparent .navLink { color: rgba(255,255,255,0.75); }
-.transparent .navLink:hover { color: #ffffff; background: rgba(255,255,255,0.1); }
-.solid .navLink { color: #4a5568; }
-.solid .navLink:hover { color: #10182B; background: rgba(16,24,43,0.05); }
+.transparent .navLink { color: #5a4030; }
+.transparent .navLink:hover { color: #1a1208; background: rgba(120,60,20,0.07); }
+.solid .navLink { color: #5a4030; }
+.solid .navLink:hover { color: #1a1208; background: rgba(120,60,20,0.07); }
 
 /* ── Right actions ── */
 .actions {
@@ -161,11 +197,12 @@
   border-radius: 10px;
   text-decoration: none;
   transition: background 0.18s, color 0.18s;
+  color: #5a4030;
 }
 
-.transparent .cartBtn { color: rgba(255,255,255,0.85); }
-.transparent .cartBtn:hover { background: rgba(255,255,255,0.1); color: #fff; }
-.solid .cartBtn { color: #4a5568; }
+.transparent .cartBtn { color: #5a4030; }
+.transparent .cartBtn:hover { background: rgba(120,60,20,0.08); color: #1a1208; }
+.solid .cartBtn { color: #5a4030; }
 .solid .cartBtn:hover { background: rgba(231,85,37,0.08); color: #E75525; }
 
 .cartBadge {
@@ -183,7 +220,7 @@
   align-items: center;
   justify-content: center;
   padding: 0 4px;
-  border: 1.5px solid white;
+  border: 1.5px solid #FDFAF6;
 }
 
 /* Auth */
@@ -200,12 +237,14 @@
   font-weight: 600;
   text-decoration: none;
   transition: all 0.18s;
+  color: #1a1208;
+  border: 1px solid rgba(120,60,20,0.2);
 }
 
-.transparent .signinBtn { color: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.2); }
-.transparent .signinBtn:hover { color: #fff; border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.08); }
-.solid .signinBtn { color: #10182B; border: 1px solid rgba(16,24,43,0.15); }
-.solid .signinBtn:hover { border-color: rgba(16,24,43,0.3); background: rgba(16,24,43,0.04); }
+.transparent .signinBtn { color: #1a1208; border: 1px solid rgba(120,60,20,0.2); }
+.transparent .signinBtn:hover { border-color: rgba(120,60,20,0.4); background: rgba(120,60,20,0.05); }
+.solid .signinBtn { color: #1a1208; border: 1px solid rgba(120,60,20,0.2); }
+.solid .signinBtn:hover { border-color: rgba(120,60,20,0.4); background: rgba(120,60,20,0.05); }
 
 .signupBtn {
   padding: 8px 20px;
@@ -222,7 +261,7 @@
   background: #ff6b3d;
   border-color: #ff6b3d;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(231,85,37,0.35);
+  box-shadow: 0 6px 20px rgba(231,85,37,0.3);
 }
 
 /* ── User dropdown ── */
@@ -241,10 +280,10 @@
   font-family: inherit;
 }
 
-.transparent .userBtn { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.85); }
-.transparent .userBtn:hover { border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.08); color: #fff; }
-.solid .userBtn { border-color: rgba(16,24,43,0.12); color: #4a5568; }
-.solid .userBtn:hover { border-color: rgba(231,85,37,0.4); color: #10182B; }
+.transparent .userBtn { border-color: rgba(120,60,20,0.2); color: #5a4030; }
+.transparent .userBtn:hover { border-color: rgba(231,85,37,0.4); background: rgba(120,60,20,0.05); color: #1a1208; }
+.solid .userBtn { border-color: rgba(120,60,20,0.15); color: #5a4030; }
+.solid .userBtn:hover { border-color: rgba(231,85,37,0.4); color: #1a1208; }
 
 .avatar {
   width: 28px;
@@ -274,10 +313,10 @@
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
-  background: white;
-  border: 1px solid rgba(16,24,43,0.1);
+  background: #FDFAF6;
+  border: 1px solid #E8E0D5;
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(16,24,43,0.15), 0 4px 16px rgba(16,24,43,0.08);
+  box-shadow: 0 20px 60px rgba(120,60,20,0.12), 0 4px 16px rgba(120,60,20,0.07);
   min-width: 220px;
   overflow: hidden;
   animation: dropIn 0.18s cubic-bezier(0.34,1.56,0.64,1);
@@ -293,7 +332,7 @@
   align-items: center;
   gap: 12px;
   padding: 16px 16px 14px;
-  border-bottom: 1px solid rgba(16,24,43,0.07);
+  border-bottom: 1px solid #E8E0D5;
 }
 
 .dropdownAvatar {
@@ -310,8 +349,8 @@
   flex-shrink: 0;
 }
 
-.dropdownName { font-size: 14px; font-weight: 700; color: #10182B; }
-.dropdownPhone { font-size: 12px; color: #8a8f9e; margin-top: 1px; }
+.dropdownName { font-size: 14px; font-weight: 700; color: #1a1208; }
+.dropdownPhone { font-size: 12px; color: #a09080; margin-top: 1px; }
 
 .dropdownItem {
   display: flex;
@@ -320,11 +359,11 @@
   padding: 11px 16px;
   font-size: 14px;
   font-weight: 500;
-  color: #374151;
+  color: #5a4030;
   text-decoration: none;
   transition: background 0.15s;
 }
-.dropdownItem:hover { background: #f8f7f5; color: #10182B; }
+.dropdownItem:hover { background: #F5EEE4; color: #1a1208; }
 
 .inlineCount {
   margin-left: auto;
@@ -340,7 +379,7 @@
   justify-content: center;
 }
 
-.dropdownDivider { height: 1px; background: rgba(16,24,43,0.07); margin: 4px 0; }
+.dropdownDivider { height: 1px; background: #E8E0D5; margin: 4px 0; }
 
 .dropdownSignOut {
   display: flex;
@@ -375,27 +414,26 @@
    ════════════════════════════════════════ */
 @media (max-width: 768px) {
 
-  /* Force navy background on mobile — ignore transparent/solid state */
+  /* Warm ivory on mobile too */
   .header {
-    background: #10182B !important;
-    border-bottom: none !important;
-    box-shadow: none !important;
+    background: #FDFAF6 !important;
+    border-bottom: 1px solid #E8E0D5 !important;
+    box-shadow: 0 1px 12px rgba(120,80,40,0.07) !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     overflow: visible;
   }
 
-  /* Override transparent/solid children that depend on parent class */
   .header .logoText,
   .transparent .logoText,
   .solid .logoText {
-    color: #ffffff !important;
+    color: #1a1208 !important;
   }
 
   .header .cartBtn,
   .transparent .cartBtn,
   .solid .cartBtn {
-    color: #ffffff !important;
+    color: #5a4030 !important;
   }
 
   /* ── Inner bar ── */
@@ -406,13 +444,12 @@
   }
 
   /* Hide desktop-only elements */
-  .nav         { display: none; }
+  .nav           { display: none; }
   .desktopSearch { display: none; }
-  .signinBtn   { display: none; }
-  .signupBtn   { display: none; }
-  .userMenu    { display: none; } /* hide on mobile — account tab in bottom nav handles this */
+  .signinBtn     { display: none; }
+  .signupBtn     { display: none; }
+  .userMenu      { display: none; }
 
-  /* Tighten actions gap so bell + cart fit neatly */
   .actions { gap: 2px; }
 
   /* Logo */
@@ -426,15 +463,14 @@
   .logoText {
     font-size: 18px;
     font-weight: 700;
-    color: #ffffff;
+    color: #1a1208;
   }
 
-  /* Mobile search pill — fills remaining space */
+  /* Mobile search pill */
   .mobileSearchRow {
     display: flex;
     align-items: center;
     flex: 1;
-    /* sits inside .inner because we inject it there on mobile */
   }
 
   .mobileSearchWrap {
@@ -442,19 +478,18 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background: rgba(255,255,255,0.1);
-    border: 1.5px solid rgba(255,255,255,0.15);
-    border-radius: 10px;
-    padding: 8px 12px;
+    background: #ffffff;
+    border: 1.5px solid #E75525;
+    border-radius: 100px;
+    padding: 7px 14px;
   }
 
   .mobileSearchWrap:focus-within {
-    border-color: #E75525;
-    background: rgba(255,255,255,0.14);
+    box-shadow: 0 0 0 3px rgba(231,85,37,0.12);
   }
 
   .mobileSearchIcon {
-    color: rgba(255,255,255,0.45);
+    color: #E75525;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -465,14 +500,14 @@
     background: none;
     border: none;
     outline: none;
-    color: #ffffff;
+    color: #1a1208;
     font-size: 13px;
     font-family: inherit;
     min-width: 0;
   }
 
   .mobileSearchInput::placeholder {
-    color: rgba(255,255,255,0.38);
+    color: #b0a090;
   }
 
   /* Cart button on mobile */
@@ -480,21 +515,22 @@
     width: 38px;
     height: 38px;
     border-radius: 9px;
-    color: #ffffff !important;
+    color: #5a4030 !important;
     flex-shrink: 0;
   }
 
   .cartBtn:hover {
-    background: rgba(255,255,255,0.1) !important;
+    background: rgba(231,85,37,0.08) !important;
+    color: #E75525 !important;
   }
 
   .cartBadge {
     top: 3px;
     right: 3px;
-    border-color: #10182B;
+    border-color: #FDFAF6;
   }
 
-  /* Dropdown (still needed if user menu shows) */
+  /* Dropdown */
   .dropdown {
     right: -4px;
     min-width: 200px;
