@@ -34,77 +34,80 @@ export default function CartPage() {
 
   return (
     <div className={styles.page}>
-      <div className="container">
-        <h1 className={styles.title}>My Cart</h1>
+      <h1 className={styles.title}>My Cart</h1>
 
-        <div className={styles.layout}>
-          {/* Items */}
-          <div className={styles.items}>
-            {items.map(item => (
-              <div key={item.id} className={styles.item}>
-                <div className={styles.itemImage}>
-                  {item.image_url
-                    ? <img src={item.image_url} alt={item.name} />
-                    : <div className={styles.noImg} />
-                  }
-                </div>
-                <div className={styles.itemBody}>
-                  <h3 className={styles.itemName}>{item.name}</h3>
-                  <span className={styles.itemPrice}>ETB {item.price.toLocaleString()}</span>
-                  <div className={styles.itemActions}>
-                    <div className={styles.qtyControl}>
-                      <button onClick={() => updateQty(item.id, item.qty - 1)}>−</button>
-                      <span>{item.qty}</span>
-                      <button onClick={() => updateQty(item.id, item.qty + 1)}>+</button>
-                    </div>
-                    <button onClick={() => removeItem(item.id)} className={styles.removeBtn}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                      Remove
-                    </button>
-                  </div>
-                </div>
-                <div className={styles.itemTotal}>
+      <div className={styles.layout}>
+        {/* Summary — renders first on mobile via order:-1 in CSS */}
+        <div className={styles.summary}>
+          <h2>Order Summary</h2>
+
+          <div className={styles.summaryRow}>
+            <span>Subtotal ({items.reduce((s, i) => s + i.qty, 0)} items)</span>
+            <span>ETB {total.toLocaleString()}</span>
+          </div>
+          <div className={styles.summaryRow}>
+            <span>Delivery Fee</span>
+            <span className={styles.green}>At checkout</span>
+          </div>
+
+          <div className={styles.summaryTotal}>
+            <span>Total</span>
+            <span>ETB {total.toLocaleString()}</span>
+          </div>
+
+          <div className={styles.codNote}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Pay with <strong style={{ marginLeft: 3 }}>Cash on Delivery</strong>
+          </div>
+
+          <button
+            className={styles.checkoutBtn}
+            onClick={() => router.push('/checkout')}
+          >
+            Proceed to Checkout
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+
+          <Link href="/" className={styles.continueBtn}>
+            ← Continue Shopping
+          </Link>
+        </div>
+
+        {/* Items */}
+        <div className={styles.items}>
+          {items.map(item => (
+            <div key={item.id} className={styles.item}>
+              <div className={styles.itemImage}>
+                {item.image_url
+                  ? <img src={item.image_url} alt={item.name} />
+                  : <div className={styles.noImg} />
+                }
+              </div>
+              <div className={styles.itemBody}>
+                <h3 className={styles.itemName}>{item.name}</h3>
+                <span className={styles.itemPrice}>ETB {item.price.toLocaleString()}</span>
+                {/* Line total visible on mobile */}
+                <span className={styles.itemLineTotal}>
                   ETB {(item.price * item.qty).toLocaleString()}
+                </span>
+                <div className={styles.itemActions}>
+                  <div className={styles.qtyControl}>
+                    <button onClick={() => updateQty(item.id, item.qty - 1)}>−</button>
+                    <span>{item.qty}</span>
+                    <button onClick={() => updateQty(item.id, item.qty + 1)}>+</button>
+                  </div>
+                  <button onClick={() => removeItem(item.id)} className={styles.removeBtn}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                    Remove
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
-
-          {/* Summary */}
-          <div className={styles.summary}>
-            <h2>Order Summary</h2>
-
-            <div className={styles.summaryRow}>
-              <span>Subtotal ({items.reduce((s, i) => s + i.qty, 0)} items)</span>
-              <span>ETB {total.toLocaleString()}</span>
+              {/* Desktop only line total */}
+              <div className={styles.itemTotal}>
+                ETB {(item.price * item.qty).toLocaleString()}
+              </div>
             </div>
-            <div className={styles.summaryRow}>
-              <span>Delivery Fee</span>
-              <span className={styles.green}>Calculated at checkout</span>
-            </div>
-
-            <div className={styles.summaryTotal}>
-              <span>Total</span>
-              <span>ETB {total.toLocaleString()}</span>
-            </div>
-
-            <div className={styles.codNote}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              Pay with <strong>Cash on Delivery</strong>
-            </div>
-
-            <button
-              className={styles.checkoutBtn}
-              onClick={() => router.push('/checkout')}
-            >
-              Proceed to Checkout
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-            </button>
-
-            <Link href="/" className={styles.continueBtn}>
-              ← Continue Shopping
-            </Link>
-          </div>
+          ))}
         </div>
       </div>
     </div>
