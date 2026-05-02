@@ -13,6 +13,7 @@
   border: none;
   cursor: pointer;
   transition: background 0.18s, color 0.18s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .bellTransparent { color: rgba(255,255,255,0.85); }
@@ -176,9 +177,46 @@
 .dropFooter:hover { background: rgba(231,85,37,0.06); }
 
 /* ── Mobile ── */
-@media (max-width: 400px) {
+@media (max-width: 768px) {
+  /* On mobile the bell sits near the right edge — align dropdown to right
+     but clamp so it doesn't overflow the screen */
   .dropdown {
-    right: -40px;
-    width: 290px;
+    position: fixed;
+    top: auto;
+    /* Anchor below the header (56px header + 28px strip = 84px) */
+    top: 84px;
+    right: 8px;
+    left: 8px;
+    width: auto;
+    max-width: 400px;
+    /* Override the absolute positioning from parent */
+    margin: 0 auto;
+    border-radius: 16px;
+    z-index: 500;
+  }
+
+  .bell {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+  }
+
+  /* Badge border matches mobile header bg */
+  .badge {
+    border-color: #10182B;
+    top: 3px;
+    right: 3px;
+  }
+
+  /* Bell always uses white color on mobile (navy header) */
+  .bell.bellSolid,
+  .bell.bellTransparent {
+    color: rgba(255,255,255,0.85);
+  }
+
+  .bell.bellSolid:active,
+  .bell.bellTransparent:active {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
   }
 }
