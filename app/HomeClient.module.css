@@ -1,373 +1,603 @@
-/*
-  ════════════════════════════════════════════════════════════════
-  ADDORA — HomeClient.module.css ADDITIONS
-  Append all of this to the bottom of your existing HomeClient.module.css
-  ════════════════════════════════════════════════════════════════
-*/
-
-/* ── HERO BACKGROUND: Option B — soft peach (replaces dark navy) ──────────── */
-/*
-  In your existing .hero rule, change the background from the dark color to:
-    background: #fff7f4;
-  And change any text colors inside the hero from white to dark:
-    heroTitle color: #1a1208
-    heroSub color: #7a5c40
-    heroBadge background: #FAECE7; color: #993C1D; border-color: #f5c4b3
-    heroFeature color: #5a4030
-    heroStatCard background: #ffffff; border: 1px solid #f5c4b3
-    heroStatNum color: #1a1208
-    heroStatLabel color: #7a5c40
-    heroStatAccent background: #E75525 (keep as is)
-    heroOrb background: #f5c4b3 (softer than before)
-
-  Quick CSS override (add this rule after your existing .hero):
-*/
-.hero {
-  background: #fff7f4 !important;
-}
-
-/* ── Hero CTA Buttons ─────────────────────────────────────────────────────── */
-.heroCtas {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 28px;
-  flex-wrap: wrap;
-}
-
-.heroCtaPrimary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #E75525;
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: 700;
-  padding: 13px 28px;
-  border-radius: 100px;
-  text-decoration: none;
-  transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
-}
-
-.heroCtaPrimary:hover {
-  background: #ff6b3d;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(231, 85, 37, 0.28);
-}
-
-.heroCtaSecondary {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #5a4030;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 13px 20px;
-  border-radius: 100px;
-  border: 1.5px solid #e8d5c8;
-  text-decoration: none;
-  transition: border-color 0.18s, color 0.18s, background 0.18s;
-}
-
-.heroCtaSecondary:hover {
-  border-color: #E75525;
-  color: #E75525;
-  background: rgba(231, 85, 37, 0.04);
-}
-
-/* ── Mobile Hero CTA ──────────────────────────────────────────────────────── */
-.mobileHeroCta {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: #E75525;
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 8px 18px;
-  border-radius: 100px;
-  text-decoration: none;
-  margin-top: 12px;
-  transition: background 0.18s;
-}
-
-.mobileHeroCta:hover {
-  background: #ff6b3d;
-}
-
-/* ── Social Proof Bar ─────────────────────────────────────────────────────── */
-.proofBar {
-  width: 100%;
-  background: #ffffff;
-  border-top: 1px solid #f5e8e0;
-  border-bottom: 1px solid #f5e8e0;
-  padding: 14px 40px;
-}
-
-.proofInner {
-  max-width: 1200px;
+/* ===== LAYOUT WRAPPER ===== */
+.sectionInner {
+  max-width: 1400px;
   margin: 0 auto;
-  display: flex;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
   align-items: center;
-  gap: 0;
-  flex-wrap: wrap;
-  justify-content: center;
 }
 
-.proofItem {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 4px 24px;
-  flex-shrink: 0;
+/* ===== DESKTOP HERO ===== */
+.hero {
+  background: var(--navy);
+  min-height: unset;
+  padding: 80px 24px 28px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
-.proofNum {
-  font-size: 15px;
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(231, 85, 37, 0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.heroContent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 560px;
+}
+
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(231, 85, 37, 0.15);
+  border: 1px solid rgba(231, 85, 37, 0.3);
+  color: #FF8A65;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 100px;
+  width: fit-content;
+}
+
+.heroTitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 32px;
   font-weight: 700;
-  color: #E75525;
+  color: white;
+  line-height: 1.15;
+  letter-spacing: -0.8px;
 }
 
-.proofLabel {
+.heroTitle span {
+  color: var(--orange);
+}
+
+.heroSub {
   font-size: 13px;
-  color: #7a5c40;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.55;
+  max-width: 420px;
 }
 
-.proofStars {
-  color: #E75525;
+.heroCod {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.heroFeature {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 13px;
-  letter-spacing: 1px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
 }
 
-.proofDivider {
-  width: 1px;
-  height: 24px;
-  background: #f0ddd4;
-  flex-shrink: 0;
+.heroVisual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
 }
 
-/* ── How It Works Section ─────────────────────────────────────────────────── */
-.howSection {
-  background: #ffffff;
-  border-bottom: 1px solid #f0ddd4;
-  padding: 48px 40px;
+.heroOrb {
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, rgba(231, 85, 37, 0.3) 0%, rgba(231, 85, 37, 0.05) 70%);
+  border-radius: 50%;
+  position: absolute;
+  pointer-events: none;
 }
 
-.howHeader {
-  text-align: center;
-  margin-bottom: 36px;
+.heroStats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 320px;
 }
 
-.howTitle {
+.heroStatCard {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.heroStatAccent {
+  grid-column: 1 / -1;
+  background: rgba(231, 85, 37, 0.15);
+  border-color: rgba(231, 85, 37, 0.35);
+}
+
+.heroStatNum {
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 22px;
   font-weight: 700;
-  color: #1a1208;
-  margin: 0 0 6px;
+  color: white;
 }
 
-.howSub {
-  font-size: 14px;
-  color: #7a5c40;
-  margin: 0;
+.heroStatLabel {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  font-weight: 500;
 }
 
-.howSteps {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 0;
-  max-width: 860px;
-  margin: 0 auto;
-  flex-wrap: wrap;
-}
-
-.howStep {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 0 20px;
-  position: relative;
-  flex: 1;
-  min-width: 140px;
-}
-
-.howIconWrap {
-  width: 60px;
-  height: 60px;
-  border-radius: 18px;
-  background: #fff7f4;
-  border: 1.5px solid #f5c4b3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #E75525;
-  position: relative;
-  flex-shrink: 0;
-}
-
-.howNum {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #E75525;
-  color: #ffffff;
+.heroCardLabel {
   font-size: 11px;
   font-weight: 700;
+  color: var(--orange);
+  letter-spacing: 0.04em;
+}
+
+.heroCardTitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
+
+.heroCardSub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+}
+
+/* ===== MOBILE HERO (mockup card) — hidden on desktop ===== */
+.mobileHero {
+  display: none;
+}
+
+/* ===== FLASH SALE BANNER ===== */
+.flashBanner {
+  background: var(--navy);
+  padding: 0 24px 20px;
+  width: 100%;
+}
+
+.flashInner {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: rgba(231, 85, 37, 0.1);
+  border: 1px solid rgba(231, 85, 37, 0.25);
+  border-radius: 14px;
+  padding: 14px 20px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  border: 2px solid #ffffff;
+  gap: 24px;
+  overflow: hidden;
 }
 
-.howStepTitle {
-  font-size: 14px;
-  font-weight: 700;
-  color: #1a1208;
-  text-align: center;
-}
-
-.howStepSub {
-  font-size: 12px;
-  color: #7a5c40;
-  text-align: center;
-}
-
-.howArrow {
-  position: absolute;
-  right: -12px;
-  top: 20px;
-  color: #E75525;
-  opacity: 0.4;
-  z-index: 1;
-}
-
-/* ── Flash Sale Countdown ─────────────────────────────────────────────────── */
-.flashTitleGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.flashCountdown {
+.flashLeft {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-left: 20px;
-  padding-left: 20px;
-  border-left: 1px solid rgba(231, 85, 37, 0.2);
+  flex-shrink: 0;
+  border-right: 1px solid rgba(231, 85, 37, 0.2);
+  padding-right: 24px;
 }
 
-.flashCountdownLabel {
-  font-size: 11px;
-  color: #7a5c40;
-  font-weight: 500;
+.flashIcon { font-size: 20px; }
+
+.flashTitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
   white-space: nowrap;
 }
 
-.flashTimerGroup {
+.flashSub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  white-space: nowrap;
+}
+
+.flashDeals {
+  display: flex;
+  gap: 12px;
+  overflow: hidden;
+  flex: 1;
+}
+
+.flashItem {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 8px 14px;
+  text-decoration: none;
+  flex: 1;
+  min-width: 0;
+  transition: background 0.2s, border-color 0.2s;
 }
 
-.flashTimerBlock {
+.flashItem:hover {
+  background: rgba(231, 85, 37, 0.1);
+  border-color: rgba(231, 85, 37, 0.3);
+}
+
+.flashBadge {
+  background: var(--orange);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 100px;
+  flex-shrink: 0;
+}
+
+.flashName {
+  font-size: 12px;
+  color: rgba(255,255,255,0.75);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.flashPrice {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--orange);
+  flex-shrink: 0;
+}
+
+/* ===== PRODUCTS ===== */
+.products {
+  padding: 48px 24px 80px;
+}
+
+.products .sectionInner {
+  display: block;
+}
+
+.filterBar {
   display: flex;
-  align-items: baseline;
-  gap: 2px;
-  background: #E75525;
-  border-radius: 6px;
-  padding: 3px 7px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
 }
 
-.flashTimerNum {
-  font-size: 16px;
-  font-weight: 700;
-  color: #ffffff;
-  font-variant-numeric: tabular-nums;
-  min-width: 20px;
-  text-align: center;
-  line-height: 1;
+.categories {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.flashTimerUnit {
-  font-size: 9px;
+.catBtn {
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-size: 13px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1;
+  background: white;
+  color: var(--text-muted);
+  border: 1.5px solid var(--gray-light);
+  transition: all 0.2s;
+  cursor: pointer;
 }
 
-.flashTimerColon {
-  font-size: 16px;
-  font-weight: 700;
-  color: #E75525;
-  line-height: 1;
-  margin: 0 1px;
-  padding-bottom: 2px;
+.catBtn:hover {
+  border-color: var(--orange);
+  color: var(--orange);
 }
 
-/* ════════════════════════════════════════
-   MOBILE RESPONSIVE (≤ 768px)
-   ════════════════════════════════════════ */
+.catActive {
+  background: var(--orange) !important;
+  color: white !important;
+  border-color: var(--orange) !important;
+}
+
+.searchWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  border: 1.5px solid var(--gray-light);
+  border-radius: 10px;
+  padding: 8px 14px;
+  min-width: 220px;
+  color: var(--gray);
+}
+
+.searchWrap:focus-within {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+.search {
+  border: none;
+  background: none;
+  font-size: 14px;
+  color: var(--text);
+  width: 100%;
+  outline: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Mobile section header — hidden on desktop */
+.mobileSectionHeader {
+  display: none;
+}
+
+/* ══════════════════════════════════════════
+   MOBILE  (≤ 768px)
+   ══════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* Hero CTA — stack on mobile */
-  .heroCtas {
-    display: none; /* hidden on mobile — mobileHeroCta handles it */
+
+  /* ── Hide desktop hero & flash banner ── */
+  .hero        { display: none; }
+  .flashBanner { display: none; }
+
+  /* ── Show mobile hero ── */
+  .mobileHero {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 12px 12px 0;
+    /* sits right below the fixed header (56px) + announcement strip (~34px) */
+    padding-top: 102px;
+    background: #ffffff;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  /* Social proof bar — scroll on mobile */
-  .proofBar {
-    padding: 12px 16px;
+  /* ── Dark card ── */
+  .mobileHeroCard {
+    width: 100%;
+    background: #10182B;
+    border-radius: 16px;
+    padding: 18px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+    min-height: 140px;
+  }
+
+  /* subtle dot-grid texture */
+  .mobileHeroCard::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+  }
+
+  /* Left */
+  .mobileHeroLeft {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 1;
+    min-width: 0;
+  }
+
+  .mobileHeroBrand {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 2px;
+  }
+
+  .mobileHeroBrandMark {
+    width: 20px;
+    height: 20px;
+    background: rgba(231,85,37,0.15);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .mobileHeroBrandName {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: #E75525;
+    letter-spacing: -0.2px;
+  }
+
+  .mobileHeroTitle {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.2;
+    letter-spacing: -0.3px;
+    margin: 0;
+  }
+
+  .mobileHeroSub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .mobileHeroPills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 4px;
+  }
+
+  .mobileHeroPill {
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 100px;
+    padding: 3px 9px;
+    background: rgba(255,255,255,0.06);
+    white-space: nowrap;
+  }
+
+  /* Right decor box */
+  .mobileHeroRight {
+    flex-shrink: 0;
+    z-index: 1;
+  }
+
+  .mobileHeroDecorBox {
+    width: 68px;
+    height: 68px;
+    border: 2px solid #E75525;
+    border-radius: 13px;
+    position: relative;
+    background: rgba(231,85,37,0.06);
+  }
+
+  .mobileHeroDot {
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    background: #E75525;
+    border-radius: 50%;
+  }
+
+  /* ── Category pills row ── */
+  .mobileCategoryRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 2px;
   }
-  .proofBar::-webkit-scrollbar { display: none; }
 
-  .proofInner {
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    min-width: max-content;
+  .mobileCategoryRow::-webkit-scrollbar { display: none; }
+
+  .mobileCatBtn {
+    flex-shrink: 0;
+    padding: 7px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    border: 1.5px solid rgba(16,24,43,0.12);
+    background: #ffffff;
+    color: #4a5568;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+
+  .mobileCatBtn:hover {
+    border-color: rgba(231,85,37,0.35);
+    color: #E75525;
+  }
+
+  .mobileCatActive {
+    background: #10182B !important;
+    color: #ffffff !important;
+    border-color: #10182B !important;
+  }
+
+  /* ── Products section ── */
+  .sectionInner {
+    grid-template-columns: 1fr;
     gap: 0;
   }
 
-  .proofItem {
-    padding: 4px 16px;
+  .products {
+    padding: 0 0 80px;
+    background: #ffffff;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .proofLabel {
-    font-size: 12px;
+  .products .sectionInner {
+    padding: 0;
+    width: 100%;
+    display: block;
   }
 
-  /* How It Works — compact on mobile */
-  .howSection {
-    padding: 32px 16px;
+  /* Hide desktop filter bar on mobile */
+  .filterBar { display: none; }
+
+  /* "Featured products" heading */
+  .mobileSectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 14px 10px;
   }
 
-  .howSteps {
-    gap: 16px;
+  .mobileSectionTitle {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #10182B;
   }
 
-  .howStep {
-    min-width: 120px;
-    padding: 0 8px;
-  }
-
-  .howArrow {
-    display: none;
-  }
-
-  /* Flash countdown — smaller on mobile */
-  .flashCountdown {
-    margin-left: 10px;
-    padding-left: 10px;
-  }
-
-  .flashTimerNum {
+  .mobileSeeAll {
     font-size: 13px;
-    min-width: 16px;
+    font-weight: 600;
+    color: #E75525;
+    text-decoration: none;
   }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: #e8eaf0;
+    width: 100%;
+  }
+
+  .empty {
+    color: #8a8f9e;
+    padding: 60px 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  .mobileHero { padding-top: 98px; }
+  .mobileHeroTitle { font-size: 16px; }
+  .mobileHeroDecorBox { width: 58px; height: 58px; }
+  .mobileHeroDot { width: 11px; height: 11px; }
 }
