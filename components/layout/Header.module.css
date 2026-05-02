@@ -6,7 +6,7 @@
   right: 0;
   z-index: 200;
   width: 100%;
-  transition: background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease;
+  transition: background 0.3s ease, backdrop-filter 0.3s ease;
 }
 
 .transparent {
@@ -22,14 +22,13 @@
   box-shadow: 0 1px 24px rgba(16,24,43,0.06);
 }
 
-/* ── Inner ── */
+/* ── Inner row ── */
 .inner {
   width: 100%;
   height: 64px;
   padding: 0 40px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
 }
 
@@ -60,11 +59,10 @@
   letter-spacing: -0.4px;
   transition: color 0.3s;
 }
-
 .transparent .logoText { color: #ffffff; }
 .solid .logoText       { color: #10182B; }
 
-/* ── Desktop search bar (center flex) ── */
+/* ── Desktop search (center) ── */
 .desktopSearch {
   flex: 1;
   max-width: 480px;
@@ -74,24 +72,20 @@
   border-radius: 10px;
   padding: 8px 14px;
   transition: background 0.3s, border-color 0.3s;
-  position: relative;
 }
 
 .transparent .desktopSearch {
   background: rgba(255,255,255,0.1);
   border: 1.5px solid rgba(255,255,255,0.15);
 }
-
 .transparent .desktopSearch:focus-within {
   background: rgba(255,255,255,0.15);
   border-color: rgba(255,255,255,0.35);
 }
-
 .solid .desktopSearch {
   background: #f3f4f6;
   border: 1.5px solid transparent;
 }
-
 .solid .desktopSearch:focus-within {
   background: white;
   border-color: #E75525;
@@ -99,11 +93,9 @@
 
 .desktopSearchIcon {
   flex-shrink: 0;
-  transition: color 0.3s;
 }
-
 .transparent .desktopSearchIcon { color: rgba(255,255,255,0.5); }
-.solid .desktopSearchIcon { color: #9ca3af; }
+.solid .desktopSearchIcon       { color: #9ca3af; }
 
 .desktopSearchInput {
   flex: 1;
@@ -113,13 +105,15 @@
   font-size: 14px;
   font-family: inherit;
 }
-
 .transparent .desktopSearchInput { color: white; }
 .transparent .desktopSearchInput::placeholder { color: rgba(255,255,255,0.4); }
-.solid .desktopSearchInput { color: #10182B; }
+.solid .desktopSearchInput       { color: #10182B; }
 .solid .desktopSearchInput::placeholder { color: #9ca3af; }
 
-/* ── Center nav ── */
+/* Mobile search — hidden on desktop */
+.mobileSearch { display: none; }
+
+/* ── Desktop nav links ── */
 .nav {
   display: flex;
   align-items: center;
@@ -136,11 +130,10 @@
   transition: background 0.18s, color 0.18s;
   white-space: nowrap;
 }
-
-.transparent .navLink { color: rgba(255,255,255,0.75); }
+.transparent .navLink       { color: rgba(255,255,255,0.75); }
 .transparent .navLink:hover { color: #ffffff; background: rgba(255,255,255,0.1); }
-.solid .navLink { color: #4a5568; }
-.solid .navLink:hover { color: #10182B; background: rgba(16,24,43,0.05); }
+.solid .navLink             { color: #4a5568; }
+.solid .navLink:hover       { color: #10182B; background: rgba(16,24,43,0.05); }
 
 /* ── Right actions ── */
 .actions {
@@ -150,7 +143,10 @@
   flex-shrink: 0;
 }
 
-/* Cart */
+/* Desktop-only wrapper */
+.desktopOnly { display: flex; align-items: center; }
+
+/* ── Cart button ── */
 .cartBtn {
   position: relative;
   display: flex;
@@ -162,11 +158,10 @@
   text-decoration: none;
   transition: background 0.18s, color 0.18s;
 }
-
-.transparent .cartBtn { color: rgba(255,255,255,0.85); }
+.transparent .cartBtn       { color: rgba(255,255,255,0.85); }
 .transparent .cartBtn:hover { background: rgba(255,255,255,0.1); color: #fff; }
-.solid .cartBtn { color: #4a5568; }
-.solid .cartBtn:hover { background: rgba(231,85,37,0.08); color: #E75525; }
+.solid .cartBtn             { color: #4a5568; }
+.solid .cartBtn:hover       { background: rgba(231,85,37,0.08); color: #E75525; }
 
 .cartBadge {
   position: absolute;
@@ -186,7 +181,7 @@
   border: 1.5px solid white;
 }
 
-/* Auth */
+/* ── Auth buttons ── */
 .authBtns {
   display: flex;
   align-items: center;
@@ -201,11 +196,10 @@
   text-decoration: none;
   transition: all 0.18s;
 }
-
-.transparent .signinBtn { color: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.2); }
+.transparent .signinBtn       { color: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.2); }
 .transparent .signinBtn:hover { color: #fff; border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.08); }
-.solid .signinBtn { color: #10182B; border: 1px solid rgba(16,24,43,0.15); }
-.solid .signinBtn:hover { border-color: rgba(16,24,43,0.3); background: rgba(16,24,43,0.04); }
+.solid .signinBtn             { color: #10182B; border: 1px solid rgba(16,24,43,0.15); }
+.solid .signinBtn:hover       { border-color: rgba(16,24,43,0.3); background: rgba(16,24,43,0.04); }
 
 .signupBtn {
   padding: 8px 20px;
@@ -220,7 +214,6 @@
 }
 .signupBtn:hover {
   background: #ff6b3d;
-  border-color: #ff6b3d;
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(231,85,37,0.35);
 }
@@ -240,11 +233,10 @@
   transition: all 0.2s;
   font-family: inherit;
 }
-
-.transparent .userBtn { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.85); }
+.transparent .userBtn       { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.85); }
 .transparent .userBtn:hover { border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.08); color: #fff; }
-.solid .userBtn { border-color: rgba(16,24,43,0.12); color: #4a5568; }
-.solid .userBtn:hover { border-color: rgba(231,85,37,0.4); color: #10182B; }
+.solid .userBtn             { border-color: rgba(16,24,43,0.12); color: #4a5568; }
+.solid .userBtn:hover       { border-color: rgba(231,85,37,0.4); color: #10182B; }
 
 .avatar {
   width: 28px;
@@ -269,7 +261,6 @@
   white-space: nowrap;
 }
 
-/* Dropdown panel */
 .dropdown {
   position: absolute;
   top: calc(100% + 10px);
@@ -285,7 +276,7 @@
 
 @keyframes dropIn {
   from { opacity: 0; transform: translateY(-8px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0)   scale(1); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .dropdownHead {
@@ -310,7 +301,7 @@
   flex-shrink: 0;
 }
 
-.dropdownName { font-size: 14px; font-weight: 700; color: #10182B; }
+.dropdownName  { font-size: 14px; font-weight: 700; color: #10182B; }
 .dropdownPhone { font-size: 12px; color: #8a8f9e; margin-top: 1px; }
 
 .dropdownItem {
@@ -360,118 +351,110 @@
 }
 .dropdownSignOut:hover { background: #fff5f5; }
 
-/* ── Mobile search bar row ── */
-.mobileSearchRow {
-  display: none;
+/* ── Orange trust bar ── */
+.trustBar {
+  background: #E75525;
+  padding: 5px 40px;
+  display: flex;
+  gap: 24px;
+  overflow: hidden;
 }
 
-/* ── Mobile ── */
+.trustBar span {
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+}
+
+/* =================================
+   MOBILE  ≤ 768px
+   ================================= */
 @media (max-width: 768px) {
-  .header {
-    overflow: visible;
-  }
 
   .inner {
+    height: 52px;
     padding: 0 12px;
-    height: 54px;
-    gap: 10px;
+    gap: 8px;
   }
 
-  /* Hide desktop nav and desktop search on mobile */
-  .nav { display: none; }
-  .desktopSearch { display: none; }
-
-  .logoText {
-    font-size: 18px;
-    display: block;
-  }
-
+  /* Smaller logo mark */
   .logoMark {
     width: 30px;
     height: 30px;
     border-radius: 8px;
   }
+  .logoMark svg { width: 15px; height: 15px; }
+  .logoText { font-size: 17px; }
 
-  .logoMark svg {
-    width: 15px;
-    height: 15px;
-  }
+  /* Hide desktop search + nav on mobile */
+  .desktopSearch { display: none; }
+  .nav           { display: none; }
+  .desktopOnly   { display: none; }
 
-  .userName {
-    display: block;
-    font-size: 12px;
-    max-width: 60px;
-  }
-
-  .userBtn {
-    padding: 4px 8px 4px 4px;
-    gap: 5px;
-  }
-
-  .signinBtn {
-    display: none;
-  }
-
-  .signupBtn {
-    padding: 7px 14px;
-    font-size: 12px;
-    font-weight: 700;
-  }
-
-  .cartBtn {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-  }
-
-  .dropdown {
-    right: -4px;
-    min-width: 200px;
-  }
-
-  /* Mobile search row below header */
-  .mobileSearchRow {
+  /* Mobile inline search bar — show between logo and cart */
+  .mobileSearch {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
-    background: var(--navy, #10182B);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    gap: 8px;
+    flex: 1;
+    border-radius: 22px;
+    padding: 7px 12px;
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.18);
+    transition: background 0.2s, border-color 0.2s;
+    color: rgba(255,255,255,0.5);
   }
 
-  .mobileSearchIcon {
-    color: rgba(255,255,255,0.4);
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
+  .mobileSearch:focus-within {
+    background: rgba(255,255,255,0.18);
+    border-color: rgba(255,255,255,0.4);
+  }
+
+  /* When header is solid (scrolled) */
+  .solid .mobileSearch {
+    background: #f3f4f6;
+    border-color: transparent;
+    color: #9ca3af;
+  }
+  .solid .mobileSearch:focus-within {
+    background: white;
+    border-color: #E75525;
   }
 
   .mobileSearchInput {
     flex: 1;
-    background: rgba(255,255,255,0.08);
-    border: 1.5px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    padding: 8px 12px 8px 36px;
-    color: white;
-    font-size: 14px;
-    font-family: inherit;
+    background: none;
+    border: none;
     outline: none;
-    width: 100%;
-    position: relative;
+    font-size: 13px;
+    font-family: inherit;
+    color: white;
+    min-width: 0;
+  }
+  .mobileSearchInput::placeholder { color: rgba(255,255,255,0.45); }
+
+  .solid .mobileSearchInput { color: #10182B; }
+  .solid .mobileSearchInput::placeholder { color: #9ca3af; }
+
+  /* Cart button smaller on mobile */
+  .cartBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    flex-shrink: 0;
   }
 
-  .mobileSearchInput::placeholder {
-    color: rgba(255,255,255,0.35);
+  /* Trust bar — smaller text, tighter padding */
+  .trustBar {
+    padding: 4px 12px;
+    gap: 14px;
+    justify-content: space-between;
   }
-
-  .mobileSearchInput:focus {
-    border-color: #E75525;
-  }
+  .trustBar span { font-size: 10px; }
 }
 
-@media (max-width: 400px) {
-  .inner { padding: 0 10px; }
-  .logoText { font-size: 16px; }
-  .signinBtn { display: none; }
-  .signupBtn { padding: 6px 10px; font-size: 11px; }
+@media (max-width: 380px) {
+  .logoText { font-size: 15px; }
+  .inner { padding: 0 10px; gap: 6px; }
 }
