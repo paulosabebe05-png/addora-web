@@ -6,6 +6,24 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import styles from './ProductCard.module.css'
 
+// Pastel backgrounds matching the mockup's colored card backgrounds
+const PASTEL_COLORS = [
+  '#EEF2FF', // soft blue-purple (watch card)
+  '#FDF2F8', // soft pink (dress card)
+  '#F0FDF4', // soft green (gel card)
+  '#FFFBEB', // soft yellow (outfit card)
+  '#FFF5F5', // soft red
+  '#F0F9FF', // soft sky
+  '#F5F3FF', // soft violet
+  '#FAFAF0', // soft lime
+]
+
+// Pick a consistent color per product based on its id
+function getPastelBg(id) {
+  const index = (parseInt(String(id).replace(/\D/g, '').slice(-4) || '0', 10)) % PASTEL_COLORS.length
+  return PASTEL_COLORS[index]
+}
+
 function StarRating({ rating = 0, reviews = 0 }) {
   const fmt = (n) => n >= 1000 ? (n / 1000).toFixed(1) + 'k' : n
   return (
@@ -34,6 +52,8 @@ export default function ProductCard({ product }) {
     ? product.price * (1 - product.discount / 100)
     : product.price
 
+  const pastelBg = getPastelBg(product.id)
+
   const handleAddToCart = (e) => {
     e.preventDefault()
     if (!user) {
@@ -60,11 +80,12 @@ export default function ProductCard({ product }) {
 
   return (
     <Link href={`/products/${product.id}`} className={styles.card}>
-      <div className={styles.imageWrap}>
+      {/* Image wrap — pastel bg injected inline for mobile */}
+      <div className={styles.imageWrap} style={{ background: pastelBg }}>
         {product.image_url ? (
           <img src={product.image_url} alt={product.name} className={styles.image} />
         ) : (
-          <div className={styles.noImage}>
+          <div className={styles.noImage} style={{ background: pastelBg }}>
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.3">
               <rect x="3" y="3" width="18" height="18" rx="2"/>
               <circle cx="8.5" cy="8.5" r="1.5"/>
@@ -78,7 +99,7 @@ export default function ProductCard({ product }) {
           <span className={styles.discountBadge}>-{product.discount}%</span>
         )}
 
-        {/* Flash / Hot badge */}
+        {/* Hot / flash badge */}
         {product.badge && product.badge !== '' && (
           <span className={styles.hotBadge}>{product.badge}</span>
         )}
@@ -88,13 +109,13 @@ export default function ProductCard({ product }) {
           <div className={styles.outOfStock}>Sold Out</div>
         )}
 
-        {/* Wishlist button */}
+        {/* Wishlist heart */}
         <button
           className={`${styles.wishBtn} ${wishlisted ? styles.wishlisted : ''}`}
           onClick={handleWishlist}
           aria-label="Add to wishlist"
         >
-          <svg width="15" height="15" viewBox="0 0 24 24"
+          <svg width="14" height="14" viewBox="0 0 24 24"
             fill={wishlisted ? '#ef4444' : 'none'}
             stroke={wishlisted ? '#ef4444' : 'currentColor'}
             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -106,7 +127,7 @@ export default function ProductCard({ product }) {
       <div className={styles.body}>
         <h3 className={styles.name}>{product.name}</h3>
 
-        {/* Star ratings */}
+        {/* Stars */}
         {(product.rating > 0 || product.reviews > 0) && (
           <StarRating rating={product.rating} reviews={product.reviews} />
         )}
@@ -135,7 +156,6 @@ export default function ProductCard({ product }) {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
-                {/* ✅ Text hidden on mobile via .addBtnText class */}
                 <span className={styles.addBtnText}>Added</span>
               </>
             ) : (
@@ -144,7 +164,6 @@ export default function ProductCard({ product }) {
                   <line x1="12" y1="5" x2="12" y2="19"/>
                   <line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
-                {/* ✅ Text hidden on mobile via .addBtnText class */}
                 <span className={styles.addBtnText}>Add to Cart</span>
               </>
             )}
