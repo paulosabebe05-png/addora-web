@@ -13,7 +13,7 @@
 .hero {
   background: var(--navy);
   min-height: unset;
-  padding: 80px 24px 20px;
+  padding: 80px 24px 28px;
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -86,7 +86,7 @@
   color: rgba(255,255,255,0.8);
 }
 
-/* RIGHT SIDE */
+/* ── Hero right: stats grid ── */
 .heroVisual {
   display: flex;
   justify-content: center;
@@ -100,39 +100,164 @@
   background: radial-gradient(circle, rgba(231, 85, 37, 0.3) 0%, rgba(231, 85, 37, 0.05) 70%);
   border-radius: 50%;
   position: absolute;
+  pointer-events: none;
 }
 
-.heroCard {
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 16px;
-  padding: 16px 24px;
-  text-align: center;
+.heroStats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 320px;
 }
 
-.heroCardLabel {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--orange);
-  margin-bottom: 6px;
+.heroStatCard {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.heroCardTitle {
+.heroStatAccent {
+  grid-column: 1 / -1;
+  background: rgba(231, 85, 37, 0.15);
+  border-color: rgba(231, 85, 37, 0.35);
+}
+
+.heroStatNum {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 22px;
   font-weight: 700;
   color: white;
-  margin-bottom: 4px;
+}
+
+.heroStatLabel {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  font-weight: 500;
+}
+
+.heroCardLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--orange);
+  letter-spacing: 0.04em;
+}
+
+.heroCardTitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
 }
 
 .heroCardSub {
   font-size: 12px;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.45);
+}
+
+/* ===== FLASH SALE BANNER ===== */
+.flashBanner {
+  background: var(--navy);
+  padding: 0 24px 20px;
+  width: 100%;
+}
+
+.flashInner {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: rgba(231, 85, 37, 0.1);
+  border: 1px solid rgba(231, 85, 37, 0.25);
+  border-radius: 14px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  overflow: hidden;
+}
+
+.flashLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(231, 85, 37, 0.2);
+  padding-right: 24px;
+}
+
+.flashIcon {
+  font-size: 20px;
+}
+
+.flashTitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+}
+
+.flashSub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  white-space: nowrap;
+}
+
+.flashDeals {
+  display: flex;
+  gap: 12px;
+  overflow: hidden;
+  flex: 1;
+}
+
+.flashItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 8px 14px;
+  text-decoration: none;
+  flex: 1;
+  min-width: 0;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.flashItem:hover {
+  background: rgba(231, 85, 37, 0.1);
+  border-color: rgba(231, 85, 37, 0.3);
+}
+
+.flashBadge {
+  background: var(--orange);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 100px;
+  flex-shrink: 0;
+}
+
+.flashName {
+  font-size: 12px;
+  color: rgba(255,255,255,0.75);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.flashPrice {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--orange);
+  flex-shrink: 0;
 }
 
 /* ===== PRODUCTS ===== */
@@ -207,12 +332,13 @@
   font-size: 14px;
   color: var(--text);
   width: 100%;
+  outline: none;
 }
 
 /* GRID */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 24px;
 }
 
@@ -237,16 +363,9 @@
     gap: 0;
   }
 
-  /*
-   * Hero top padding:
-   *   54px  = mobile header bar
-   *   52px  = mobileSearchRow (8px top + ~36px input + 8px bottom)
-   *   10px  = breathing room
-   * = 116px total
-   */
   .hero {
     min-height: unset;
-    padding: 116px 16px 24px;
+    padding: 116px 16px 20px;
     width: 100%;
     box-sizing: border-box;
   }
@@ -289,7 +408,11 @@
     gap: 5px;
   }
 
-  /* Dark background continues from hero into products */
+  /* Flash banner — hide on mobile (already tight on space) */
+  .flashBanner {
+    display: none;
+  }
+
   .products {
     padding: 0 0 60px;
     background: var(--navy);
@@ -303,11 +426,6 @@
     display: block;
   }
 
-  /*
-   * STICKY FILTER BAR
-   * Sits just below the combined header height:
-   *   54px header + 52px mobileSearchRow = 106px
-   */
   .filterBar {
     flex-direction: column;
     align-items: stretch;
@@ -323,12 +441,10 @@
     box-sizing: border-box;
   }
 
-  /* Hide desktop search — mobile uses header search row */
   .searchWrap {
     display: none;
   }
 
-  /* Category pills — horizontal scroll, no wrap */
   .categories {
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -368,7 +484,6 @@
     border-color: var(--orange) !important;
   }
 
-  /* 2-col tight grid — AliExpress style */
   .grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
