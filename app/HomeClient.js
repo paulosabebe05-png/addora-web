@@ -24,7 +24,7 @@ export default function HomeClient({ products }) {
 
   return (
     <>
-      {/* ── Hero ── */}
+      {/* ── DESKTOP Hero ── */}
       <section className={styles.hero}>
         <div className={styles.sectionInner}>
           <div className={styles.heroContent}>
@@ -92,7 +92,59 @@ export default function HomeClient({ products }) {
         </div>
       </section>
 
-      {/* ── Flash Sale Banner ── */}
+      {/* ── MOBILE Hero Card (mockup style) ── */}
+      <section className={styles.mobileHero}>
+        <div className={styles.mobileHeroCard}>
+          {/* Left content */}
+          <div className={styles.mobileHeroLeft}>
+            <div className={styles.mobileHeroBrand}>
+              <div className={styles.mobileHeroBrandMark}>
+                <svg width="13" height="13" viewBox="0 0 32 32" fill="none">
+                  <path d="M8 24 Q16 8 24 24" stroke="#E75525" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
+                  <circle cx="8"  cy="24" r="2.8" fill="#E75525"/>
+                  <circle cx="16" cy="13" r="2.8" fill="#E75525"/>
+                  <circle cx="24" cy="24" r="2.8" fill="#E75525"/>
+                </svg>
+              </div>
+              <span className={styles.mobileHeroBrandName}>addora</span>
+            </div>
+
+            <h2 className={styles.mobileHeroTitle}>Launching in Ethiopia</h2>
+            <p className={styles.mobileHeroSub}>Thousands of products · Trusted sellers</p>
+
+            <div className={styles.mobileHeroPills}>
+              <span className={styles.mobileHeroPill}>Telebirr</span>
+              <span className={styles.mobileHeroPill}>Chapa</span>
+              <span className={styles.mobileHeroPill}>Cash on delivery</span>
+            </div>
+          </div>
+
+          {/* Right decorative dot box */}
+          <div className={styles.mobileHeroRight}>
+            <div className={styles.mobileHeroDecorBox}>
+              <span className={styles.mobileHeroDot} style={{ top: '20%', left: '20%' }} />
+              <span className={styles.mobileHeroDot} style={{ top: '20%', right: '20%' }} />
+              <span className={styles.mobileHeroDot} style={{ bottom: '20%', left: '20%' }} />
+              <span className={styles.mobileHeroDot} style={{ bottom: '20%', right: '20%' }} />
+            </div>
+          </div>
+        </div>
+
+        {/* Category pills */}
+        <div className={styles.mobileCategoryRow}>
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat}
+              className={`${styles.mobileCatBtn} ${activeCategory === cat ? styles.mobileCatActive : ''}`}
+              onClick={() => setActiveCategory(cat)}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Flash Sale Banner (desktop only) ── */}
       <div className={styles.flashBanner}>
         <div className={styles.flashInner}>
           <div className={styles.flashLeft}>
@@ -115,6 +167,8 @@ export default function HomeClient({ products }) {
       {/* ── Products ── */}
       <section className={styles.products} id="products">
         <div className={styles.sectionInner}>
+
+          {/* Desktop filter bar (categories + search) */}
           <div className={styles.filterBar}>
             <div className={styles.categories}>
               {CATEGORIES.map(cat => (
@@ -141,6 +195,12 @@ export default function HomeClient({ products }) {
                 className={styles.search}
               />
             </div>
+          </div>
+
+          {/* "Featured products" heading + See all — mobile only */}
+          <div className={styles.mobileSectionHeader}>
+            <span className={styles.mobileSectionTitle}>Featured products</span>
+            <a href="#" className={styles.mobileSeeAll}>See all</a>
           </div>
 
           {filtered.length === 0 ? (
