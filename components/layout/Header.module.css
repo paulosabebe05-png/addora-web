@@ -360,87 +360,98 @@
 }
 .dropdownSignOut:hover { background: #fff5f5; }
 
-/* ── Mobile search bar row ── */
+/* ── Mobile announcement strip — hidden on desktop ── */
+.announcementStrip {
+  display: none;
+}
+
+/* ── Mobile search row ── */
 .mobileSearchRow {
   display: none;
 }
 
-/* ── Mobile ── */
+/* ════════════════════════════════════════
+   MOBILE ONLY  (≤ 768px)
+   ════════════════════════════════════════ */
 @media (max-width: 768px) {
+
+  /* Force navy background on mobile — ignore transparent/solid state */
   .header {
+    background: #10182B !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
     overflow: visible;
   }
 
+  /* Override transparent/solid children that depend on parent class */
+  .header .logoText,
+  .transparent .logoText,
+  .solid .logoText {
+    color: #ffffff !important;
+  }
+
+  .header .cartBtn,
+  .transparent .cartBtn,
+  .solid .cartBtn {
+    color: #ffffff !important;
+  }
+
+  /* ── Inner bar ── */
   .inner {
-    padding: 0 12px;
-    height: 54px;
+    padding: 0 14px;
+    height: 56px;
     gap: 10px;
   }
 
-  /* Hide desktop nav and desktop search on mobile */
-  .nav { display: none; }
+  /* Hide desktop-only elements */
+  .nav         { display: none; }
   .desktopSearch { display: none; }
+  .signinBtn   { display: none; }
+  .signupBtn   { display: none; }
+  .userMenu    { display: none; } /* hide on mobile — account tab in bottom nav handles this */
+
+  /* Logo */
+  .logoMark {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+  }
+  .logoMark svg { width: 16px; height: 16px; }
 
   .logoText {
     font-size: 18px;
-    display: block;
-  }
-
-  .logoMark {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-  }
-
-  .logoMark svg {
-    width: 15px;
-    height: 15px;
-  }
-
-  .userName {
-    display: block;
-    font-size: 12px;
-    max-width: 60px;
-  }
-
-  .userBtn {
-    padding: 4px 8px 4px 4px;
-    gap: 5px;
-  }
-
-  .signinBtn {
-    display: none;
-  }
-
-  .signupBtn {
-    padding: 7px 14px;
-    font-size: 12px;
     font-weight: 700;
+    color: #ffffff;
   }
 
-  .cartBtn {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-  }
-
-  .dropdown {
-    right: -4px;
-    min-width: 200px;
-  }
-
-  /* Mobile search row below header */
+  /* Mobile search pill — fills remaining space */
   .mobileSearchRow {
     display: flex;
     align-items: center;
-    gap: 10px;
+    flex: 1;
+    /* sits inside .inner because we inject it there on mobile */
+  }
+
+  .mobileSearchWrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
     padding: 8px 12px;
-    background: var(--navy, #10182B);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .mobileSearchWrap:focus-within {
+    border-color: #E75525;
+    background: rgba(255,255,255,0.14);
   }
 
   .mobileSearchIcon {
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.45);
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -448,30 +459,89 @@
 
   .mobileSearchInput {
     flex: 1;
-    background: rgba(255,255,255,0.08);
-    border: 1.5px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    padding: 8px 12px 8px 36px;
-    color: white;
-    font-size: 14px;
-    font-family: inherit;
+    background: none;
+    border: none;
     outline: none;
-    width: 100%;
-    position: relative;
+    color: #ffffff;
+    font-size: 13px;
+    font-family: inherit;
+    min-width: 0;
   }
 
   .mobileSearchInput::placeholder {
-    color: rgba(255,255,255,0.35);
+    color: rgba(255,255,255,0.38);
   }
 
-  .mobileSearchInput:focus {
-    border-color: #E75525;
+  /* Cart button on mobile */
+  .cartBtn {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    color: #ffffff !important;
+    flex-shrink: 0;
+  }
+
+  .cartBtn:hover {
+    background: rgba(255,255,255,0.1) !important;
+  }
+
+  .cartBadge {
+    top: 3px;
+    right: 3px;
+    border-color: #10182B;
+  }
+
+  /* Dropdown (still needed if user menu shows) */
+  .dropdown {
+    right: -4px;
+    min-width: 200px;
+  }
+
+  /* ── Orange announcement strip ── */
+  .announcementStrip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    background: #E75525;
+    padding: 7px 14px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .announcementInner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    animation: ticker 18s linear infinite;
+  }
+
+  @keyframes ticker {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .announcementItem {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .announcementDot {
+    width: 4px;
+    height: 4px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 50%;
+    flex-shrink: 0;
   }
 }
 
 @media (max-width: 400px) {
   .inner { padding: 0 10px; }
   .logoText { font-size: 16px; }
-  .signinBtn { display: none; }
-  .signupBtn { padding: 6px 10px; font-size: 11px; }
 }
