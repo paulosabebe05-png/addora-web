@@ -1,4 +1,8 @@
-.page { padding: 0 0 80px; }
+.page {
+  padding: 0 0 80px;
+  /* Fixed header (56px) + announcement strip (~34px) = ~90px */
+  padding-top: 90px;
+}
 
 .title {
   font-family: 'Space Grotesk', sans-serif;
