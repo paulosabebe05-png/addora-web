@@ -185,18 +185,20 @@ export default function Header() {
           </div>
         </div>
 
-        {/* ── Orange announcement strip — mobile only ── */}
-        <div className={styles.announcementStrip}>
-          <div className={styles.announcementInner}>
-            {tickerItems.map((item, i) => (
-              <span key={i} className={styles.announcementItem}>
-                <span>{item.icon}</span>
-                <span>{item.text}</span>
-                {i < tickerItems.length - 1 && <span className={styles.announcementDot} />}
-              </span>
-            ))}
+        {/* ── Orange announcement strip — mobile + home page only ── */}
+        {isHome && (
+          <div className={styles.announcementStrip}>
+            <div className={styles.announcementInner}>
+              {tickerItems.map((item, i) => (
+                <span key={i} className={styles.announcementItem}>
+                  <span>{item.icon}</span>
+                  <span>{item.text}</span>
+                  {i < tickerItems.length - 1 && <span className={styles.announcementDot} />}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </header>
     </>
   )
