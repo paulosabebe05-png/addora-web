@@ -1,6 +1,5 @@
 'use client'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useAuth } from '../../lib/auth'
 import { useCart } from '../../lib/cart'
 import { useRouter, usePathname } from 'next/navigation'
@@ -50,7 +49,7 @@ export default function Header() {
     }
   }
 
-  // Transparent only on home before scroll
+  // Always use solid/ivory — transparent only on home before scroll
   const transparent = isHome && !scrolled
 
   const announcements = [
@@ -65,19 +64,20 @@ export default function Header() {
       <header className={`${styles.header} ${transparent ? styles.transparent : styles.solid}`}>
         <div className={styles.inner}>
 
-          {/* ── Logo — your /public/logo.png, auto-scales per breakpoint ── */}
+          {/* ── Logo ── */}
           <Link href="/" className={styles.logo}>
-            <Image
-              src="/logo.png"
-              alt="Addora"
-              width={1080}   /* actual PNG pixel width  */
-              height={1080}  /* actual PNG pixel height */
-              priority
-              className={styles.logoImg}
-            />
+            <div className={styles.logoMark}>
+              <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+                <path d="M8 24 Q16 8 24 24" stroke="white" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
+                <circle cx="8"  cy="24" r="2.8" fill="white"/>
+                <circle cx="16" cy="13" r="2.8" fill="white"/>
+                <circle cx="24" cy="24" r="2.8" fill="white"/>
+              </svg>
+            </div>
+            <span className={styles.logoText}>Addora</span>
           </Link>
 
-          {/* ── Desktop search bar ── */}
+          {/* ── Desktop search bar — pill with Search button ── */}
           <div className={styles.desktopSearch}>
             <span className={styles.desktopSearchIcon}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
@@ -102,7 +102,7 @@ export default function Header() {
             </button>
           </div>
 
-          {/* ── Mobile search bar ── */}
+          {/* ── Mobile search bar — pill style ── */}
           <div className={styles.mobileSearchRow}>
             <div className={styles.mobileSearchWrap}>
               <span className={styles.mobileSearchIcon}>
@@ -132,6 +132,7 @@ export default function Header() {
           {/* ── Right actions ── */}
           <div className={styles.actions}>
 
+            {/* Notification bell */}
             <NotificationBell transparent={transparent} />
 
             {/* Cart */}
@@ -200,7 +201,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* ── Orange announcement strip — mobile + home only ── */}
+        {/* ── Orange announcement strip — mobile + home page only ── */}
         {isHome && (
           <div className={styles.announcementStrip}>
             <div className={styles.announcementInner}>
