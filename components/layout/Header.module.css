@@ -30,7 +30,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 16px;
 }
 
 /* ── Logo ── */
@@ -64,22 +64,77 @@
 .transparent .logoText { color: #ffffff; }
 .solid .logoText       { color: #10182B; }
 
+/* ── Desktop search bar (center flex) ── */
+.desktopSearch {
+  flex: 1;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 10px;
+  padding: 8px 14px;
+  transition: background 0.3s, border-color 0.3s;
+  position: relative;
+}
+
+.transparent .desktopSearch {
+  background: rgba(255,255,255,0.1);
+  border: 1.5px solid rgba(255,255,255,0.15);
+}
+
+.transparent .desktopSearch:focus-within {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.35);
+}
+
+.solid .desktopSearch {
+  background: #f3f4f6;
+  border: 1.5px solid transparent;
+}
+
+.solid .desktopSearch:focus-within {
+  background: white;
+  border-color: #E75525;
+}
+
+.desktopSearchIcon {
+  flex-shrink: 0;
+  transition: color 0.3s;
+}
+
+.transparent .desktopSearchIcon { color: rgba(255,255,255,0.5); }
+.solid .desktopSearchIcon { color: #9ca3af; }
+
+.desktopSearchInput {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.transparent .desktopSearchInput { color: white; }
+.transparent .desktopSearchInput::placeholder { color: rgba(255,255,255,0.4); }
+.solid .desktopSearchInput { color: #10182B; }
+.solid .desktopSearchInput::placeholder { color: #9ca3af; }
+
 /* ── Center nav ── */
 .nav {
   display: flex;
   align-items: center;
   gap: 4px;
-  flex: 1;
-  justify-content: center;
+  flex-shrink: 0;
 }
 
 .navLink {
-  padding: 7px 16px;
+  padding: 7px 14px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
   transition: background 0.18s, color 0.18s;
+  white-space: nowrap;
 }
 
 .transparent .navLink { color: rgba(255,255,255,0.75); }
@@ -322,13 +377,13 @@
     gap: 10px;
   }
 
-  /* Hide desktop nav */
+  /* Hide desktop nav and desktop search on mobile */
   .nav { display: none; }
+  .desktopSearch { display: none; }
 
-  /* ✅ Keep logo text visible on mobile — same as desktop */
   .logoText {
     font-size: 18px;
-    display: block; /* ensure it's never hidden */
+    display: block;
   }
 
   .logoMark {
@@ -342,20 +397,17 @@
     height: 15px;
   }
 
-  /* ✅ Keep username visible on mobile */
   .userName {
     display: block;
     font-size: 12px;
     max-width: 60px;
   }
 
-  /* Tighter user button on mobile */
   .userBtn {
     padding: 4px 8px 4px 4px;
     gap: 5px;
   }
 
-  /* Auth buttons — hide Sign In to save space, keep Sign Up */
   .signinBtn {
     display: none;
   }
@@ -366,14 +418,12 @@
     font-weight: 700;
   }
 
-  /* Cart */
   .cartBtn {
     width: 36px;
     height: 36px;
     border-radius: 8px;
   }
 
-  /* Dropdown: ensure it doesn't overflow viewport */
   .dropdown {
     right: -4px;
     min-width: 200px;
@@ -421,17 +471,7 @@
 
 @media (max-width: 400px) {
   .inner { padding: 0 10px; }
-
-  /* Keep logo text even on very small screens */
-  .logoText {
-    font-size: 16px;
-    display: block;
-  }
-
+  .logoText { font-size: 16px; }
   .signinBtn { display: none; }
-
-  .signupBtn {
-    padding: 6px 10px;
-    font-size: 11px;
-  }
+  .signupBtn { padding: 6px 10px; font-size: 11px; }
 }
