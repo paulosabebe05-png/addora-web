@@ -7,18 +7,14 @@
   position: relative;
   overflow: hidden;
   background: #10182B;
-  height: 280px;
 }
 
-/* Full-bleed banner image */
+/* Full-bleed banner image — natural size, no zoom, no crop */
 .hero .heroBannerImg {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  position: absolute;
-  inset: 0;
+  height: auto;
+  position: relative;
   z-index: 0;
 }
 
