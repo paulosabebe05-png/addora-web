@@ -534,18 +534,8 @@
     z-index: 0;
   }
 
-  /* Dark gradient overlay so text stays readable over any image */
-  .mobileBannerOverlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      90deg,
-      rgba(16,24,43,0.72) 0%,
-      rgba(16,24,43,0.35) 60%,
-      transparent 100%
-    );
-    z-index: 1;
-  }
+  /* Overlay removed — banner images have their own design */
+  .mobileBannerOverlay { display: none; }
 
   .mobileBannerLeft {
     display: flex;
