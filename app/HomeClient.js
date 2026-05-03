@@ -172,65 +172,7 @@ function DesktopHero({ banners, loadingBanners }) {
     return () => clearInterval(id)
   }, [banners.length])
 
-  // Loading skeleton
-  if (loadingBanners) {
-    return (
-      <section className={styles.hero}>
-        <div className={styles.heroInner}>
-          <div className={styles.heroContent}>
-            <div className={styles.heroBannerSkeleton} style={{ height: 18, width: 160, borderRadius: 100, marginBottom: 8 }} />
-            <div className={styles.heroBannerSkeleton} style={{ height: 32, width: 320, borderRadius: 8, marginBottom: 10 }} />
-            <div className={styles.heroBannerSkeleton} style={{ height: 14, width: 260, borderRadius: 6 }} />
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  // Static fallback when no banners
-  if (banners.length === 0) {
-    return (
-      <section className={styles.hero}>
-        <div className={styles.heroInner}>
-          <div className={styles.heroContent}>
-            <span className={styles.heroBadge}>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              </svg>
-              Ethiopia&apos;s Newest Online Marketplace
-            </span>
-            <h1 className={styles.heroTitle}>
-              Shop Smart, <span>Pay on Delivery</span>
-            </h1>
-            <div className={styles.heroCod}>
-              {['Cash on Delivery','1–3 Day Delivery','Free in Addis','200+ Sellers'].map(f => (
-                <div key={f} className={styles.heroFeature}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                  {f}
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className={styles.heroStats}>
-            <div className={styles.heroStatCard}>
-              <span className={styles.heroStatNum}>5,000+</span>
-              <span className={styles.heroStatLabel}>Products</span>
-            </div>
-            <div className={styles.heroStatCard}>
-              <span className={styles.heroStatNum}>200+</span>
-              <span className={styles.heroStatLabel}>Sellers</span>
-            </div>
-            <div className={`${styles.heroStatCard} ${styles.heroStatAccent}`}>
-              <span className={styles.heroCardLabel}>⚡ Flash Deal</span>
-              <span className={styles.heroCardTitle}>Up to 64% Off</span>
-            </div>
-          </div>
-        </div>
-      </section>
-    )
-  }
+  if (loadingBanners || banners.length === 0) return null
 
   const banner = banners[activeIdx]
   const handleClick = () => { if (banner.target_url) router.push(banner.target_url) }
@@ -241,15 +183,12 @@ function DesktopHero({ banners, loadingBanners }) {
       style={{ cursor: banner.target_url ? 'pointer' : 'default' }}
       onClick={handleClick}
     >
-      {/* Full-bleed banner image — no overlay, no text on top */}
       <img
         key={activeIdx}
         src={banner.image_url}
         alt={banner.title || 'Promotion'}
         className={styles.heroBannerImg}
       />
-
-      {/* Dots indicator at bottom-left */}
       <div className={styles.heroInner}>
         <BannerDots count={banners.length} active={activeIdx} onSelect={setActiveIdx} />
       </div>
@@ -273,61 +212,19 @@ function MobileHero({ banners, loadingBanners, activeCategory, setActiveCategory
   return (
     <section className={styles.mobileHero}>
 
-      {/* Banner */}
-      {loadingBanners ? (
-        <div className={`${styles.mobileBanner} ${styles.mobileBannerLoading}`}>
-          <div className={styles.mobileBannerLeft}>
-            <div className={styles.mobileSkeleton} style={{ width: 80, height: 12 }} />
-            <div className={styles.mobileSkeleton} style={{ width: 160, height: 26, marginTop: 4 }} />
-            <div className={styles.mobileSkeleton} style={{ width: 100, height: 28, borderRadius: 100, marginTop: 8 }} />
-          </div>
-        </div>
-      ) : banners.length === 0 ? (
-        /* Static fallback */
-        <div className={styles.mobileBanner}>
-          <div className={styles.mobileBannerLeft}>
-            <span className={styles.mobileBannerTag}>🔥 Launch Sale</span>
-            <h2 className={styles.mobileBannerTitle}>Up to 64% Off</h2>
-            <p className={styles.mobileBannerSub}>Cash on delivery · Free in Addis</p>
-            <Link href="#all-products" className={styles.mobileBannerCta}>Shop Now</Link>
-          </div>
-          <div className={styles.mobileBannerRight}>
-            <div className={styles.bannerOrb} />
-            <div className={styles.bannerPercent}>64%<br/><span>OFF</span></div>
-          </div>
-        </div>
-      ) : (
-        /* Dynamic — image_url fills banner, target_url is destination */
+      {/* Banner — only shown when DB banners exist */}
+      {!loadingBanners && banners.length > 0 && (
         <div
           className={styles.mobileBanner}
           key={activeIdx}
           style={{ cursor: banner.target_url ? 'pointer' : 'default' }}
           onClick={() => banner.target_url && router.push(banner.target_url)}
         >
-          {/* Full-bleed image */}
           <img
             src={banner.image_url}
             alt={banner.title || 'Promotion'}
             className={styles.mobileBannerBgImg}
           />
-          {/* Overlay so text stays legible */}
-          <div className={styles.mobileBannerOverlay} />
-
-          <div className={styles.mobileBannerLeft}>
-            {banner.title && (
-              <h2 className={styles.mobileBannerTitle}>{banner.title}</h2>
-            )}
-            {banner.target_url && (
-              <Link
-                href={banner.target_url}
-                className={styles.mobileBannerCta}
-                onClick={e => e.stopPropagation()}
-              >
-                Shop Now
-              </Link>
-            )}
-          </div>
-
           <BannerDots count={banners.length} active={activeIdx} onSelect={setActiveIdx} />
         </div>
       )}
