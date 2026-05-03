@@ -121,7 +121,7 @@ export default function CategoriesPage() {
                 key={cat.id}
                 className={styles.card}
                 style={{ background: `linear-gradient(135deg, ${bg}, ${accent})` }}
-                onClick={() => router.push(`/?category=${encodeURIComponent(cat.name)}`)}
+                onClick={() => router.push(`/categories/${cat.id}`)}
               >
                 <span className={styles.cardIcon}>{getCategoryIcon(cat.name)}</span>
                 <span className={styles.cardName}>{cat.name}</span>
