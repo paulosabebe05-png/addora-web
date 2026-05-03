@@ -7,13 +7,16 @@
   position: relative;
   overflow: hidden;
   background: #10182B;
+  /* 1400x160 image × 2 = 320px tall, fits full image at 2× scale */
+  height: 320px;
 }
 
-/* Full-bleed banner image — natural size, no zoom, no crop */
+/* Scale image to fill full width AND height — no crop since same ratio */
 .hero .heroBannerImg {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: fill;
   position: relative;
   z-index: 0;
 }
