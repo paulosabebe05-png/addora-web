@@ -166,6 +166,7 @@ function BannerDots({ count, active, onSelect }) {
 function DesktopHero({ banners, loadingBanners }) {
   const router = useRouter()
   const [activeIdx, setActiveIdx] = useState(0)
+  const touchStartX = useRef(null)
 
   useEffect(() => {
     if (banners.length <= 1) return
@@ -178,11 +179,25 @@ function DesktopHero({ banners, loadingBanners }) {
   const banner = banners[activeIdx]
   const handleClick = () => { if (banner.target_url) router.push(banner.target_url) }
 
+  const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX }
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return
+    const diff = touchStartX.current - e.changedTouches[0].clientX
+    if (Math.abs(diff) > 40) {
+      setActiveIdx(i => diff > 0
+        ? (i + 1) % banners.length
+        : (i - 1 + banners.length) % banners.length)
+    }
+    touchStartX.current = null
+  }
+
   return (
     <section
       className={styles.hero}
       style={{ cursor: banner.target_url ? 'pointer' : 'default' }}
       onClick={handleClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <img
         key={activeIdx}
@@ -201,6 +216,7 @@ function DesktopHero({ banners, loadingBanners }) {
 function MobileHero({ banners, loadingBanners, activeCategory, setActiveCategory }) {
   const router = useRouter()
   const [activeIdx, setActiveIdx] = useState(0)
+  const touchStartX = useRef(null)
 
   useEffect(() => {
     if (banners.length <= 1) return
@@ -209,6 +225,18 @@ function MobileHero({ banners, loadingBanners, activeCategory, setActiveCategory
   }, [banners.length])
 
   const banner = banners[activeIdx]
+
+  const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX }
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return
+    const diff = touchStartX.current - e.changedTouches[0].clientX
+    if (Math.abs(diff) > 40) {
+      setActiveIdx(i => diff > 0
+        ? (i + 1) % banners.length
+        : (i - 1 + banners.length) % banners.length)
+    }
+    touchStartX.current = null
+  }
 
   return (
     <section className={styles.mobileHero}>
@@ -220,6 +248,8 @@ function MobileHero({ banners, loadingBanners, activeCategory, setActiveCategory
           key={activeIdx}
           style={{ cursor: banner.target_url ? 'pointer' : 'default' }}
           onClick={() => banner.target_url && router.push(banner.target_url)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
           <img
             src={banner.image_url}
