@@ -1,38 +1,62 @@
 /* ══════════════════════════════════════════
-   DESKTOP HERO — compact
+   DESKTOP HERO — full-width image banner
    ══════════════════════════════════════════ */
 
 .hero {
-  background: #10182B;
-  padding: 80px 24px 20px;
   width: 100%;
   position: relative;
   overflow: hidden;
+  background: #10182B;
+  min-height: 340px;
+  display: flex;
+  align-items: stretch;
+  padding-top: 64px; /* navbar offset */
 }
 
-.hero::before {
+/* Full-bleed banner image */
+.hero .heroBannerImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  z-index: 0;
+}
+
+/* Gradient overlay so text stays readable */
+.hero::after {
   content: '';
   position: absolute;
-  top: -80px; right: -80px;
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, rgba(231,85,37,0.18) 0%, transparent 70%);
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(16,24,43,0.78) 0%,
+    rgba(16,24,43,0.45) 55%,
+    rgba(16,24,43,0.10) 100%
+  );
+  z-index: 1;
   pointer-events: none;
 }
 
 .heroInner {
   max-width: 1400px;
   margin: 0 auto;
+  width: 100%;
+  padding: 48px 24px 36px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 32px;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 2;
 }
 
 .heroContent {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-width: 480px;
+  max-width: 520px;
 }
 
 .heroBadge {
@@ -99,30 +123,17 @@
   transform: scale(1.03);
 }
 
-/* ── Hero right column ── */
+/* ── Hero right column — hidden (image is full-bleed bg now) ── */
 .heroRight {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
-  flex-shrink: 0;
+  display: none;
 }
 
-/* ── Banner image (desktop) ── */
+/* ── Banner image (desktop) — used as full-bleed bg via .hero .heroBannerImg ── */
 .heroBannerImgWrap {
-  width: 300px;
-  height: 200px;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.1);
-  position: relative;
+  display: none;
 }
 
 .heroBannerImg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
   animation: heroBannerFadeIn 0.4s ease both;
 }
 
@@ -521,7 +532,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #10182B;
+    background: white;
     border-radius: 16px;
     padding: 16px 18px;
     overflow: hidden;
