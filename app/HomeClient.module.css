@@ -7,29 +7,25 @@
   position: relative;
   overflow: hidden;
   background: #10182B;
-  aspect-ratio: 1400 / 160;
 }
 
-/* Full-bleed banner image — crisp, no overlay, no wash */
+/* Full-bleed banner image — natural height, no cropping */
 .hero .heroBannerImg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: fill;
   display: block;
+  width: 100%;
+  height: auto;
+  position: relative;
   z-index: 0;
 }
 
-/* heroInner: only holds the dots indicator at bottom-left */
+/* heroInner: holds dots BELOW the banner image */
 .heroInner {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
+  position: relative;
   display: flex;
   align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+  background: #FDFAF6;
 }
 
 /* Hide text overlay — banner images carry their own design */
@@ -203,7 +199,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.3);
+  background: rgba(16,24,43,0.2);
   border: none;
   cursor: pointer;
   padding: 0;
@@ -622,12 +618,10 @@
     color: #E75525;
   }
 
-  /* Mobile banner dots — centered at bottom of banner */
+  /* Mobile banner dots — centered below banner */
   .mobileBanner .bannerDots {
-    position: absolute;
-    bottom: 8px;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
+    margin-top: 6px;
     z-index: 2;
   }
 
