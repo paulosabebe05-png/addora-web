@@ -601,3 +601,258 @@
   .mobileHeroDecorBox { width: 58px; height: 58px; }
   .mobileHeroDot { width: 11px; height: 11px; }
 }
+
+/* ══════════════════════════════════════════
+   NEW MOBILE UPGRADES
+   ══════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* ── Hero CTA button ── */
+  .mobileHeroCta {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 10px;
+    padding: 9px 18px;
+    background: #E75525;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 100px;
+    text-decoration: none;
+    width: fit-content;
+    box-shadow: 0 4px 14px rgba(231,85,37,0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .mobileHeroCta:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px rgba(231,85,37,0.3);
+  }
+
+  /* Override hero title for new copy */
+  .mobileHeroTitle {
+    font-size: 20px !important;
+    line-height: 1.15 !important;
+  }
+
+  /* ── Trust strip ── */
+  .trustStrip {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background: #fff;
+    border: 1px solid #F0EBE3;
+    border-radius: 12px;
+    padding: 10px 14px;
+    gap: 8px;
+  }
+
+  .trustItem {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4a5568;
+    white-space: nowrap;
+  }
+
+  .trustIcon {
+    font-size: 13px;
+  }
+
+  .trustDivider {
+    width: 1px;
+    height: 20px;
+    background: #e8e0d5;
+    flex-shrink: 0;
+  }
+
+  /* ── Flash Sale section ── */
+  .flashSection {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #FFE0D0;
+  }
+
+  .flashHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px 10px;
+    background: linear-gradient(90deg, #1a1208, #2d1608);
+  }
+
+  .flashTitleRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .flashFire {
+    font-size: 16px;
+  }
+
+  .flashTitle {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+
+  .flashBadgePill {
+    background: #E75525;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 100px;
+  }
+
+  /* Countdown timer */
+  .flashTimer {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .flashTimerGroup {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .flashTimerNum {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: #E75525;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    border-radius: 6px;
+    font-family: 'Space Grotesk', monospace;
+  }
+
+  .flashTimerColon {
+    color: rgba(255,255,255,0.6);
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 1px;
+  }
+
+  /* Flash product grid — horizontal scroll */
+  .flashGrid {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 10px 10px 12px;
+    background: #fff;
+  }
+
+  .flashGrid::-webkit-scrollbar { display: none; }
+
+  .flashItem {
+    flex-shrink: 0;
+    width: 95px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    padding: 0 5px;
+  }
+
+  .flashImg {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    background: #FFF3ED;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+
+  .flashImgEl {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .flashItemBadge {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    background: #E75525;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 100px;
+  }
+
+  .flashItemPrice {
+    font-size: 11px;
+    font-weight: 800;
+    color: #E75525;
+    text-align: center;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  /* ── Category pills with icons ── */
+  .catIcon {
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  /* Override mobileCatBtn to show icon + label */
+  .mobileCatBtn {
+    display: flex !important;
+    align-items: center;
+    gap: 5px !important;
+  }
+}
+
+/* Desktop: trust strip hidden */
+.trustStrip { display: none; }
+.flashSection { display: none; }
+
+@media (min-width: 769px) {
+  .trustStrip { display: none; }
+  .flashSection { display: none; }
+}
+
+/* ── Desktop flash banner alias classes ── */
+.flashIconDesktop { font-size: 20px; }
+.flashTitleDesktop {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+}
+.flashDealItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 8px 14px;
+  text-decoration: none;
+  flex: 1;
+  min-width: 0;
+  transition: background 0.2s, border-color 0.2s;
+}
+.flashDealItem:hover {
+  background: rgba(231,85,37,0.1);
+  border-color: rgba(231,85,37,0.3);
+}
