@@ -6,24 +6,45 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import styles from './ProductCard.module.css'
 
-// Pastel backgrounds matching the mockup's colored card backgrounds
 const PASTEL_COLORS = [
-  '#EEF2FF', // soft blue-purple (watch card)
-  '#FDF2F8', // soft pink (dress card)
-  '#F0FDF4', // soft green (gel card)
-  '#FFFBEB', // soft yellow (outfit card)
-  '#FFF5F5', // soft red
-  '#F0F9FF', // soft sky
-  '#F5F3FF', // soft violet
-  '#FAFAF0', // soft lime
+  '#EEF2FF',
+  '#FDF2F8',
+  '#F0FDF4',
+  '#FFFBEB',
+  '#FFF5F5',
+  '#F0F9FF',
+  '#F5F3FF',
+  '#FAFAF0',
 ]
 
-// Pick a consistent color per product based on its id
 function getPastelBg(id) {
   const index = (parseInt(String(id).replace(/\D/g, '').slice(-4) || '0', 10)) % PASTEL_COLORS.length
   return PASTEL_COLORS[index]
 }
 
+// ── Shimmer image — shows while loading ──
+function ImageWithSkeleton({ src, alt, className }) {
+  const [loaded, setLoaded] = useState(false)
+  const [error, setError] = useState(false)
+
+  if (error || !src) return null
+
+  return (
+    <>
+      {!loaded && <div className={styles.imgSkeleton} />}
+      <img
+        src={src}
+        alt={alt}
+        className={className}
+        style={{ opacity: loaded ? 1 : 0, transition: 'opacity 0.25s' }}
+        onLoad={() => setLoaded(true)}
+        onError={() => setError(true)}
+      />
+    </>
+  )
+}
+
+// ── Star rating ──
 function StarRating({ rating = 0, reviews = 0 }) {
   const fmt = (n) => n >= 1000 ? (n / 1000).toFixed(1) + 'k' : n
   return (
@@ -54,6 +75,9 @@ export default function ProductCard({ product }) {
 
   const pastelBg = getPastelBg(product.id)
 
+  // Stock urgency: show "only N left" if stock is low
+  const lowStock = product.stock > 0 && product.stock <= 5
+
   const handleAddToCart = (e) => {
     e.preventDefault()
     if (!user) {
@@ -76,17 +100,26 @@ export default function ProductCard({ product }) {
     setWishlisted((w) => !w)
   }
 
-  const fmtSold = (n) => n >= 1000 ? (n / 1000).toFixed(1) + 'k' : n
+  const fmtSold = (n) => {
+    if (!n) return null
+    return n >= 1000 ? (n / 1000).toFixed(1) + 'k' : n
+  }
 
   return (
     <Link href={`/products/${product.id}`} className={styles.card}>
-      {/* Image wrap — pastel bg injected inline for mobile */}
+
+      {/* ── Image area ── */}
       <div className={styles.imageWrap} style={{ background: pastelBg }}>
+
         {product.image_url ? (
-          <img src={product.image_url} alt={product.name} className={styles.image} />
+          <ImageWithSkeleton
+            src={product.image_url}
+            alt={product.name}
+            className={styles.image}
+          />
         ) : (
           <div className={styles.noImage} style={{ background: pastelBg }}>
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.3">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.25">
               <rect x="3" y="3" width="18" height="18" rx="2"/>
               <circle cx="8.5" cy="8.5" r="1.5"/>
               <polyline points="21 15 16 10 5 21"/>
@@ -99,23 +132,23 @@ export default function ProductCard({ product }) {
           <span className={styles.discountBadge}>-{product.discount}%</span>
         )}
 
-        {/* Hot / flash badge */}
+        {/* Hot badge */}
         {product.badge && product.badge !== '' && (
           <span className={styles.hotBadge}>{product.badge}</span>
         )}
 
-        {/* Out of stock overlay */}
+        {/* Out of stock */}
         {product.stock === 0 && (
           <div className={styles.outOfStock}>Sold Out</div>
         )}
 
-        {/* Wishlist heart */}
+        {/* Wishlist */}
         <button
           className={`${styles.wishBtn} ${wishlisted ? styles.wishlisted : ''}`}
           onClick={handleWishlist}
           aria-label="Add to wishlist"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24"
+          <svg width="13" height="13" viewBox="0 0 24 24"
             fill={wishlisted ? '#ef4444' : 'none'}
             stroke={wishlisted ? '#ef4444' : 'currentColor'}
             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -124,19 +157,45 @@ export default function ProductCard({ product }) {
         </button>
       </div>
 
+      {/* ── Body ── */}
       <div className={styles.body}>
+
+        {/* Social proof row — ABOVE the name, prominent */}
+        {(product.sold > 0 || product.reviews > 0) && (
+          <div className={styles.socialRow}>
+            {product.sold > 0 && (
+              <span className={styles.soldBadge}>
+                🔥 {fmtSold(product.sold)} sold
+              </span>
+            )}
+            {product.reviews > 0 && (
+              <span className={styles.reviewBadge}>
+                ★ {product.rating} ({product.reviews > 999 ? (product.reviews/1000).toFixed(1)+'k' : product.reviews})
+              </span>
+            )}
+          </div>
+        )}
+
         <h3 className={styles.name}>{product.name}</h3>
 
         {/* Stars */}
-        {(product.rating > 0 || product.reviews > 0) && (
+        {product.rating > 0 && (
           <StarRating rating={product.rating} reviews={product.reviews} />
         )}
 
-        {/* Sold count */}
-        {product.sold > 0 && (
-          <p className={styles.soldCount}>{fmtSold(product.sold)} sold</p>
+        {/* Low stock warning */}
+        {lowStock && (
+          <p className={styles.lowStock}>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            Only {product.stock} left!
+          </p>
         )}
 
+        {/* Footer: price + cart button */}
         <div className={styles.footer}>
           <div className={styles.pricing}>
             <span className={styles.price}>ETB {Math.round(discountedPrice).toLocaleString()}</span>
@@ -153,14 +212,14 @@ export default function ProductCard({ product }) {
           >
             {added ? (
               <>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
                 <span className={styles.addBtnText}>Added</span>
               </>
             ) : (
               <>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="12" y1="5" x2="12" y2="19"/>
                   <line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
