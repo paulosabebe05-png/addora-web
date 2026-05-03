@@ -7,56 +7,37 @@
   position: relative;
   overflow: hidden;
   background: #10182B;
-  min-height: 340px;
-  display: flex;
-  align-items: stretch;
-  padding-top: 64px; /* navbar offset */
+  /* Responsive height proportional to width, clamped */
+  height: calc(100vw * 0.32);
+  min-height: 280px;
+  max-height: 480px;
 }
 
-/* Full-bleed banner image */
+/* Full-bleed banner image — crisp, no overlay, no wash */
 .hero .heroBannerImg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center top;
   display: block;
   z-index: 0;
 }
 
-/* Gradient overlay so text stays readable */
-.hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(16,24,43,0.78) 0%,
-    rgba(16,24,43,0.45) 55%,
-    rgba(16,24,43,0.10) 100%
-  );
-  z-index: 1;
-  pointer-events: none;
-}
-
+/* heroInner: only holds the dots indicator at bottom-left */
 .heroInner {
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
-  padding: 48px 24px 36px;
+  position: absolute;
+  bottom: 16px;
+  left: 24px;
+  z-index: 2;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  position: relative;
-  z-index: 2;
 }
 
+/* Hide text overlay — banner images carry their own design */
 .heroContent {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 520px;
+  display: none;
 }
 
 .heroBadge {
