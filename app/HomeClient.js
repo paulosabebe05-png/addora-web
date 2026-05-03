@@ -236,8 +236,12 @@ function DesktopHero({ banners, loadingBanners }) {
   const handleClick = () => { if (banner.target_url) router.push(banner.target_url) }
 
   return (
-    <section className={styles.hero}>
-      {/* Full-bleed background image */}
+    <section
+      className={styles.hero}
+      style={{ cursor: banner.target_url ? 'pointer' : 'default' }}
+      onClick={handleClick}
+    >
+      {/* Full-bleed banner image — no overlay, no text on top */}
       <img
         key={activeIdx}
         src={banner.image_url}
@@ -245,47 +249,9 @@ function DesktopHero({ banners, loadingBanners }) {
         className={styles.heroBannerImg}
       />
 
+      {/* Dots indicator at bottom-left */}
       <div className={styles.heroInner}>
-
-        {/* Left: text + CTA (overlaid on image) */}
-        <div
-          className={styles.heroContent}
-          style={{ cursor: banner.target_url ? 'pointer' : 'default' }}
-          onClick={handleClick}
-        >
-          <span className={styles.heroBadge}>
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-            Ethiopia&apos;s Newest Online Marketplace
-          </span>
-          {banner.title && (
-            <h1 className={`${styles.heroTitle} ${styles.heroBannerTitle}`} key={activeIdx}>
-              {banner.title}
-            </h1>
-          )}
-          <div className={styles.heroCod}>
-            {['Cash on Delivery','1–3 Day Delivery','Free in Addis','200+ Sellers'].map(f => (
-              <div key={f} className={styles.heroFeature}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                {f}
-              </div>
-            ))}
-          </div>
-          {banner.target_url && (
-            <Link
-              href={banner.target_url}
-              className={styles.heroBannerCta}
-              onClick={e => e.stopPropagation()}
-            >
-              Shop Now →
-            </Link>
-          )}
-          <BannerDots count={banners.length} active={activeIdx} onSelect={setActiveIdx} />
-        </div>
-
+        <BannerDots count={banners.length} active={activeIdx} onSelect={setActiveIdx} />
       </div>
     </section>
   )
