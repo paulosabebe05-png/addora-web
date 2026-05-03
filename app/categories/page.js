@@ -1,140 +1,217 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import styles from './categories.module.css'
 
-// Icon map — fallback icons per category name keyword
 function getCategoryIcon(name) {
   const n = name.toLowerCase()
-  if (n.includes('phone') || n.includes('mobile'))    return '📱'
-  if (n.includes('computer') || n.includes('laptop')) return '💻'
+  if (n.includes('phone') || n.includes('mobile'))     return '📱'
+  if (n.includes('computer') || n.includes('laptop'))  return '💻'
   if (n.includes('fashion') || n.includes('cloth') || n.includes('dress')) return '👗'
-  if (n.includes('shoe') || n.includes('footwear'))   return '👟'
-  if (n.includes('beauty') || n.includes('cosmetic')) return '💄'
-  if (n.includes('food') || n.includes('grocery'))    return '🛒'
-  if (n.includes('sport') || n.includes('fitness'))   return '⚽'
-  if (n.includes('home') || n.includes('furniture'))  return '🛋️'
-  if (n.includes('book') || n.includes('stationery')) return '📚'
-  if (n.includes('toy') || n.includes('kids'))        return '🧸'
-  if (n.includes('watch'))                            return '⌚'
-  if (n.includes('jewel') || n.includes('accessory')) return '💍'
-  if (n.includes('health') || n.includes('medical'))  return '💊'
-  if (n.includes('automotive') || n.includes('car'))  return '🚗'
-  if (n.includes('garden') || n.includes('outdoor'))  return '🌿'
-  if (n.includes('pet'))                              return '🐾'
-  if (n.includes('music') || n.includes('audio'))     return '🎵'
-  if (n.includes('camera') || n.includes('photo'))    return '📷'
-  if (n.includes('bag') || n.includes('luggage'))     return '👜'
-  if (n.includes('tool') || n.includes('hardware'))   return '🔧'
+  if (n.includes('shoe') || n.includes('footwear'))    return '👟'
+  if (n.includes('beauty') || n.includes('cosmetic'))  return '💄'
+  if (n.includes('food') || n.includes('grocery'))     return '🛒'
+  if (n.includes('sport') || n.includes('fitness'))    return '⚽'
+  if (n.includes('home') || n.includes('furniture') || n.includes('appliance')) return '🛋️'
+  if (n.includes('book') || n.includes('stationery'))  return '📚'
+  if (n.includes('toy') || n.includes('kids'))         return '🧸'
+  if (n.includes('watch'))                             return '⌚'
+  if (n.includes('jewel') || n.includes('accessory'))  return '💍'
+  if (n.includes('health') || n.includes('medical'))   return '💊'
+  if (n.includes('automotive') || n.includes('car'))   return '🚗'
+  if (n.includes('garden') || n.includes('outdoor'))   return '🌿'
+  if (n.includes('pet'))                               return '🐾'
+  if (n.includes('music') || n.includes('audio'))      return '🎵'
+  if (n.includes('camera') || n.includes('photo'))     return '📷'
+  if (n.includes('bag') || n.includes('luggage'))      return '👜'
+  if (n.includes('tool') || n.includes('hardware'))    return '🔧'
+  if (n.includes('wedding'))                           return '💒'
+  if (n.includes('hair'))                              return '💇'
+  if (n.includes('electronic'))                        return '⚡'
   return '🛍️'
 }
 
-// Gradient palette — cycles through for visual variety
-const GRADIENTS = [
-  ['#FFF3ED', '#FFE0D0'],
-  ['#EDF4FF', '#D0E4FF'],
-  ['#EDFFF5', '#C8F5DC'],
-  ['#FFF9ED', '#FFE9B8'],
-  ['#F5EDFF', '#E0C8FF'],
-  ['#EDFFFE', '#C0F0EE'],
-  ['#FFEDEE', '#FFD0D4'],
-  ['#F0FFED', '#D0F5C8'],
+const PASTELS = [
+  '#FFF3ED', '#EDF4FF', '#EDFFF5', '#FFF9ED',
+  '#F5EDFF', '#EDFFFE', '#FFEDEE', '#F0FFED',
+  '#FFF0FB', '#EDFFFA', '#FFFAED', '#F0EEFF',
 ]
 
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
-  const router = useRouter()
+  const [categories, setCategories]           = useState([])
+  const [products, setProducts]               = useState([])
+  const [allProducts, setAllProducts]         = useState([])
+  const [activeCat, setActiveCat]             = useState(null)
+  const [loading, setLoading]                 = useState(true)
+  const [productsLoading, setProductsLoading] = useState(false)
+  const rightRef = useRef(null)
 
   useEffect(() => {
-    async function fetchCategories() {
-      const { data, error } = await supabase
+    async function load() {
+      const { data: cats } = await supabase
         .from('categories')
-        .select('*')
+        .select('id, name')
         .order('name', { ascending: true })
 
-      if (!error && data) setCategories(data)
+      const { data: prods } = await supabase
+        .from('products')
+        .select('id, name, image_url, price, discount, category_id')
+        .eq('active', true)
+        .order('created_at', { ascending: false })
+        .limit(30)
+
+      setCategories(cats || [])
+      setAllProducts(prods || [])
       setLoading(false)
     }
-    fetchCategories()
+    load()
   }, [])
 
-  const filtered = categories.filter(c =>
-    c.name.toLowerCase().includes(search.toLowerCase())
-  )
+  async function selectCategory(cat) {
+    setActiveCat(cat)
+    setProductsLoading(true)
+    rightRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+    const { data } = await supabase
+      .from('products')
+      .select('id, name, image_url, price, discount, category_id')
+      .eq('category_id', cat.id)
+      .eq('active', true)
+      .order('created_at', { ascending: false })
+    setProducts(data || [])
+    setProductsLoading(false)
+  }
+
+  // Group for default "Recommend" view
+  const grouped = {}
+  if (!activeCat) {
+    allProducts.forEach(p => {
+      const cat = categories.find(c => c.id === p.category_id)
+      const key = cat ? cat.name : 'Other'
+      if (!grouped[key]) grouped[key] = []
+      if (grouped[key].length < 6) grouped[key].push(p)
+    })
+  }
 
   return (
     <div className={styles.page}>
-      {/* ── Hero header ── */}
-      <div className={styles.hero}>
-        <h1 className={styles.heroTitle}>Shop by Category</h1>
-        <p className={styles.heroSub}>Find exactly what you're looking for</p>
 
-        {/* Search */}
-        <div className={styles.searchWrap}>
-          <svg className={styles.searchIcon} width="16" height="16" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-            <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-          <input
-            type="text"
-            placeholder="Search categories..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className={styles.searchInput}
-          />
-          {search && (
-            <button className={styles.searchClear} onClick={() => setSearch('')}>✕</button>
-          )}
-        </div>
-      </div>
+      {/* ── Left sidebar ── */}
+      <aside className={styles.sidebar}>
+        <button
+          className={`${styles.sideItem} ${!activeCat ? styles.sideActive : ''}`}
+          onClick={() => { setActiveCat(null); setProducts([]) }}
+        >
+          <span className={styles.sideLabel}>Recommend</span>
+        </button>
 
-      {/* ── Count ── */}
-      {!loading && (
-        <div className={styles.countRow}>
-          <span className={styles.countText}>
-            {filtered.length} {filtered.length === 1 ? 'category' : 'categories'}
-            {search && ` for "${search}"`}
-          </span>
-        </div>
-      )}
-
-      {/* ── Grid ── */}
-      <div className={styles.grid}>
-        {loading ? (
-          Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className={styles.skeleton} />
-          ))
-        ) : filtered.length === 0 ? (
-          <div className={styles.empty}>
-            <span className={styles.emptyIcon}>🔍</span>
-            <p>No categories found</p>
-          </div>
-        ) : (
-          filtered.map((cat, i) => {
-            const [bg, accent] = GRADIENTS[i % GRADIENTS.length]
-            return (
+        {loading
+          ? Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className={styles.sideSkeleton} />
+            ))
+          : categories.map(cat => (
               <button
                 key={cat.id}
-                className={styles.card}
-                style={{ background: `linear-gradient(135deg, ${bg}, ${accent})` }}
-                onClick={() => router.push(`/categories/${cat.id}`)}
+                className={`${styles.sideItem} ${activeCat?.id === cat.id ? styles.sideActive : ''}`}
+                onClick={() => selectCategory(cat)}
               >
-                <span className={styles.cardIcon}>{getCategoryIcon(cat.name)}</span>
-                <span className={styles.cardName}>{cat.name}</span>
-                <svg className={styles.cardArrow} width="14" height="14" viewBox="0 0 24 24"
-                  fill="none" stroke="#E75525" strokeWidth="2.5" strokeLinecap="round">
-                  <line x1="5" y1="12" x2="19" y2="12"/>
-                  <polyline points="12 5 19 12 12 19"/>
-                </svg>
+                <span className={styles.sideLabel}>{cat.name}</span>
+                {activeCat?.id === cat.id && <span className={styles.sideIndicator} />}
               </button>
-            )
-          })
+            ))
+        }
+      </aside>
+
+      {/* ── Right panel ── */}
+      <main className={styles.main} ref={rightRef}>
+
+        {/* Default grouped view */}
+        {!activeCat && !loading && (
+          Object.keys(grouped).length === 0
+            ? <div className={styles.empty}><span>🛍️</span><p>No products yet</p></div>
+            : Object.entries(grouped).map(([catName, prods]) => {
+                const cat = categories.find(c => c.name === catName)
+                return (
+                  <section key={catName} className={styles.section}>
+                    <div className={styles.sectionHead}>
+                      <h2 className={styles.sectionTitle}>{catName}</h2>
+                      {cat && (
+                        <button
+                          className={styles.sectionAll}
+                          onClick={() => selectCategory(cat)}
+                        >
+                          All &gt;
+                        </button>
+                      )}
+                    </div>
+                    <div className={styles.productGrid}>
+                      {prods.map((p, i) => (
+                        <Link key={p.id} href={`/products/${p.id}`} className={styles.productItem}>
+                          <div className={styles.productImgWrap} style={{ background: PASTELS[i % PASTELS.length] }}>
+                            {p.image_url
+                              ? <img src={p.image_url} alt={p.name} className={styles.productImg} />
+                              : <span className={styles.productImgPlaceholder}>{getCategoryIcon(catName)}</span>
+                            }
+                            {p.discount > 0 && <span className={styles.discountBadge}>-{p.discount}%</span>}
+                          </div>
+                          <span className={styles.productName}>{p.name}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </section>
+                )
+              })
         )}
-      </div>
+
+        {/* Selected category view */}
+        {activeCat && (
+          <>
+            <div className={styles.catHeader}>
+              <h2 className={styles.catTitle}>{activeCat.name}</h2>
+              <span className={styles.catCount}>
+                {productsLoading ? '…' : `${products.length} items`}
+              </span>
+            </div>
+
+            {productsLoading ? (
+              <div className={styles.productGrid}>
+                {Array.from({ length: 9 }).map((_, i) => (
+                  <div key={i} className={styles.productSkeleton} />
+                ))}
+              </div>
+            ) : products.length === 0 ? (
+              <div className={styles.empty}>
+                <span>📦</span>
+                <p>No products in this category yet</p>
+              </div>
+            ) : (
+              <div className={styles.productGrid}>
+                {products.map((p, i) => (
+                  <Link key={p.id} href={`/products/${p.id}`} className={styles.productItem}>
+                    <div className={styles.productImgWrap} style={{ background: PASTELS[i % PASTELS.length] }}>
+                      {p.image_url
+                        ? <img src={p.image_url} alt={p.name} className={styles.productImg} />
+                        : <span className={styles.productImgPlaceholder}>{getCategoryIcon(activeCat.name)}</span>
+                      }
+                      {p.discount > 0 && <span className={styles.discountBadge}>-{p.discount}%</span>}
+                    </div>
+                    <span className={styles.productName}>{p.name}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {loading && (
+          <div className={styles.productGrid}>
+            {Array.from({ length: 9 }).map((_, i) => (
+              <div key={i} className={styles.productSkeleton} />
+            ))}
+          </div>
+        )}
+      </main>
     </div>
   )
 }
