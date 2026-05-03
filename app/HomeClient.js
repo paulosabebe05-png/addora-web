@@ -243,21 +243,23 @@ function MobileHero({ banners, loadingBanners, activeCategory, setActiveCategory
 
       {/* Banner — only shown when DB banners exist */}
       {!loadingBanners && banners.length > 0 && (
-        <div
-          className={styles.mobileBanner}
-          key={activeIdx}
-          style={{ cursor: banner.target_url ? 'pointer' : 'default' }}
-          onClick={() => banner.target_url && router.push(banner.target_url)}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          <img
-            src={banner.image_url}
-            alt={banner.title || 'Promotion'}
-            className={styles.mobileBannerBgImg}
-          />
+        <>
+          <div
+            className={styles.mobileBanner}
+            key={activeIdx}
+            style={{ cursor: banner.target_url ? 'pointer' : 'default' }}
+            onClick={() => banner.target_url && router.push(banner.target_url)}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            <img
+              src={banner.image_url}
+              alt={banner.title || 'Promotion'}
+              className={styles.mobileBannerBgImg}
+            />
+          </div>
           <BannerDots count={banners.length} active={activeIdx} onSelect={setActiveIdx} />
-        </div>
+        </>
       )}
 
       {/* Trust strip */}
