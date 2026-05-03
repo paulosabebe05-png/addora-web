@@ -5,18 +5,14 @@
 .hero {
   width: 100%;
   position: relative;
-  overflow: hidden;
   background: #10182B;
-  /* 1400x160 image × 2 = 320px tall, fits full image at 2× scale */
-  height: 320px;
 }
 
-/* Scale image to fill full width AND height — no crop since same ratio */
+/* Show full image at natural proportions — no crop, no cut */
 .hero .heroBannerImg {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: fill;
+  height: auto;
   position: relative;
   z-index: 0;
 }
