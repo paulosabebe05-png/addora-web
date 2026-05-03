@@ -115,8 +115,8 @@ function ProductRow({ products, loading }) {
   )
 }
 
-// ── useBanners — uses real column names: active, target_url ──
-function useBanners() {
+// ── useBanners — filters by device: 'desktop' | 'mobile' ──
+function useBanners(device) {
   const [banners, setBanners] = useState([])
   const [loadingBanners, setLoadingBanners] = useState(true)
 
@@ -126,7 +126,8 @@ function useBanners() {
         const { data, error } = await supabase
           .from('banners')
           .select('id, image_url, target_url, title, sort_order')
-          .eq('active', true)                      // ← correct column: active
+          .eq('active', true)
+          .eq('device', device)                    // ← filter by device
           .order('sort_order', { ascending: true })
 
         if (error) throw error
@@ -139,7 +140,7 @@ function useBanners() {
       }
     }
     fetchBanners()
-  }, [])
+  }, [device])
 
   return { banners, loadingBanners }
 }
@@ -266,7 +267,8 @@ export default function HomeClient({ products }) {
   const [activeCategory, setActiveCategory] = useState('All')
   const [search, setSearch] = useState('')
   const countdown = useCountdown(6)
-  const { banners, loadingBanners } = useBanners()
+  const { banners: desktopBanners, loadingBanners: loadingDesktop } = useBanners('desktop')
+  const { banners: mobileBanners,  loadingBanners: loadingMobile  } = useBanners('mobile')
 
   const flashProducts = products.filter(p => p.discount >= 20).slice(0, 10)
   const todayDeals    = products.filter(p => p.discount >= 10).slice(0, 10)
@@ -290,10 +292,10 @@ export default function HomeClient({ products }) {
 
   return (
     <>
-      <DesktopHero banners={banners} loadingBanners={loadingBanners} />
+      <DesktopHero banners={desktopBanners} loadingBanners={loadingDesktop} />
       <MobileHero
-        banners={banners}
-        loadingBanners={loadingBanners}
+        banners={mobileBanners}
+        loadingBanners={loadingMobile}
         activeCategory={activeCategory}
         setActiveCategory={setActiveCategory}
       />
