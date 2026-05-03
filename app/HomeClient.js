@@ -237,9 +237,17 @@ function DesktopHero({ banners, loadingBanners }) {
 
   return (
     <section className={styles.hero}>
+      {/* Full-bleed background image */}
+      <img
+        key={activeIdx}
+        src={banner.image_url}
+        alt={banner.title || 'Promotion'}
+        className={styles.heroBannerImg}
+      />
+
       <div className={styles.heroInner}>
 
-        {/* Left: text + CTA */}
+        {/* Left: text + CTA (overlaid on image) */}
         <div
           className={styles.heroContent}
           style={{ cursor: banner.target_url ? 'pointer' : 'default' }}
@@ -275,22 +283,6 @@ function DesktopHero({ banners, loadingBanners }) {
               Shop Now →
             </Link>
           )}
-        </div>
-
-        {/* Right: banner image */}
-        <div className={styles.heroRight}>
-          <div
-            className={styles.heroBannerImgWrap}
-            style={{ cursor: banner.target_url ? 'pointer' : 'default' }}
-            onClick={handleClick}
-          >
-            <img
-              key={activeIdx}
-              src={banner.image_url}
-              alt={banner.title || 'Promotion'}
-              className={styles.heroBannerImg}
-            />
-          </div>
           <BannerDots count={banners.length} active={activeIdx} onSelect={setActiveIdx} />
         </div>
 
