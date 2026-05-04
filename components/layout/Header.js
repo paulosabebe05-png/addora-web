@@ -67,12 +67,7 @@ export default function Header() {
           {/* ── Logo ── */}
           <Link href="/" className={styles.logo}>
             <div className={styles.logoMark}>
-              <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
-                <path d="M8 24 Q16 8 24 24" stroke="white" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
-                <circle cx="8"  cy="24" r="2.8" fill="white"/>
-                <circle cx="16" cy="13" r="2.8" fill="white"/>
-                <circle cx="24" cy="24" r="2.8" fill="white"/>
-              </svg>
+              <img src="/logo.png" alt="Addora logo" className={styles.logoImg} />
             </div>
             <span className={styles.logoText}>Addora</span>
           </Link>
