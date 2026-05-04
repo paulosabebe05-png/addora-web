@@ -5,7 +5,7 @@
 .hero {
   width: 100%;
   position: relative;
-  background: #ffffff;
+  background: #FDFAF6;
   padding-top: 80px;
   max-height: 420px;
   overflow: hidden;
@@ -30,9 +30,10 @@
   align-items: center;
   justify-content: center;
   padding: 8px 0;
-  background: #ffffff;
+  background: #FDFAF6;
 }
 
+/* Hide text overlay — banner images carry their own design */
 .heroContent {
   display: none;
 }
@@ -257,7 +258,7 @@
   border-radius: 100px;
   font-size: 13px;
   font-weight: 500;
-  background: #f4f4f5;
+  background: #f5f5f5;
   border: 1.5px solid transparent;
   color: #444;
   cursor: pointer;
@@ -281,7 +282,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #f4f4f5;
+  background: #f5f5f5;
   border: 1.5px solid transparent;
   border-radius: 100px;
   padding: 8px 16px;
@@ -502,7 +503,7 @@
     flex-direction: column;
     gap: 10px;
     padding: 82px 12px 8px;
-    background: #ffffff;
+    background: #FDFAF6;
   }
 
   /* ── Compact banner ── */
@@ -711,7 +712,7 @@
 
   .section {
     padding: 16px 0 6px;
-    border-bottom: 8px solid #f0f0f0;
+    border-bottom: 8px solid #F5F5F5;
   }
 
   .sectionHeader {
