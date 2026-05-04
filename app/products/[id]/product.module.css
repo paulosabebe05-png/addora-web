@@ -135,7 +135,7 @@
   top: 16px;
   left: 16px;
   background: var(--gold);
-  color: #0c0c0e;
+  color: #faf7f2;
   font-size: 10px;
   font-weight: 700;
   padding: 5px 12px;
@@ -149,7 +149,7 @@
 .oosOverlay {
   position: absolute;
   inset: 0;
-  background: rgba(12,12,14,.7);
+  background: rgba(245,240,232,.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -165,7 +165,7 @@
   position: absolute;
   bottom: 14px;
   right: 14px;
-  background: rgba(12,12,14,.7);
+  background: rgba(245,240,232,.88);
   color: var(--text-secondary);
   font-size: 10px;
   padding: 5px 12px;
@@ -183,8 +183,8 @@
   transform: translateY(-50%);
   width: 38px;
   height: 38px;
-  background: rgba(12,12,14,.75);
-  border: 1px solid var(--border-hover);
+  background: rgba(250,247,242,.92);
+  border: 1px solid var(--border);
   border-radius: 50%;
   cursor: pointer;
   font-size: 18px;
@@ -192,7 +192,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-dark-sm);
   opacity: 0;
   transition: opacity .2s, background .2s;
   z-index: 2;
@@ -202,7 +202,7 @@
 .mainBox:hover .arrow { opacity: 1; }
 .arrowL { left: 12px; }
 .arrowR { right: 12px; }
-.arrow:hover { background: rgba(201,168,76,.2); border-color: var(--gold); color: var(--gold); }
+.arrow:hover { background: #fff; border-color: var(--text-primary); }
 
 .zoomHint {
   position: absolute;
@@ -210,7 +210,7 @@
   left: 14px;
   font-size: 10px;
   color: var(--text-secondary);
-  background: rgba(12,12,14,.7);
+  background: rgba(250,247,242,.88);
   padding: 5px 12px;
   border-radius: 20px;
   border: 1px solid var(--border);
@@ -308,7 +308,7 @@
   position: relative;
 }
 
-/* Gold top line accent */
+/* Ink top line accent */
 .infoPanel::before {
   content: '';
   position: absolute;
@@ -316,8 +316,8 @@
   left: 36px;
   right: 36px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  opacity: .5;
+  background: linear-gradient(90deg, transparent, rgba(26,26,26,.25), transparent);
+  opacity: 1;
 }
 
 .title {
@@ -402,7 +402,7 @@
   font-weight: 600;
   color: var(--gold);
   background: var(--gold-dim);
-  border: 1px solid rgba(201,168,76,.3);
+  border: 1px solid var(--border-hover);
   padding: 2px 8px;
   border-radius: 2px;
   letter-spacing: .08em;
@@ -428,7 +428,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(201,168,76,.04) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(26,26,26,.02) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -471,9 +471,9 @@
   font-weight: 300;
 }
 .savePill {
-  background: var(--gold-dim);
-  color: var(--gold);
-  border: 1px solid rgba(201,168,76,.3);
+  background: var(--save-bg);
+  color: var(--save-color);
+  border: 1px solid var(--save-border);
   font-size: 10px;
   font-weight: 600;
   padding: 4px 10px;
@@ -528,7 +528,7 @@
 .colorOn { border-color: var(--gold) !important; }
 .colorOos { opacity: .3; cursor: not-allowed; }
 .colorImg { width: 56px; height: 56px; object-fit: cover; border-radius: 2px; display: block; }
-.colorSwatch { width: 56px; height: 40px; border-radius: 2px; display: block; border: 1px solid rgba(255,255,255,.06); }
+.colorSwatch { width: 56px; height: 40px; border-radius: 2px; display: block; border: 1px solid rgba(26,26,26,.1); }
 .colorLabel {
   font-size: 9px;
   color: var(--text-secondary);
@@ -697,7 +697,7 @@
   flex: 1;
   padding: 16px 10px;
   background: var(--gold);
-  color: #0c0c0e;
+  color: #faf7f2;
   font-size: 12px;
   font-weight: 700;
   border: none;
