@@ -19,26 +19,29 @@
   --shadow: 0 4px 24px rgba(16, 24, 43, 0.08);
   --shadow-lg: 0 12px 48px rgba(16, 24, 43, 0.16);
 
-  /* ── Premium product page tokens ── */
-  --bg: #0c0c0e;
-  --surface: #131316;
-  --surface2: #1a1a1f;
-  --border: rgba(255,255,255,.07);
-  --border-hover: rgba(255,255,255,.14);
-  --gold: #c9a84c;
-  --gold-light: #e2c47a;
-  --gold-dim: rgba(201,168,76,.15);
-  --gold-glow: rgba(201,168,76,.25);
-  --text-primary: #f0ede8;
-  --text-secondary: #8a8784;
-  --text-muted-dark: #4a4845;
-  --accent: #c9a84c;
-  --red: #e05a3a;
-  --green: #4caf7d;
-  --shadow-dark: 0 32px 80px rgba(0,0,0,.6);
-  --shadow-dark-sm: 0 8px 32px rgba(0,0,0,.4);
-  --radius-product: 4px;
-  --radius-product-lg: 8px;
+  /* ── Product page — Soft Linen + Black Ink ── */
+  --bg: #f5f0e8;
+  --surface: #faf7f2;
+  --surface2: #eee8de;
+  --border: rgba(26,26,26,.1);
+  --border-hover: rgba(26,26,26,.22);
+  --gold: #1a1a1a;
+  --gold-light: #3a3530;
+  --gold-dim: rgba(26,26,26,.07);
+  --gold-glow: rgba(26,26,26,.15);
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b6660;
+  --text-muted-dark: #a8a098;
+  --accent: #1a1a1a;
+  --red: #b94040;
+  --green: #3d7a52;
+  --shadow-dark: 0 16px 48px rgba(26,26,26,.1);
+  --shadow-dark-sm: 0 4px 20px rgba(26,26,26,.08);
+  --radius-product: 3px;
+  --radius-product-lg: 6px;
+  --save-bg: #e8dfc8;
+  --save-color: #5c4a2a;
+  --save-border: #c8b898;
 }
 
 * {
