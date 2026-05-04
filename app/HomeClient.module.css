@@ -7,7 +7,7 @@
   position: relative;
   background: #ffffff;
   padding-top: 68px;
-  max-height: 340px;
+  max-height: 370px;
   overflow: hidden;
 }
 
@@ -17,7 +17,7 @@
   height: auto;
   position: relative;
   z-index: 0;
-  max-height: 260px;
+  max-height: 290px;
   max-width: 1200px;
   object-fit: cover;
   object-position: center;
@@ -39,8 +39,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-left: 28px;
-  padding-right: 28px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 /* Hide text overlay */
