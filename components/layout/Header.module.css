@@ -6,21 +6,24 @@
   right: 0;
   z-index: 200;
   width: 100%;
-  transition: background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease;
+  transition: background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* ── Option 1: Warm Ivory theme ── */
+/* ── Transparent (home, before scroll) ── */
 .transparent {
-  background: #FDFAF6;
-  border-bottom: 1px solid #E8E0D5;
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
+/* ── Solid (scrolled or non-home) ── */
 .solid {
-  background: #FDFAF6;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 1px 20px rgba(0,0,0,0.06);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid #E8E0D5;
-  box-shadow: 0 1px 24px rgba(120,80,40,0.07);
 }
 
 /* ── Inner ── */
@@ -52,21 +55,22 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(231,85,37,0.3);
 }
 
 .logoText {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 20px;
   font-weight: 700;
-  letter-spacing: -0.4px;
+  letter-spacing: -0.5px;
   transition: color 0.3s;
-  color: #1a1208;
+  color: #0D0D0D;
 }
 
-.transparent .logoText { color: #1a1208; }
-.solid .logoText       { color: #1a1208; }
+.transparent .logoText { color: #0D0D0D; }
+.solid .logoText       { color: #0D0D0D; }
 
-/* ── Desktop search bar — pill style with Search button ── */
+/* ── Desktop search bar ── */
 .desktopSearch {
   flex: 1;
   max-width: 520px;
@@ -76,15 +80,14 @@
   border: 1.5px solid #E75525;
   background: #ffffff;
   overflow: hidden;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, border-color 0.2s;
   padding: 0;
 }
 
 .desktopSearch:focus-within {
-  box-shadow: 0 0 0 3px rgba(231, 85, 37, 0.12);
+  box-shadow: 0 0 0 3px rgba(231,85,37,0.12);
 }
 
-/* remove old transparent/solid overrides for search — ivory is always same */
 .transparent .desktopSearch,
 .solid .desktopSearch {
   background: #ffffff;
@@ -93,7 +96,7 @@
 
 .transparent .desktopSearch:focus-within,
 .solid .desktopSearch:focus-within {
-  box-shadow: 0 0 0 3px rgba(231, 85, 37, 0.12);
+  box-shadow: 0 0 0 3px rgba(231,85,37,0.12);
   background: #ffffff;
   border-color: #E75525;
 }
@@ -119,21 +122,21 @@
   outline: none;
   font-size: 14px;
   font-family: inherit;
-  color: #1a1208;
+  color: #0D0D0D;
   padding: 10px 8px;
 }
 
 .transparent .desktopSearchInput,
 .solid .desktopSearchInput {
-  color: #1a1208;
+  color: #0D0D0D;
 }
 
 .transparent .desktopSearchInput::placeholder,
 .solid .desktopSearchInput::placeholder {
-  color: #b0a090;
+  color: #B0B0B8;
 }
 
-/* ── Search button (right pill side) ── */
+/* ── Search button ── */
 .desktopSearchBtn {
   flex-shrink: 0;
   background: #E75525;
@@ -148,10 +151,11 @@
   cursor: pointer;
   transition: background 0.18s;
   white-space: nowrap;
+  letter-spacing: -0.01em;
 }
 
 .desktopSearchBtn:hover {
-  background: #ff6b3d;
+  background: #cf4419;
 }
 
 /* ── Center nav ── */
@@ -170,16 +174,17 @@
   text-decoration: none;
   transition: background 0.18s, color 0.18s;
   white-space: nowrap;
-  color: #5a4030;
+  color: #444;
   display: flex;
   align-items: center;
   gap: 5px;
+  letter-spacing: -0.01em;
 }
 
-.transparent .navLink { color: #5a4030; }
-.transparent .navLink:hover { color: #1a1208; background: rgba(120,60,20,0.07); }
-.solid .navLink { color: #5a4030; }
-.solid .navLink:hover { color: #1a1208; background: rgba(120,60,20,0.07); }
+.transparent .navLink { color: #444; }
+.transparent .navLink:hover { color: #0D0D0D; background: rgba(0,0,0,0.05); }
+.solid .navLink { color: #444; }
+.solid .navLink:hover { color: #0D0D0D; background: rgba(0,0,0,0.05); }
 
 .navLinkActive {
   color: #E75525 !important;
@@ -206,12 +211,12 @@
   border-radius: 10px;
   text-decoration: none;
   transition: background 0.18s, color 0.18s;
-  color: #5a4030;
+  color: #444;
 }
 
-.transparent .cartBtn { color: #5a4030; }
-.transparent .cartBtn:hover { background: rgba(120,60,20,0.08); color: #1a1208; }
-.solid .cartBtn { color: #5a4030; }
+.transparent .cartBtn { color: #444; }
+.transparent .cartBtn:hover { background: rgba(0,0,0,0.06); color: #0D0D0D; }
+.solid .cartBtn { color: #444; }
 .solid .cartBtn:hover { background: rgba(231,85,37,0.08); color: #E75525; }
 
 .cartBadge {
@@ -229,7 +234,8 @@
   align-items: center;
   justify-content: center;
   padding: 0 4px;
-  border: 1.5px solid #FDFAF6;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(231,85,37,0.35);
 }
 
 /* Auth */
@@ -246,14 +252,15 @@
   font-weight: 600;
   text-decoration: none;
   transition: all 0.18s;
-  color: #1a1208;
-  border: 1px solid rgba(120,60,20,0.2);
+  color: #0D0D0D;
+  border: 1px solid rgba(0,0,0,0.14);
+  letter-spacing: -0.01em;
 }
 
-.transparent .signinBtn { color: #1a1208; border: 1px solid rgba(120,60,20,0.2); }
-.transparent .signinBtn:hover { border-color: rgba(120,60,20,0.4); background: rgba(120,60,20,0.05); }
-.solid .signinBtn { color: #1a1208; border: 1px solid rgba(120,60,20,0.2); }
-.solid .signinBtn:hover { border-color: rgba(120,60,20,0.4); background: rgba(120,60,20,0.05); }
+.transparent .signinBtn { color: #0D0D0D; border: 1px solid rgba(0,0,0,0.14); }
+.transparent .signinBtn:hover { border-color: rgba(0,0,0,0.28); background: rgba(0,0,0,0.04); }
+.solid .signinBtn { color: #0D0D0D; border: 1px solid rgba(0,0,0,0.14); }
+.solid .signinBtn:hover { border-color: rgba(0,0,0,0.28); background: rgba(0,0,0,0.04); }
 
 .signupBtn {
   padding: 8px 20px;
@@ -265,10 +272,11 @@
   text-decoration: none;
   border: 1px solid #E75525;
   transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+  letter-spacing: -0.01em;
 }
 .signupBtn:hover {
-  background: #ff6b3d;
-  border-color: #ff6b3d;
+  background: #cf4419;
+  border-color: #cf4419;
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(231,85,37,0.3);
 }
@@ -289,10 +297,10 @@
   font-family: inherit;
 }
 
-.transparent .userBtn { border-color: rgba(120,60,20,0.2); color: #5a4030; }
-.transparent .userBtn:hover { border-color: rgba(231,85,37,0.4); background: rgba(120,60,20,0.05); color: #1a1208; }
-.solid .userBtn { border-color: rgba(120,60,20,0.15); color: #5a4030; }
-.solid .userBtn:hover { border-color: rgba(231,85,37,0.4); color: #1a1208; }
+.transparent .userBtn { border-color: rgba(0,0,0,0.12); color: #444; }
+.transparent .userBtn:hover { border-color: rgba(231,85,37,0.4); background: rgba(0,0,0,0.04); color: #0D0D0D; }
+.solid .userBtn { border-color: rgba(0,0,0,0.10); color: #444; }
+.solid .userBtn:hover { border-color: rgba(231,85,37,0.4); color: #0D0D0D; }
 
 .avatar {
   width: 28px;
@@ -306,6 +314,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(231,85,37,0.25);
 }
 
 .userName {
@@ -315,6 +324,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: #0D0D0D;
+  letter-spacing: -0.01em;
 }
 
 /* Dropdown panel */
@@ -322,10 +333,10 @@
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
-  background: #FDFAF6;
-  border: 1px solid #E8E0D5;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(120,60,20,0.12), 0 4px 16px rgba(120,60,20,0.07);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06);
   min-width: 220px;
   overflow: hidden;
   animation: dropIn 0.18s cubic-bezier(0.34,1.56,0.64,1);
@@ -333,7 +344,7 @@
 
 @keyframes dropIn {
   from { opacity: 0; transform: translateY(-8px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0)   scale(1); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .dropdownHead {
@@ -341,7 +352,8 @@
   align-items: center;
   gap: 12px;
   padding: 16px 16px 14px;
-  border-bottom: 1px solid #E8E0D5;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  background: #FAFAFA;
 }
 
 .dropdownAvatar {
@@ -356,10 +368,11 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(231,85,37,0.25);
 }
 
-.dropdownName { font-size: 14px; font-weight: 700; color: #1a1208; }
-.dropdownPhone { font-size: 12px; color: #a09080; margin-top: 1px; }
+.dropdownName { font-size: 14px; font-weight: 700; color: #0D0D0D; letter-spacing: -0.02em; }
+.dropdownPhone { font-size: 12px; color: #999; margin-top: 1px; }
 
 .dropdownItem {
   display: flex;
@@ -368,11 +381,11 @@
   padding: 11px 16px;
   font-size: 14px;
   font-weight: 500;
-  color: #5a4030;
+  color: #333;
   text-decoration: none;
   transition: background 0.15s;
 }
-.dropdownItem:hover { background: #F5EEE4; color: #1a1208; }
+.dropdownItem:hover { background: #F7F7F8; color: #0D0D0D; }
 
 .inlineCount {
   margin-left: auto;
@@ -388,7 +401,7 @@
   justify-content: center;
 }
 
-.dropdownDivider { height: 1px; background: #E8E0D5; margin: 4px 0; }
+.dropdownDivider { height: 1px; background: rgba(0,0,0,0.06); margin: 4px 0; }
 
 .dropdownSignOut {
   display: flex;
@@ -408,7 +421,7 @@
 }
 .dropdownSignOut:hover { background: #fff5f5; }
 
-/* ── Mobile announcement strip — hidden on desktop ── */
+/* ── Mobile announcement strip ── */
 .announcementStrip {
   display: none;
 }
@@ -423,11 +436,10 @@
    ════════════════════════════════════════ */
 @media (max-width: 768px) {
 
-  /* Warm ivory on mobile too */
   .header {
-    background: #FDFAF6 !important;
-    border-bottom: 1px solid #E8E0D5 !important;
-    box-shadow: 0 1px 12px rgba(120,80,40,0.07) !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid rgba(0,0,0,0.07) !important;
+    box-shadow: 0 1px 12px rgba(0,0,0,0.06) !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     overflow: visible;
@@ -436,13 +448,13 @@
   .header .logoText,
   .transparent .logoText,
   .solid .logoText {
-    color: #1a1208 !important;
+    color: #0D0D0D !important;
   }
 
   .header .cartBtn,
   .transparent .cartBtn,
   .solid .cartBtn {
-    color: #5a4030 !important;
+    color: #444 !important;
   }
 
   /* ── Inner bar ── */
@@ -472,7 +484,7 @@
   .logoText {
     font-size: 18px;
     font-weight: 700;
-    color: #1a1208;
+    color: #0D0D0D;
   }
 
   /* Mobile search pill */
@@ -487,21 +499,28 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #ffffff;
-    border: 1.5px solid #E75525;
+    background: #F7F7F8;
+    border: 1.5px solid transparent;
     border-radius: 100px;
     padding: 7px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
   }
 
   .mobileSearchWrap:focus-within {
-    box-shadow: 0 0 0 3px rgba(231,85,37,0.12);
+    background: #ffffff;
+    border-color: #E75525;
+    box-shadow: 0 0 0 3px rgba(231,85,37,0.10);
   }
 
   .mobileSearchIcon {
-    color: #E75525;
+    color: #999;
     flex-shrink: 0;
     display: flex;
     align-items: center;
+  }
+
+  .mobileSearchWrap:focus-within .mobileSearchIcon {
+    color: #E75525;
   }
 
   .mobileSearchInput {
@@ -509,14 +528,14 @@
     background: none;
     border: none;
     outline: none;
-    color: #1a1208;
+    color: #0D0D0D;
     font-size: 13px;
     font-family: inherit;
     min-width: 0;
   }
 
   .mobileSearchInput::placeholder {
-    color: #b0a090;
+    color: #B0B0B8;
   }
 
   /* Cart button on mobile */
@@ -524,7 +543,7 @@
     width: 38px;
     height: 38px;
     border-radius: 9px;
-    color: #5a4030 !important;
+    color: #444 !important;
     flex-shrink: 0;
   }
 
@@ -536,7 +555,7 @@
   .cartBadge {
     top: 3px;
     right: 3px;
-    border-color: #FDFAF6;
+    border-color: #ffffff;
   }
 
   /* Dropdown */
@@ -545,7 +564,7 @@
     min-width: 200px;
   }
 
-  /* ── Orange announcement strip ── */
+  /* ── Announcement strip ── */
   .announcementStrip {
     display: flex;
     align-items: center;
@@ -583,7 +602,7 @@
   .announcementDot {
     width: 4px;
     height: 4px;
-    background: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.4);
     border-radius: 50%;
     flex-shrink: 0;
   }
