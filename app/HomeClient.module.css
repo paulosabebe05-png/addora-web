@@ -6,8 +6,8 @@
   width: 100%;
   position: relative;
   background: #ffffff;
-  padding-top: 80px;
-  max-height: 420px;
+  padding-top: 68px;
+  max-height: 340px;
   overflow: hidden;
 }
 
@@ -17,9 +17,11 @@
   height: auto;
   position: relative;
   z-index: 0;
-  max-height: 340px;
+  max-height: 260px;
+  max-width: 1200px;
   object-fit: cover;
   object-position: center;
+  border-radius: 12px;
 }
 
 /* heroInner: holds dots BELOW the banner image */
@@ -28,8 +30,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 0;
+  padding: 8px 0;
   background: #ffffff;
+}
+
+/* Constrain banner image to a readable max width */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 28px;
+  padding-right: 28px;
 }
 
 /* Hide text overlay */
