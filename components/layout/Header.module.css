@@ -11,12 +11,12 @@
 
 /* ── Option 1: Warm Ivory theme ── */
 .transparent {
-  background: #FDFAF6;
+  background: #ffffff;
   border-bottom: 1px solid #E8E0D5;
 }
 
 .solid {
-  background: #FDFAF6;
+  background: #ffffff;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid #E8E0D5;
@@ -229,7 +229,7 @@
   align-items: center;
   justify-content: center;
   padding: 0 4px;
-  border: 1.5px solid #FDFAF6;
+  border: 1.5px solid #ffffff;
 }
 
 /* Auth */
@@ -322,7 +322,7 @@
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
-  background: #FDFAF6;
+  background: #ffffff;
   border: 1px solid #E8E0D5;
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(120,60,20,0.12), 0 4px 16px rgba(120,60,20,0.07);
@@ -425,7 +425,7 @@
 
   /* Warm ivory on mobile too */
   .header {
-    background: #FDFAF6 !important;
+    background: #ffffff !important;
     border-bottom: 1px solid #E8E0D5 !important;
     box-shadow: 0 1px 12px rgba(120,80,40,0.07) !important;
     backdrop-filter: none !important;
@@ -536,7 +536,7 @@
   .cartBadge {
     top: 3px;
     right: 3px;
-    border-color: #FDFAF6;
+    border-color: #ffffff;
   }
 
   /* Dropdown */
