@@ -5,8 +5,8 @@
 .hero {
   width: 100%;
   position: relative;
-  background: #10182B;
-  padding-top: 80px; /* push below fixed navbar */
+  background: #FDFAF6;
+  padding-top: 80px;
 }
 
 /* Show full image — no crop, no cut */
