@@ -7,6 +7,8 @@
   position: relative;
   background: #FDFAF6;
   padding-top: 80px;
+  max-height: 420px;
+  overflow: hidden;
 }
 
 /* Show full image — no crop, no cut */
@@ -16,6 +18,9 @@
   height: auto;
   position: relative;
   z-index: 0;
+  max-height: 340px;
+  object-fit: cover;
+  object-position: center;
 }
 
 /* heroInner: holds dots BELOW the banner image */
