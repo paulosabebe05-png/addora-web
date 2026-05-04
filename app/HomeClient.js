@@ -12,14 +12,15 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
 
-// Real banners table schema:
-//   id          uuid primary key
-//   image_url   text not null
-//   target_url  text nullable  ← where clicking goes, e.g. /products/abc-123
-//   title       text nullable
-//   active      boolean        ← NOT is_active
-//   sort_order  integer
-//   created_at  timestamptz
+// ── Products table columns used here ──
+// id, name, price, category_id, image_url, stock, active, description,
+// discount, store_id, created_at, extra_images, section, affiliate_commission
+// NEW columns added (see migration SQL below):
+//   rating    numeric  default 0   ← average customer rating
+//   sold      integer  default 0   ← total units sold
+
+const PRODUCT_FIELDS =
+  'id, name, price, image_url, discount, section, rating, sold, created_at, category_id, stock, active'
 
 const CATEGORIES = [
   { label: 'All',          icon: '🛍️' },
@@ -51,6 +52,57 @@ function useCountdown(targetHours = 6) {
   }, [])
   const pad = (n) => String(n).padStart(2, '0')
   return `${pad(time.h)}:${pad(time.m)}:${pad(time.s)}`
+}
+
+// ── Per-section product hook ──
+// Each section fetches ONLY its own rows from the DB using the `section` enum column.
+// `orderCol` and `ascending` control sort order.
+function useSectionProducts(sectionValue, { orderCol = 'created_at', ascending = false, limit = 10 } = {}) {
+  const [products, setProducts] = useState([])
+  const [loading, setLoading]   = useState(true)
+
+  useEffect(() => {
+    async function fetch() {
+      setLoading(true)
+      const { data, error } = await supabase
+        .from('products')
+        .select(PRODUCT_FIELDS)
+        .eq('active', true)
+        .eq('section', sectionValue)
+        .order(orderCol, { ascending })
+        .limit(limit)
+
+      if (error) console.error(`Section [${sectionValue}] fetch error:`, error)
+      setProducts(data || [])
+      setLoading(false)
+    }
+    fetch()
+  }, [sectionValue])
+
+  return { products, loading }
+}
+
+// ── All-products hook (for the bottom grid + search/filter) ──
+function useAllProducts() {
+  const [products, setProducts] = useState([])
+  const [loading, setLoading]   = useState(true)
+
+  useEffect(() => {
+    async function fetch() {
+      const { data, error } = await supabase
+        .from('products')
+        .select(PRODUCT_FIELDS)
+        .eq('active', true)
+        .order('created_at', { ascending: false })
+
+      if (error) console.error('All-products fetch error:', error)
+      setProducts(data || [])
+      setLoading(false)
+    }
+    fetch()
+  }, [])
+
+  return { products, loading }
 }
 
 // ── Skeleton card ──
@@ -104,6 +156,7 @@ function ProductRow({ products, loading }) {
       </div>
     )
   }
+  if (!products.length) return null
   return (
     <div className={styles.hScrollRow}>
       {products.map(p => (
@@ -127,7 +180,7 @@ function useBanners(device) {
           .from('banners')
           .select('id, image_url, target_url, title, sort_order')
           .eq('active', true)
-          .eq('device', device)                    // ← filter by device
+          .eq('device', device)
           .order('sort_order', { ascending: true })
 
         if (error) throw error
@@ -178,7 +231,6 @@ function DesktopHero({ banners, loadingBanners }) {
 
   const banner = banners[activeIdx]
   const handleClick = () => { if (banner.target_url) router.push(banner.target_url) }
-
   const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX }
   const handleTouchEnd = (e) => {
     if (touchStartX.current === null) return
@@ -225,7 +277,6 @@ function MobileHero({ banners, loadingBanners, activeCategory, setActiveCategory
   }, [banners.length])
 
   const banner = banners[activeIdx]
-
   const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX }
   const handleTouchEnd = (e) => {
     if (touchStartX.current === null) return
@@ -240,8 +291,6 @@ function MobileHero({ banners, loadingBanners, activeCategory, setActiveCategory
 
   return (
     <section className={styles.mobileHero}>
-
-      {/* Banner — only shown when DB banners exist */}
       {!loadingBanners && banners.length > 0 && (
         <>
           <div
@@ -262,7 +311,6 @@ function MobileHero({ banners, loadingBanners, activeCategory, setActiveCategory
         </>
       )}
 
-      {/* Trust strip */}
       <div className={styles.trustStrip}>
         {[
           { icon: '✓', label: 'Cash on Delivery' },
@@ -277,7 +325,6 @@ function MobileHero({ banners, loadingBanners, activeCategory, setActiveCategory
         ))}
       </div>
 
-      {/* Category pills */}
       <div className={styles.catRow}>
         {CATEGORIES.map(cat => (
           <button
@@ -295,24 +342,34 @@ function MobileHero({ banners, loadingBanners, activeCategory, setActiveCategory
 }
 
 // ── Main export ──
-export default function HomeClient({ products }) {
+// NOTE: `products` prop is no longer required — all data is fetched here.
+// You can remove it from the server component that renders <HomeClient />.
+export default function HomeClient() {
   const [activeCategory, setActiveCategory] = useState('All')
   const [search, setSearch] = useState('')
   const countdown = useCountdown(6)
+
+  // Banners
   const { banners: desktopBanners, loadingBanners: loadingDesktop } = useBanners('desktop')
   const { banners: mobileBanners,  loadingBanners: loadingMobile  } = useBanners('mobile')
 
-  const flashProducts = products.filter(p => p.discount >= 20).slice(0, 10)
-  const todayDeals    = products.filter(p => p.discount >= 10).slice(0, 10)
-  const forYou        = [...products].sort(() => Math.random() - 0.5).slice(0, 10)
-  const topRated      = [...products].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 10)
-  const newArrivals   = [...products].slice(0, 10)
-  const bestSellers   = [...products].sort((a, b) => (b.sold || 0) - (a.sold || 0)).slice(0, 10)
+  // ── Per-section fetches ──
+  // Each hook only fetches rows WHERE section = '<value>'
+  const { products: flashProducts, loading: loadingFlash }       = useSectionProducts('flash_sale',    { orderCol: 'discount',    ascending: false })
+  const { products: todayDeals,    loading: loadingDeals }        = useSectionProducts('todays_deals',  { orderCol: 'discount',    ascending: false })
+  const { products: forYou,        loading: loadingForYou }       = useSectionProducts('for_you',       { orderCol: 'created_at',  ascending: false })
+  const { products: bestSellers,   loading: loadingBestSellers }  = useSectionProducts('best_sellers',  { orderCol: 'sold',        ascending: false })
+  const { products: topRated,      loading: loadingTopRated }     = useSectionProducts('top_rated',     { orderCol: 'rating',      ascending: false })
+  const { products: newArrivals,   loading: loadingNewArrivals }  = useSectionProducts('new_arrivals',  { orderCol: 'created_at',  ascending: false })
 
-  const filtered = products.filter(p => {
+  // ── All products (bottom grid + search/filter) ──
+  const { products: allProducts, loading: loadingAll } = useAllProducts()
+
+  // ── Filter logic (runs on already-fetched allProducts) ──
+  const filtered = allProducts.filter(p => {
     const matchCat =
       activeCategory === 'All' ||
-      (p.category && p.category.toLowerCase().includes(activeCategory.toLowerCase())) ||
+      (p.category_id && p.category_id === activeCategory) ||
       p.name.toLowerCase().includes(activeCategory.toLowerCase())
     const matchSearch =
       !search.trim() ||
@@ -363,12 +420,17 @@ export default function HomeClient({ products }) {
         </div>
 
         {isFiltering ? (
+          /* ── Filtered view ── */
           <section className={styles.section} id="all-products">
             <SectionHeader
               title={`${filtered.length} products${activeCategory !== 'All' ? ` in ${activeCategory}` : ''}`}
               seeAllHref="/categories"
             />
-            {filtered.length === 0 ? (
+            {loadingAll ? (
+              <div className={styles.productGrid}>
+                {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
+              </div>
+            ) : filtered.length === 0 ? (
               <div className={styles.empty}><p>No products found</p></div>
             ) : (
               <div className={styles.productGrid}>
@@ -381,52 +443,53 @@ export default function HomeClient({ products }) {
             )}
           </section>
         ) : (
+          /* ── Default section view ── */
           <>
-            {flashProducts.length > 0 && (
-              <section className={styles.section}>
-                <SectionHeader icon="⚡" title="Flash Sale" subtitle="Limited time deals" countdown={countdown} seeAllHref="/?cat=sale" />
-                <ProductRow products={flashProducts} />
-              </section>
-            )}
-            {todayDeals.length > 0 && (
-              <section className={styles.section}>
-                <SectionHeader icon="🎯" title="Today's Deals" subtitle="Hand-picked savings" seeAllHref="/?cat=deals" />
-                <ProductRow products={todayDeals} />
-              </section>
-            )}
-            {forYou.length > 0 && (
-              <section className={styles.section}>
-                <SectionHeader icon="✨" title="For You" subtitle="Recommended picks" seeAllHref="/?cat=foryou" />
-                <ProductRow products={forYou} />
-              </section>
-            )}
-            {bestSellers.length > 0 && (
-              <section className={styles.section}>
-                <SectionHeader icon="🏆" title="Best Sellers" subtitle="Most ordered products" seeAllHref="/?cat=bestsellers" />
-                <ProductRow products={bestSellers} />
-              </section>
-            )}
-            {topRated.length > 0 && (
-              <section className={styles.section}>
-                <SectionHeader icon="⭐" title="Top Rated" subtitle="Highest customer ratings" seeAllHref="/?cat=toprated" />
-                <ProductRow products={topRated} />
-              </section>
-            )}
-            {newArrivals.length > 0 && (
-              <section className={styles.section}>
-                <SectionHeader icon="🆕" title="New Arrivals" subtitle="Just added to the store" seeAllHref="/?cat=new" />
-                <ProductRow products={newArrivals} />
-              </section>
-            )}
+            <section className={styles.section}>
+              <SectionHeader icon="⚡" title="Flash Sale" subtitle="Limited time deals" countdown={countdown} seeAllHref="/?cat=sale" />
+              <ProductRow products={flashProducts} loading={loadingFlash} />
+            </section>
+
+            <section className={styles.section}>
+              <SectionHeader icon="🎯" title="Today's Deals" subtitle="Hand-picked savings" seeAllHref="/?cat=deals" />
+              <ProductRow products={todayDeals} loading={loadingDeals} />
+            </section>
+
+            <section className={styles.section}>
+              <SectionHeader icon="✨" title="For You" subtitle="Recommended picks" seeAllHref="/?cat=foryou" />
+              <ProductRow products={forYou} loading={loadingForYou} />
+            </section>
+
+            <section className={styles.section}>
+              <SectionHeader icon="🏆" title="Best Sellers" subtitle="Most ordered products" seeAllHref="/?cat=bestsellers" />
+              <ProductRow products={bestSellers} loading={loadingBestSellers} />
+            </section>
+
+            <section className={styles.section}>
+              <SectionHeader icon="⭐" title="Top Rated" subtitle="Highest customer ratings" seeAllHref="/?cat=toprated" />
+              <ProductRow products={topRated} loading={loadingTopRated} />
+            </section>
+
+            <section className={styles.section}>
+              <SectionHeader icon="🆕" title="New Arrivals" subtitle="Just added to the store" seeAllHref="/?cat=new" />
+              <ProductRow products={newArrivals} loading={loadingNewArrivals} />
+            </section>
+
             <section className={styles.section} id="all-products">
-              <SectionHeader title="All Products" subtitle={`${products.length} items`} />
-              <div className={styles.productGrid}>
-                {products.map((p, i) => (
-                  <div key={p.id} style={{ animationDelay: `${i * 0.02}s` }}>
-                    <ProductCard product={p} />
-                  </div>
-                ))}
-              </div>
+              <SectionHeader title="All Products" subtitle={loadingAll ? '…' : `${allProducts.length} items`} />
+              {loadingAll ? (
+                <div className={styles.productGrid}>
+                  {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
+                </div>
+              ) : (
+                <div className={styles.productGrid}>
+                  {allProducts.map((p, i) => (
+                    <div key={p.id} style={{ animationDelay: `${i * 0.02}s` }}>
+                      <ProductCard product={p} />
+                    </div>
+                  ))}
+                </div>
+              )}
             </section>
           </>
         )}
