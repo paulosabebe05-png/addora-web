@@ -1,6 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
 
 :root {
+  /* ── Original brand tokens ── */
   --orange: #E75525;
   --orange-light: #FF6B3D;
   --orange-dim: rgba(231, 85, 37, 0.12);
@@ -17,6 +18,27 @@
   --radius-sm: 8px;
   --shadow: 0 4px 24px rgba(16, 24, 43, 0.08);
   --shadow-lg: 0 12px 48px rgba(16, 24, 43, 0.16);
+
+  /* ── Premium product page tokens ── */
+  --bg: #0c0c0e;
+  --surface: #131316;
+  --surface2: #1a1a1f;
+  --border: rgba(255,255,255,.07);
+  --border-hover: rgba(255,255,255,.14);
+  --gold: #c9a84c;
+  --gold-light: #e2c47a;
+  --gold-dim: rgba(201,168,76,.15);
+  --gold-glow: rgba(201,168,76,.25);
+  --text-primary: #f0ede8;
+  --text-secondary: #8a8784;
+  --text-muted-dark: #4a4845;
+  --accent: #c9a84c;
+  --red: #e05a3a;
+  --green: #4caf7d;
+  --shadow-dark: 0 32px 80px rgba(0,0,0,.6);
+  --shadow-dark-sm: 0 8px 32px rgba(0,0,0,.4);
+  --radius-product: 4px;
+  --radius-product-lg: 8px;
 }
 
 * {
@@ -27,7 +49,6 @@
 
 html {
   scroll-behavior: smooth;
-  /* Prevent horizontal scroll on mobile */
   overflow-x: hidden;
   max-width: 100%;
 }
@@ -37,7 +58,6 @@ body {
   background: var(--off-white);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
-  /* Prevent horizontal scroll/overflow on all devices */
   overflow-x: hidden;
   max-width: 100%;
   width: 100%;
@@ -107,14 +127,8 @@ input, textarea, select {
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   white-space: nowrap;
 }
-
-.toast.show {
-  transform: translateX(-50%) translateY(0);
-}
-
-.toast.success {
-  background: var(--orange);
-}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.success { background: var(--orange); }
 
 /* Badge */
 .badge {
@@ -129,15 +143,12 @@ input, textarea, select {
   font-weight: 700;
   border-radius: 50%;
 }
-/* Add this to your existing globals.css */
 
-/* Bottom nav height — gives main content breathing room on mobile */
 @media (max-width: 768px) {
   :root {
     --bottom-nav-height: 70px;
   }
 
-  /* Push footer above bottom nav */
   footer {
     margin-bottom: var(--bottom-nav-height);
   }
