@@ -2,21 +2,14 @@ import { supabase } from '../../../lib/supabase'
 import ProductDetailClient from './ProductDetailClient'
 import { notFound } from 'next/navigation'
 
-// CRITICAL: always fetch fresh — no stale cache
-// so stock updates and new variants are always visible
 export const revalidate = 0
 export const dynamic = 'force-dynamic'
 
 export default async function ProductPage({ params }) {
   const [{ data: product, error: pErr }, { data: variants, error: vErr }] =
     await Promise.all([
-      supabase
-        .from('products')
-        .select('*')
-        .eq('id', params.id)
-        .single(),
-      supabase
-        .from('product_variants')
+      supabase.from('products').select('*').eq('id', params.id).single(),
+      supabase.from('product_variants')
         .select('id, product_id, color, size, stock, price, sku')
         .eq('product_id', params.id)
         .order('color', { ascending: true })
@@ -25,10 +18,21 @@ export default async function ProductPage({ params }) {
 
   if (pErr || !product) notFound()
 
-  // Log in dev so you can see what comes back
+  // Fetch the store if product has a store_id
+  let store = null
+  if (product.store_id) {
+    const { data: storeData } = await supabase
+      .from('stores')
+      .select('id, name, logo_url, verified, rating')
+      .eq('id', product.store_id)
+      .single()
+    store = storeData ?? null
+  }
+
   if (process.env.NODE_ENV === 'development') {
     console.log('[product]', product.id, '| stock:', product.stock)
     console.log('[variants]', variants?.length ?? 0, variants)
+    console.log('[store]', store)
     if (vErr) console.error('[variants error]', vErr)
   }
 
@@ -36,6 +40,7 @@ export default async function ProductPage({ params }) {
     <ProductDetailClient
       product={product}
       variants={variants ?? []}
+      store={store}
     />
   )
 }
