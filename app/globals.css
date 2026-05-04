@@ -9,7 +9,7 @@
   --navy-mid: #1C2B4A;
   --navy-light: #263659;
   --white: #FFFFFF;
-  --off-white: #ffffff;
+  --off-white: #F7F5F2;
   --gray: #8A8F9E;
   --gray-light: #E8EAF0;
   --text: #10182B;
@@ -55,7 +55,7 @@ html {
 
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  background: #ffffff;
+  background: var(--off-white);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
