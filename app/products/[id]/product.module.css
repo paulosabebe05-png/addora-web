@@ -1,29 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=Cormorant:wght@700;800&display=swap');
 
-/* ═══════════════════════════════════════════
-   CSS VARIABLES — Premium Dark Theme
-═══════════════════════════════════════════ */
-:root {
-  --bg: #0c0c0e;
-  --surface: #131316;
-  --surface2: #1a1a1f;
-  --border: rgba(255,255,255,.07);
-  --border-hover: rgba(255,255,255,.14);
-  --gold: #c9a84c;
-  --gold-light: #e2c47a;
-  --gold-dim: rgba(201,168,76,.15);
-  --gold-glow: rgba(201,168,76,.25);
-  --text-primary: #f0ede8;
-  --text-secondary: #8a8784;
-  --text-muted: #4a4845;
-  --accent: #c9a84c;
-  --red: #e05a3a;
-  --green: #4caf7d;
-  --shadow: 0 32px 80px rgba(0,0,0,.6);
-  --shadow-sm: 0 8px 32px rgba(0,0,0,.4);
-  --radius: 4px;
-  --radius-lg: 8px;
-}
+/* Variables are defined in globals.css */
 
 /* ═══════════════════════════════════════════
    BASE
