@@ -167,9 +167,9 @@ export default function ProductDetailClient({ product, variants = [], store = nu
         {/* Breadcrumb */}
         <nav className={styles.bc}>
           <Link href="/">Home</Link>
-          <span>›</span>
+          <span className={styles.bcSep}>—</span>
           <Link href="/#products">Products</Link>
-          <span>›</span>
+          <span className={styles.bcSep}>—</span>
           <span className={styles.bcCurrent}>{product.name}</span>
         </nav>
 
@@ -229,7 +229,7 @@ export default function ProductDetailClient({ product, variants = [], store = nu
                   onClick={e => { e.stopPropagation(); setActiveImg(i => (i + 1) % images.length) }}>›</button>
               </>}
 
-              {images.length > 0 && !zoomed && <span className={styles.zoomHint}>🔍 Tap to enlarge</span>}
+              {images.length > 0 && !zoomed && <span className={styles.zoomHint}>Tap to enlarge</span>}
             </div>
           </div>
 
@@ -294,7 +294,7 @@ export default function ProductDetailClient({ product, variants = [], store = nu
             {/* Price */}
             <div className={styles.priceBox}>
               {product.discount > 0 && (
-                <span className={styles.offerTag}>
+                <span className={styles.offerTag}><span className={styles.offerDot}/>
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
                   </svg>
