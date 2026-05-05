@@ -33,8 +33,6 @@
   margin-bottom: 32px;
 }
 
-
-/* Logomark container */
 .logoMark {
   display: flex;
   align-items: center;
@@ -42,7 +40,6 @@
   flex-shrink: 0;
 }
 
-/* Premium 3D glow on the image itself */
 .logoImg {
   width: 72px;
   height: 72px;
@@ -63,7 +60,6 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-/* SVG fallback sits in same space */
 .logoFallback {
   display: flex;
   align-items: center;
@@ -72,7 +68,6 @@
   z-index: 1;
 }
 
-/* Wordmark beneath the mark */
 .logoWordmark {
   font-family: 'Space Grotesk', 'DM Sans', sans-serif;
   font-size: 22px;
@@ -82,6 +77,173 @@
   line-height: 1;
 }
 
+/* ─────────────────────────────────────────
+   Auth Method Tabs (Email / Phone)
+───────────────────────────────────────── */
+.authTabs {
+  display: flex;
+  background: #f4f5f7;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 24px;
+  gap: 4px;
+}
+
+.authTab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: #8a8f9e;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+}
+
+.authTabActive {
+  background: white;
+  color: #10182B;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+
+.authTab svg {
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: opacity 0.18s;
+}
+
+.authTabActive svg {
+  opacity: 1;
+  color: #E75525;
+}
+
+/* ─────────────────────────────────────────
+   Phone input with country code prefix
+───────────────────────────────────────── */
+.phoneWrap {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #e4e6ed;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.phoneWrap:focus-within {
+  border-color: #E75525;
+}
+
+.countryCode {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 12px 11px 14px;
+  border-right: 1.5px solid #e4e6ed;
+  background: #fafafa;
+  font-size: 14px;
+  font-weight: 700;
+  color: #374151;
+  font-family: inherit;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: default;
+  user-select: none;
+}
+
+.countryFlag {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.phoneInput {
+  flex: 1;
+  border: none;
+  background: none;
+  font-size: 15px;
+  color: #10182B;
+  outline: none;
+  font-family: inherit;
+  padding: 11px 14px;
+}
+
+.phoneInput::placeholder {
+  color: #9ca3af;
+}
+
+/* ─────────────────────────────────────────
+   OTP Coming Soon Notice
+───────────────────────────────────────── */
+.otpComingSoon {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #fff8f5;
+  border: 1.5px solid #fdd5c4;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 4px;
+}
+
+.otpComingSoonIcon {
+  font-size: 18px;
+  flex-shrink: 0;
+  line-height: 1.3;
+}
+
+.otpComingSoonText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.otpComingSoonTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #E75525;
+}
+
+.otpComingSoonSub {
+  font-size: 12px;
+  color: #9ca3af;
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────
+   OTP digit inputs (for when it goes live)
+───────────────────────────────────────── */
+.otpRow {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 6px 0;
+}
+
+.otpDigit {
+  width: 48px;
+  height: 54px;
+  border: 1.5px solid #e4e6ed;
+  border-radius: 10px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #10182B;
+  text-align: center;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: white;
+}
+
+.otpDigit:focus {
+  border-color: #E75525;
+  box-shadow: 0 0 0 3px rgba(231,85,37,0.1);
+}
 
 /* ─────────────────────────────────────────
    Legacy inline brand (keep for other pages)
@@ -253,6 +415,13 @@
   transform: translateY(-1px);
 }
 .submitBtn:disabled { opacity: 0.65; cursor: not-allowed; }
+
+.submitBtnDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #e0a090;
+  transform: none !important;
+}
 
 .spinner {
   width: 18px;
