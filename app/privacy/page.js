@@ -17,7 +17,7 @@ const sections = [
       },
       {
         subtitle: 'Order & Transaction Data',
-        text: 'We retain records of products you have purchased, order history, delivery status, and payment method preferences (cash on delivery details). This helps us resolve disputes, process returns, and improve our service.',
+        text: 'We retain records of products you have purchased, order history, delivery status, and payment method preferences. This helps us resolve disputes, process returns, and improve our service.',
       },
       {
         subtitle: 'Device & Usage Data',
@@ -139,31 +139,12 @@ const sections = [
 
 export default function PrivacyPage() {
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#f8f8f6',
-      fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif",
-    }}>
+    <div style={{ minHeight: '100vh', background: '#f8f8f6', fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif" }}>
 
       {/* Hero */}
-      <div style={{
-        background: 'linear-gradient(135deg, #10182B 0%, #1a2a42 60%, #10182B 100%)',
-        padding: '100px 24px 64px',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
-        <div style={{
-          position: 'absolute', top: '-80px', right: '-80px',
-          width: '300px', height: '300px', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(231,85,37,0.18) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }} />
-        <div style={{
-          position: 'absolute', bottom: '-40px', left: '10%',
-          width: '200px', height: '200px', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(231,85,37,0.1) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }} />
+      <div style={{ background: 'linear-gradient(135deg, #10182B 0%, #1a2a42 60%, #10182B 100%)', padding: '100px 24px 64px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: '-80px', right: '-80px', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(231,85,37,0.18) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '-40px', left: '10%', width: '200px', height: '200px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(231,85,37,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
         <div style={{ maxWidth: '800px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}>
@@ -172,56 +153,30 @@ export default function PrivacyPage() {
             <span style={{ color: '#E75525', fontSize: '13px', fontWeight: 600 }}>Privacy Policy</span>
           </div>
 
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '7px',
-            background: 'rgba(231,85,37,0.15)', border: '1px solid rgba(231,85,37,0.3)',
-            color: '#FF8A65', fontSize: '12px', fontWeight: 600,
-            padding: '5px 14px', borderRadius: '100px', marginBottom: '20px',
-          }}>
-            🔒 Your Privacy Matters
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', background: 'rgba(231,85,37,0.15)', border: '1px solid rgba(231,85,37,0.3)', color: '#FF8A65', fontSize: '12px', fontWeight: 600, padding: '6px 14px', borderRadius: '100px', marginBottom: '20px' }}>
+            🔒 Privacy Policy
           </div>
 
-          <h1 style={{
-            fontSize: 'clamp(32px, 5vw, 52px)',
-            fontWeight: 800,
-            color: 'white',
-            lineHeight: 1.1,
-            letterSpacing: '-1px',
-            marginBottom: '16px',
-          }}>
-            Privacy <span style={{ color: '#E75525' }}>Policy</span>
+          <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, color: 'white', margin: '0 0 16px', lineHeight: 1.15, letterSpacing: '-0.5px' }}>
+            Your Privacy Matters to Us
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '16px', lineHeight: 1.6, maxWidth: '520px' }}>
-            We believe in transparency. This policy explains how Addora collects, uses, and protects your personal information.
+          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '16px', lineHeight: 1.6, margin: '0 0 28px', maxWidth: '560px' }}>
+            We are transparent about how we handle your personal data on the Addora marketplace.
           </p>
-
-          <div style={{ display: 'flex', gap: '24px', marginTop: '28px', flexWrap: 'wrap' }}>
-            {[
-              { label: 'Last updated', value: 'May 1, 2026' },
-              { label: 'Effective', value: 'May 1, 2026' },
-              { label: 'Version', value: '2.0' },
-            ].map(item => (
-              <div key={item.label}>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', marginBottom: '2px' }}>{item.label}</div>
-                <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>{item.value}</div>
-              </div>
-            ))}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>
+            <span>Last updated: January 2025</span>
+            <span>·</span>
+            <span>Addora Technology PLC</span>
           </div>
         </div>
       </div>
 
-      {/* Main content */}
+      {/* Main */}
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 24px 80px', display: 'grid', gridTemplateColumns: '240px 1fr', gap: '48px', alignItems: 'start' }}>
 
-        {/* Sticky sidebar TOC — hover via CSS class, no JS handlers */}
+        {/* Sidebar */}
         <aside style={{ position: 'sticky', top: '88px' }}>
-          <div style={{
-            background: 'white',
-            borderRadius: '16px',
-            padding: '24px',
-            boxShadow: '0 2px 20px rgba(16,24,43,0.08)',
-            border: '1px solid rgba(16,24,43,0.06)',
-          }}>
+          <div style={{ background: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 2px 20px rgba(16,24,43,0.08)', border: '1px solid rgba(16,24,43,0.06)' }}>
             <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af', marginBottom: '16px' }}>
               Contents
             </div>
@@ -231,12 +186,8 @@ export default function PrivacyPage() {
                 <span>{s.title}</span>
               </a>
             ))}
-
             <div style={{ borderTop: '1px solid #f0f0f0', marginTop: '16px', paddingTop: '16px' }}>
-              <Link href="/terms" style={{
-                display: 'flex', alignItems: 'center', gap: '8px',
-                fontSize: '13px', color: '#E75525', fontWeight: 600, textDecoration: 'none',
-              }}>
+              <Link href="/terms" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#E75525', fontWeight: 600, textDecoration: 'none' }}>
                 📄 Terms of Service →
               </Link>
             </div>
@@ -245,42 +196,20 @@ export default function PrivacyPage() {
 
         {/* Content */}
         <div>
-          <div style={{
-            background: 'linear-gradient(135deg, #10182B, #1a2a42)',
-            borderRadius: '16px',
-            padding: '28px 32px',
-            marginBottom: '32px',
-            border: '1px solid rgba(231,85,37,0.2)',
-          }}>
+          <div style={{ background: 'linear-gradient(135deg, #10182B, #1a2a42)', borderRadius: '16px', padding: '28px 32px', marginBottom: '32px', border: '1px solid rgba(231,85,37,0.2)' }}>
             <div style={{ fontSize: '22px', marginBottom: '10px' }}>👋</div>
             <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '15px', lineHeight: 1.7, margin: 0 }}>
-              Addora Technology PLC operates the Addora marketplace at <strong style={{ color: 'white' }}>addora.com.et</strong>.
-              We are committed to protecting your privacy and being transparent about our data practices.
-              By using Addora, you agree to the terms described in this policy.
+              Addora Technology PLC operates the Addora marketplace at <strong style={{ color: 'white' }}>addora.com.et</strong>. We are committed to protecting your privacy and being transparent about our data practices. By using Addora, you agree to the terms described in this policy.
             </p>
           </div>
 
           {sections.map((section) => (
-            <div key={section.id} id={section.id} style={{
-              background: 'white',
-              borderRadius: '16px',
-              padding: '32px',
-              marginBottom: '16px',
-              boxShadow: '0 2px 16px rgba(16,24,43,0.06)',
-              border: '1px solid rgba(16,24,43,0.05)',
-              scrollMarginTop: '88px',
-            }}>
+            <div key={section.id} id={section.id} style={{ background: 'white', borderRadius: '16px', padding: '32px', marginBottom: '16px', boxShadow: '0 2px 16px rgba(16,24,43,0.06)', border: '1px solid rgba(16,24,43,0.05)', scrollMarginTop: '88px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-                <div style={{
-                  width: '42px', height: '42px', borderRadius: '12px',
-                  background: 'rgba(231,85,37,0.1)', display: 'flex',
-                  alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0,
-                }}>
+                <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(231,85,37,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>
                   {section.icon}
                 </div>
-                <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#10182B', margin: 0 }}>
-                  {section.title}
-                </h2>
+                <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#10182B', margin: 0 }}>{section.title}</h2>
               </div>
 
               {section.id === 'contact' ? (
@@ -308,19 +237,9 @@ export default function PrivacyPage() {
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   {section.content.map((item, ii) => (
-                    <div key={ii} style={{
-                      paddingLeft: '16px',
-                      borderLeft: '3px solid',
-                      borderImage: ii === 0
-                        ? 'linear-gradient(to bottom, #E75525, rgba(231,85,37,0.3)) 1'
-                        : 'linear-gradient(to bottom, rgba(231,85,37,0.3), rgba(231,85,37,0.05)) 1',
-                    }}>
-                      <div style={{ fontSize: '14px', fontWeight: 700, color: '#10182B', marginBottom: '6px' }}>
-                        {item.subtitle}
-                      </div>
-                      <p style={{ color: '#6b7280', fontSize: '14.5px', lineHeight: 1.75, margin: 0 }}>
-                        {item.text}
-                      </p>
+                    <div key={ii} style={{ paddingLeft: '16px', borderLeft: '3px solid', borderImage: ii === 0 ? 'linear-gradient(to bottom, #E75525, rgba(231,85,37,0.3)) 1' : 'linear-gradient(to bottom, rgba(231,85,37,0.3), rgba(231,85,37,0.05)) 1' }}>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: '#10182B', marginBottom: '6px' }}>{item.subtitle}</div>
+                      <p style={{ color: '#6b7280', fontSize: '14.5px', lineHeight: 1.75, margin: 0 }}>{item.text}</p>
                     </div>
                   ))}
                 </div>
@@ -328,24 +247,12 @@ export default function PrivacyPage() {
             </div>
           ))}
 
-          <div style={{
-            background: '#10182B', borderRadius: '16px', padding: '32px',
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            flexWrap: 'wrap', gap: '16px',
-          }}>
+          <div style={{ background: '#10182B', borderRadius: '16px', padding: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
             <div>
-              <div style={{ color: 'white', fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>
-                Still have questions about your privacy?
-              </div>
-              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px' }}>
-                Our team is ready to help you.
-              </div>
+              <div style={{ color: 'white', fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>Still have questions about your privacy?</div>
+              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px' }}>Our team is ready to help you.</div>
             </div>
-            <a href="mailto:addora@addora.com.et" style={{
-              background: '#E75525', color: 'white', padding: '12px 24px',
-              borderRadius: '10px', textDecoration: 'none', fontSize: '14px', fontWeight: 700,
-              display: 'inline-flex', alignItems: 'center', gap: '8px',
-            }}>
+            <a href="mailto:addora@addora.com.et" style={{ background: '#E75525', color: 'white', padding: '12px 24px', borderRadius: '10px', textDecoration: 'none', fontSize: '14px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
               Contact Us →
             </a>
           </div>
@@ -353,45 +260,13 @@ export default function PrivacyPage() {
       </div>
 
       <style>{`
-        .toc-link {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 8px 10px;
-          border-radius: 8px;
-          margin-bottom: 2px;
-          text-decoration: none;
-          color: #374151;
-          font-size: 13px;
-          font-weight: 500;
-          transition: background 0.15s, color 0.15s;
-        }
-        .toc-link:hover {
-          background: #fff5f0;
-          color: #E75525;
-        }
-        .contact-card {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          background: #f8f8f6;
-          border-radius: 12px;
-          padding: 14px 16px;
-          text-decoration: none;
-          border: 1px solid #f0f0ee;
-          transition: border-color 0.15s;
-        }
-        .contact-card:hover {
-          border-color: #E75525;
-        }
+        .toc-link { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; margin-bottom: 2px; text-decoration: none; color: #374151; font-size: 13px; font-weight: 500; transition: background 0.15s, color 0.15s; }
+        .toc-link:hover { background: #fff5f0; color: #E75525; }
+        .contact-card { display: flex; align-items: center; gap: 12px; background: #f8f8f6; border-radius: 12px; padding: 14px 16px; text-decoration: none; border: 1px solid #f0f0ee; transition: border-color 0.15s; }
+        .contact-card:hover { border-color: #E75525; }
         @media (max-width: 768px) {
-          aside { display: none; }
-          div[style*="gridTemplateColumns: 240px"] {
-            grid-template-columns: 1fr !important;
-          }
-          div[style*="gridTemplateColumns: '1fr 1fr'"] {
-            grid-template-columns: 1fr !important;
-          }
+          aside { display: none !important; }
+          div[style*="gridTemplateColumns: 240px"] { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </div>
