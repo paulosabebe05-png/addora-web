@@ -11,15 +11,19 @@ function SignInContent() {
   const searchParams = useSearchParams()
   const redirect = searchParams.get('redirect') || '/'
 
-  const [form, setForm]       = useState({ email: '', password: '' })
-  const [error, setError]     = useState('')
-  const [loading, setLoading] = useState(false)
+  const [form, setForm]         = useState({ email: '', password: '' })
+  const [agreed, setAgreed]     = useState(false)
+  const [agreeError, setAgreeError] = useState(false)
+  const [error, setError]       = useState('')
+  const [loading, setLoading]   = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
   const [showPass, setShowPass] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    if (!agreed) { setAgreeError(true); return }
+    setAgreeError(false)
     if (!form.email || !form.password) {
       setError('Please fill in all fields'); return
     }
@@ -36,6 +40,8 @@ function SignInContent() {
 
   const handleGoogle = async () => {
     setError('')
+    if (!agreed) { setAgreeError(true); return }
+    setAgreeError(false)
     setGoogleLoading(true)
     try {
       await signInWithGoogle()
@@ -57,12 +63,10 @@ function SignInContent() {
               alt="Addora logo"
               className={styles.logoImg}
               onError={(e) => {
-                /* Graceful fallback: hide broken img, show SVG mark */
                 e.currentTarget.style.display = 'none'
                 e.currentTarget.nextSibling.style.display = 'flex'
               }}
             />
-            {/* SVG fallback (hidden by default, shown if image 404s) */}
             <span className={styles.logoFallback} style={{ display: 'none' }}>
               <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
                 <path d="M8 24 Q16 8 24 24" stroke="white" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
@@ -79,6 +83,34 @@ function SignInContent() {
           <h1>Welcome back</h1>
           <p>Sign in to your Addora account</p>
         </div>
+
+        {/* Terms checkbox — must agree before any sign-in method */}
+        <label className={`${styles.agreeRow} ${agreeError ? styles.agreeRowError : ''}`}>
+          <span className={`${styles.checkbox} ${agreed ? styles.checkboxChecked : ''}`}
+            onClick={() => { setAgreed(!agreed); setAgreeError(false) }}
+            role="checkbox"
+            aria-checked={agreed}
+            tabIndex={0}
+            onKeyDown={e => e.key === ' ' && (setAgreed(!agreed), setAgreeError(false))}
+          >
+            {agreed && (
+              <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+                <path d="M1 4L4 7.5L10 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            )}
+          </span>
+          <span className={styles.agreeText}>
+            I agree to Addora's{' '}
+            <Link href="/terms" className={styles.agreeLink}>Terms of Service</Link>
+            {' '}and{' '}
+            <Link href="/privacy" className={styles.agreeLink}>Privacy Policy</Link>
+          </span>
+        </label>
+        {agreeError && (
+          <p className={styles.agreeErrorMsg}>
+            Please accept the Terms of Service and Privacy Policy to continue.
+          </p>
+        )}
 
         <button className={styles.googleBtn} onClick={handleGoogle} disabled={googleLoading} type="button">
           {googleLoading ? <span className={styles.spinner} /> : (
