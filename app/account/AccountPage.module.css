@@ -1,0 +1,412 @@
+/* AccountPage.module.css — Primary brand: #E75525 */
+
+.page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Header ── */
+.header {
+  background: #E75525;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  right: -30px;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  pointer-events: none;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  pointer-events: none;
+}
+
+.headerContent {
+  position: relative;
+  z-index: 1;
+  padding: 52px 20px 24px;
+}
+
+.pageTitle {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin: 0 0 16px;
+}
+
+/* Logged-in */
+.userCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  border: 2.5px solid rgba(255,255,255,0.5);
+  color: white;
+  font-size: 20px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.userInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.userName {
+  font-size: 17px;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userEmail {
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.editBtn {
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  border: 1.5px solid rgba(255,255,255,0.5);
+  border-radius: 20px;
+  padding: 5px 14px;
+  text-decoration: none;
+  white-space: nowrap;
+  background: rgba(255,255,255,0.15);
+}
+
+/* Guest */
+.guestCard {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.guestIcon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.guestText {
+  display: flex;
+  flex-direction: column;
+}
+
+.guestTitle {
+  font-size: 20px;
+  font-weight: 800;
+  color: white;
+}
+
+.guestSub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.65);
+  margin-top: 3px;
+}
+
+.authButtons {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.signInBtn {
+  flex: 1;
+  background: white;
+  color: #E75525;
+  font-size: 14px;
+  font-weight: 800;
+  border-radius: 12px;
+  padding: 13px;
+  text-align: center;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.signInBtn:active { opacity: 0.9; }
+
+.signUpBtn {
+  flex: 1;
+  background: rgba(255,255,255,0.15);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 13px;
+  text-align: center;
+  text-decoration: none;
+  border: 1.5px solid rgba(255,255,255,0.35);
+}
+
+/* ── Stats bar ── */
+.statsBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: white;
+  border-bottom: 1px solid #eee;
+  padding: 14px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+
+.statNum {
+  font-size: 20px;
+  font-weight: 800;
+  color: #E75525;
+}
+
+.statLabel {
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.statDivider {
+  width: 1px;
+  height: 28px;
+  background: #eee;
+}
+
+/* ── Affiliate banner ── */
+.affiliateBanner {
+  margin: 16px 16px 0;
+  background: #10182B;
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.affiliateLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.affiliateEarn {
+  font-size: 14px;
+  font-weight: 800;
+  color: #E75525;
+}
+
+.affiliateDesc {
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.4;
+}
+
+.affiliateJoin {
+  font-size: 13px;
+  font-weight: 800;
+  color: white;
+  background: #E75525;
+  border-radius: 20px;
+  padding: 8px 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(231,85,37,0.45);
+}
+
+/* ── Sections ── */
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 16px 0;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.groupLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  padding: 0 4px;
+  display: block;
+}
+
+.groupCard {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.linkRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  text-decoration: none;
+  border-bottom: 1px solid #f5f5f5;
+  transition: background 0.15s;
+}
+
+.linkRow:last-child { border-bottom: none; }
+.linkRow:active { background: #fdf2ee; }
+
+.linkIcon {
+  font-size: 18px;
+  width: 36px;
+  height: 36px;
+  background: #fdf2ee;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.linkText {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  gap: 1.5px;
+}
+
+.linkLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+}
+
+.linkDesc {
+  font-size: 11.5px;
+  color: #9ca3af;
+}
+
+.badge {
+  font-size: 10px;
+  font-weight: 800;
+  background: #E75525;
+  color: white;
+  border-radius: 20px;
+  padding: 3px 8px;
+  margin-right: 4px;
+}
+
+.chevron {
+  color: #d1d5db;
+  flex-shrink: 0;
+}
+
+/* ── Sign out ── */
+.signOutBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 20px 16px 0;
+  width: calc(100% - 32px);
+  padding: 14px;
+  background: white;
+  border: 1.5px solid #fecaca;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ef4444;
+  cursor: pointer;
+}
+
+.signOutBtn:hover { background: #fff5f5; }
+
+/* ── Footer ── */
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 28px 20px 12px;
+}
+
+.footerLogo {
+  font-size: 18px;
+  font-weight: 900;
+  color: #E75525;
+  letter-spacing: -0.02em;
+}
+
+.footerSub {
+  font-size: 10.5px;
+  color: #b0b8c1;
+  text-align: center;
+}
+
+.footerLinks {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.footerLinks a {
+  color: #E75525;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.bottomPad { height: 90px; }
