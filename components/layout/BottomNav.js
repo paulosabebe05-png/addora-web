@@ -65,7 +65,6 @@ export default function BottomNav() {
     {
       href: '/account',
       label: 'Account',
-      isAccount: true,
       icon: (active) => (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
           stroke={active ? '#E75525' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -92,58 +91,6 @@ export default function BottomNav() {
                 <span className={styles.centerBadge}>{count > 9 ? '9+' : count}</span>
               )}
             </Link>
-          )
-        }
-
-        if (link.isAccount) {
-          return (
-            <div key={link.href} className={styles.accountWrap}>
-              <button
-                className={`${styles.item} ${styles.accountBtn} ${active ? styles.active : ''}`}
-                onClick={() => {
-                  const panel = document.getElementById('accountPanel')
-                  if (panel) panel.classList.toggle(styles.panelOpen)
-                }}
-              >
-                {link.icon(active)}
-                <span className={styles.label}>{link.label}</span>
-              </button>
-
-              {/* Account panel */}
-              <div id="accountPanel" className={styles.accountPanel}>
-                <div className={styles.panelArrow} />
-                {user ? (
-                  <>
-                    <div className={styles.panelUser}>
-                      <div className={styles.panelAvatar}>
-                        {user.email?.[0]?.toUpperCase() ?? 'U'}
-                      </div>
-                      <div className={styles.panelInfo}>
-                        <span className={styles.panelName}>
-                          {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
-                        </span>
-                        <span className={styles.panelEmail}>{user.email}</span>
-                      </div>
-                    </div>
-                    <Link href="/orders" className={styles.panelLink} onClick={() => document.getElementById('accountPanel')?.classList.remove(styles.panelOpen)}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                      My Orders
-                    </Link>
-                    <button className={`${styles.panelLink} ${styles.panelSignOut}`} onClick={() => { signOut(); document.getElementById('accountPanel')?.classList.remove(styles.panelOpen) }}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                      Sign Out
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <p className={styles.panelGuest}>Sign in to manage your account</p>
-                    <Link href="/auth/signin" className={styles.panelSignIn} onClick={() => document.getElementById('accountPanel')?.classList.remove(styles.panelOpen)}>
-                      Sign In
-                    </Link>
-                  </>
-                )}
-              </div>
-            </div>
           )
         }
 
