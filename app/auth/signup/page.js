@@ -9,10 +9,12 @@ export default function SignUpPage() {
   const { signUp, signInWithGoogle } = useAuth()
   const router = useRouter()
 
-  const [form, setForm]       = useState({ name: '', email: '', password: '', confirm: '' })
-  const [error, setError]     = useState('')
-  const [success, setSuccess] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [form, setForm]         = useState({ name: '', email: '', password: '', confirm: '' })
+  const [agreed, setAgreed]     = useState(false)
+  const [agreeError, setAgreeError] = useState(false)
+  const [error, setError]       = useState('')
+  const [success, setSuccess]   = useState(false)
+  const [loading, setLoading]   = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
   const [showPass, setShowPass] = useState(false)
 
@@ -28,18 +30,16 @@ export default function SignUpPage() {
     if (form.password !== form.confirm) {
       setError('Passwords do not match'); return
     }
+    if (!agreed) { setAgreeError(true); return }
+    setAgreeError(false)
     setLoading(true)
     try {
       const data = await signUp({ name: form.name, email: form.email, password: form.password })
-      // Supabase sends a confirmation email by default.
-      // If email confirmation is disabled in your project, user is logged in immediately.
       if (data?.user?.identities?.length === 0) {
         setError('An account with this email already exists')
       } else if (data?.session) {
-        // Auto-confirmed (email confirmation disabled) → go to home
         router.push('/')
       } else {
-        // Email confirmation required
         setSuccess(true)
       }
     } catch (err) {
@@ -49,6 +49,8 @@ export default function SignUpPage() {
 
   const handleGoogle = async () => {
     setError('')
+    if (!agreed) { setAgreeError(true); return }
+    setAgreeError(false)
     setGoogleLoading(true)
     try {
       await signInWithGoogle()
@@ -61,6 +63,25 @@ export default function SignUpPage() {
   if (success) return (
     <div className={styles.page}>
       <div className={styles.card}>
+        <div className={styles.logoCenter}>
+          <div className={styles.logoMark}>
+            <img src="/logo.png" alt="Addora logo" className={styles.logoImg}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+                e.currentTarget.nextSibling.style.display = 'flex'
+              }}
+            />
+            <span className={styles.logoFallback} style={{ display: 'none' }}>
+              <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+                <path d="M8 24 Q16 8 24 24" stroke="white" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
+                <circle cx="8" cy="24" r="2.8" fill="white"/>
+                <circle cx="16" cy="13" r="2.8" fill="white"/>
+                <circle cx="24" cy="24" r="2.8" fill="white"/>
+              </svg>
+            </span>
+          </div>
+          <span className={styles.logoWordmark}>Addora</span>
+        </div>
         <div className={styles.successBox}>
           <div className={styles.successIcon}>✉️</div>
           <h2>Check your email!</h2>
@@ -80,16 +101,28 @@ export default function SignUpPage() {
     <div className={styles.page}>
       <div className={styles.card}>
 
-        <div className={styles.brand}>
-          <div className={styles.brandMark}>
-            <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
-              <path d="M8 24 Q16 8 24 24" stroke="white" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
-              <circle cx="8"  cy="24" r="2.8" fill="white"/>
-              <circle cx="16" cy="13" r="2.8" fill="white"/>
-              <circle cx="24" cy="24" r="2.8" fill="white"/>
-            </svg>
+        {/* ── Premium Centered Logo Lockup ── */}
+        <div className={styles.logoCenter}>
+          <div className={styles.logoMark}>
+            <img
+              src="/logo.png"
+              alt="Addora logo"
+              className={styles.logoImg}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+                e.currentTarget.nextSibling.style.display = 'flex'
+              }}
+            />
+            <span className={styles.logoFallback} style={{ display: 'none' }}>
+              <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+                <path d="M8 24 Q16 8 24 24" stroke="white" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
+                <circle cx="8"  cy="24" r="2.8" fill="white"/>
+                <circle cx="16" cy="13" r="2.8" fill="white"/>
+                <circle cx="24" cy="24" r="2.8" fill="white"/>
+              </svg>
+            </span>
           </div>
-          <span>Addora</span>
+          <span className={styles.logoWordmark}>Addora</span>
         </div>
 
         <div className={styles.header}>
@@ -97,11 +130,8 @@ export default function SignUpPage() {
           <p>Join Addora and start shopping today</p>
         </div>
 
-        {/* Google button */}
         <button className={styles.googleBtn} onClick={handleGoogle} disabled={googleLoading} type="button">
-          {googleLoading ? (
-            <span className={styles.spinner} />
-          ) : (
+          {googleLoading ? <span className={styles.spinner} /> : (
             <svg width="18" height="18" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -112,9 +142,7 @@ export default function SignUpPage() {
           {googleLoading ? 'Connecting…' : 'Continue with Google'}
         </button>
 
-        <div className={styles.orDivider}>
-          <span /><p>or create with email</p><span />
-        </div>
+        <div className={styles.orDivider}><span /><p>or create with email</p><span /></div>
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
@@ -164,6 +192,34 @@ export default function SignUpPage() {
                 className={styles.input} autoComplete="new-password" />
             </div>
           </div>
+
+          {/* Terms checkbox */}
+          <label className={`${styles.agreeRow} ${agreeError ? styles.agreeRowError : ''}`}>
+            <span className={`${styles.checkbox} ${agreed ? styles.checkboxChecked : ''}`}
+              onClick={() => { setAgreed(!agreed); setAgreeError(false) }}
+              role="checkbox"
+              aria-checked={agreed}
+              tabIndex={0}
+              onKeyDown={e => e.key === ' ' && (setAgreed(!agreed), setAgreeError(false))}
+            >
+              {agreed && (
+                <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+                  <path d="M1 4L4 7.5L10 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </span>
+            <span className={styles.agreeText}>
+              I agree to Addora's{' '}
+              <Link href="/terms" className={styles.agreeLink}>Terms of Service</Link>
+              {' '}and{' '}
+              <Link href="/privacy" className={styles.agreeLink}>Privacy Policy</Link>
+            </span>
+          </label>
+          {agreeError && (
+            <p className={styles.agreeErrorMsg}>
+              Please accept the Terms &amp; Privacy Policy to continue.
+            </p>
+          )}
 
           {error && <div className={styles.error}>{error}</div>}
 
