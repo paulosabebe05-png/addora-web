@@ -18,16 +18,6 @@ export default function AccountPage() {
       ],
     },
     {
-      group: 'Explore',
-      items: [
-        { href: '/affiliates', label: 'Addora Affiliates', desc: 'Earn by sharing products', icon: '🤝', badge: 'Earn' },
-        { href: '/categories', label: 'All Categories', desc: 'Browse everything', icon: '🗂️' },
-        { href: '/brands', label: 'Top Brands', desc: 'Premium & trusted brands', icon: '⭐' },
-        { href: '/flash-sale', label: 'Flash Sales', desc: 'Limited-time deals', icon: '⚡' },
-        { href: '/new-arrivals', label: 'New Arrivals', desc: 'Just added to the store', icon: '✨' },
-      ],
-    },
-    {
       group: 'Help & Legal',
       items: [
         { href: '/help', label: 'Help Center', desc: 'FAQs and support', icon: '💬' },
