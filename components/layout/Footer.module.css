@@ -1,67 +1,27 @@
-/* ══════════════════════════════
-   TOP STRIP
-   ══════════════════════════════ */
-.topStrip {
-  background: rgba(255, 255, 255, 0.04);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  width: 100%;
-}
-
-.topStripInner {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 14px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  flex-wrap: wrap;
-}
-
-.stripItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 28px;
-  font-size: 13px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.8);
-  white-space: nowrap;
-}
-
-.stripDivider {
-  width: 1px;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.12);
-  flex-shrink: 0;
-}
-
-/* ══════════════════════════════
-   FOOTER BASE
-   ══════════════════════════════ */
 .footer {
   background: var(--navy);
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255,255,255,0.7);
   margin-top: 80px;
   width: 100%;
 }
 
-/* ══════════════════════════════
-   MAIN INNER GRID
-   ══════════════════════════════ */
-.inner {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 56px 24px 44px;
-  display: grid;
-  grid-template-columns: 1.6fr 3fr;
-  gap: 64px;
-  align-items: start;
+.logoImg {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
-/* ══════════════════════════════
-   BRAND COLUMN
-   ══════════════════════════════ */
+/* FIXED */
+.inner {
+  max-width: 1400px; /* changed from 1200 */
+  margin: 0 auto;
+  padding: 56px 24px 40px; /* better alignment */
+  display: grid;
+  grid-template-columns: 1.4fr 2fr;
+  gap: 60px;
+}
+
 .brand {
   display: flex;
   flex-direction: column;
@@ -76,90 +36,32 @@
   font-size: 20px;
   font-weight: 700;
   color: white;
-  text-decoration: none;
 }
 
-.logo:hover { opacity: 0.85; }
-
-.brandDesc {
-  font-size: 13.5px;
-  line-height: 1.75;
-  color: rgba(255, 255, 255, 0.5);
-  max-width: 280px;
-  margin: 0;
+.brand p {
+  font-size: 14px;
+  line-height: 1.7;
+  max-width: 260px;
 }
 
-/* Payment */
-.paymentLabel {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.35);
-  margin-top: 4px;
-}
-
-.paymentBadges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.payBadge {
+.codBadge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.65);
-  font-size: 11.5px;
-  font-weight: 600;
-  padding: 5px 11px;
-  border-radius: 8px;
-  transition: background 0.2s, border-color 0.2s;
-}
-
-.payBadge:hover {
-  background: rgba(231, 85, 37, 0.15);
-  border-color: rgba(231, 85, 37, 0.3);
+  background: rgba(231, 85, 37, 0.2);
+  border: 1px solid rgba(231, 85, 37, 0.4);
   color: #FF8A65;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 100px;
+  width: fit-content;
 }
 
-/* Socials */
-.socials {
-  display: flex;
-  gap: 8px;
-  margin-top: 4px;
-}
-
-.socialBtn {
-  width: 36px;
-  height: 36px;
-  border-radius: 9px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.6);
-  text-decoration: none;
-  transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.15s;
-}
-
-.socialBtn:hover {
-  background: #E75525;
-  border-color: #E75525;
-  color: white;
-  transform: translateY(-2px);
-}
-
-/* ══════════════════════════════
-   LINKS GRID
-   ══════════════════════════════ */
 .links {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 28px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
 }
 
 .col {
@@ -169,216 +71,71 @@
 }
 
 .col h4 {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.08em;
   color: white;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
-.col a {
-  font-size: 13.5px;
-  color: rgba(255, 255, 255, 0.55);
+.col a, .col p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
   text-decoration: none;
-  transition: color 0.18s, padding-left 0.18s;
-  display: inline-flex;
-  align-items: center;
+  transition: color 0.2s;
+  padding: 6px 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
-.col a:hover {
-  color: #E75525;
-  padding-left: 4px;
-}
+.col a:hover { color: var(--orange); }
 
-.col p {
-  font-size: 13.5px;
-  color: rgba(255, 255, 255, 0.45);
-  margin: 0;
-  line-height: 1.5;
-}
-
-.hours {
-  color: rgba(231, 85, 37, 0.7) !important;
-  font-size: 12px !important;
-  font-weight: 600;
-}
-
-/* ══════════════════════════════
-   BOTTOM BAR
-   ══════════════════════════════ */
+/* FIXED */
 .bottom {
-  max-width: 1400px;
+  max-width: 1400px; /* changed from 1200 */
   margin: 0 auto;
-  padding: 18px 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 20px 24px;
+  border-top: 1px solid rgba(255,255,255,0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
-}
-
-.bottomLeft {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.bottomLeft p {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.45);
-  margin: 0;
-}
-
-.bottomSub {
-  font-size: 11px !important;
-  color: rgba(255, 255, 255, 0.25) !important;
 }
 
 .bottomLinks {
   display: flex;
   gap: 20px;
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .bottomLinks a {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255,255,255,0.5);
   text-decoration: none;
-  transition: color 0.18s;
+  transition: color 0.2s;
 }
 
-.bottomLinks a:hover {
-  color: white;
-}
+.bottomLinks a:hover { color: white; }
 
-/* ══════════════════════════════
-   TABLET  ≤ 1024px
-   ══════════════════════════════ */
-@media (max-width: 1024px) {
-  .inner {
-    grid-template-columns: 1fr 2fr;
-    gap: 48px;
-  }
-
-  .links {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-  }
-}
-
-/* ══════════════════════════════
-   MOBILE  ≤ 768px
-   ══════════════════════════════ */
 @media (max-width: 768px) {
-
-  /* Top strip — horizontal scroll on mobile */
-  .topStripInner {
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding: 10px 16px;
-    gap: 0;
+  .footer {
+    margin-top: 0;
   }
-
-  .topStripInner::-webkit-scrollbar { display: none; }
-
-  .stripItem {
-    padding: 0 16px;
-    font-size: 12px;
-    flex-shrink: 0;
-  }
-
-  /* Main grid → single column */
   .inner {
     grid-template-columns: 1fr;
-    gap: 0;
-    padding: 0;
+    gap: 32px;
+    padding: 40px 20px;
   }
-
-  /* Brand block */
-  .brand {
-    padding: 32px 16px 24px;
-    gap: 14px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  }
-
-  .brandDesc {
-    max-width: 100%;
-    font-size: 13px;
-  }
-
-  /* Payment badges — wrap */
-  .paymentBadges {
-    gap: 6px;
-  }
-
-  .payBadge {
-    font-size: 11px;
-    padding: 4px 9px;
-  }
-
-  /* Links grid → 2 cols on mobile */
-  .links {
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    padding: 0;
-  }
-
-  .col {
-    padding: 20px 16px;
-    gap: 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  /* Alternate cols get right border for divider effect */
-  .col:nth-child(odd) {
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  .col h4 {
-    font-size: 11px;
-    margin-bottom: 4px;
-  }
-
-  .col a,
-  .col p {
-    font-size: 13px;
-  }
-
-  /* Bottom bar → stacked */
+  .links { grid-template-columns: 1fr 1fr; }
   .bottom {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 20px 16px 32px;
-  }
-
-  .bottomLinks {
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  /* Add bottom margin for bottom nav bar */
-  .footer {
-    margin-bottom: 70px;
+    gap: 12px;
+    text-align: center;
   }
 }
 
-/* ══════════════════════════════
-   SMALL MOBILE  ≤ 480px
-   ══════════════════════════════ */
-@media (max-width: 480px) {
-  .links {
-    grid-template-columns: 1fr;
-  }
-
-  .col:nth-child(odd) {
-    border-right: none;
-  }
-
-  .socials {
-    gap: 6px;
-  }
+@media (max-width: 430px) {
+  .links { grid-template-columns: 1fr; }
+  .logoImg { width: 24px; height: 24px; }
 }
