@@ -43,7 +43,7 @@ export default function Footer() {
 
           <div className={styles.col}>
             <h4>Contact</h4>
-            <a href="tel:+251900000000">+251 926 635 307</a>
+            <a href="tel:+251926635307">+251 926 635 307</a>
             <a href="mailto:addora@addora.com.et">addora@addora.com.et</a>
             <p>Addis Ababa, Ethiopia</p>
           </div>
@@ -55,6 +55,7 @@ export default function Footer() {
         <div className={styles.bottomLinks}>
           <a href="#">Privacy Policy</a>
           <a href="#">Terms of Service</a>
+          <a href="/refund-policy">Refund Policy</a>
         </div>
       </div>
     </footer>
