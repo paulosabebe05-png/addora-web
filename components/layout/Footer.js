@@ -54,6 +54,7 @@ export default function Footer() {
         <div className={styles.bottomLinks}>
           <Link href="/privacy">Privacy Policy</Link>
           <Link href="/terms">Terms of Service</Link>
+          <Link href="/refund-policy">Refund Policy</Link>
         </div>
       </div>
     </footer>
