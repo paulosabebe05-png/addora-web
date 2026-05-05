@@ -1,58 +1,101 @@
-/* AccountPage.module.css — Primary brand: #E75525 */
+/* AccountPage.module.css — Premium upgrade · Brand: #E75525 */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --brand: #E75525;
+  --brand-dark: #C94418;
+  --brand-light: #FFF0EB;
+  --brand-glow: rgba(231, 85, 37, 0.35);
+  --surface: #FFFFFF;
+  --surface-alt: #F7F8FA;
+  --border: rgba(0, 0, 0, 0.06);
+  --text-primary: #0F0F14;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-brand: 0 6px 20px rgba(231,85,37,0.38);
+}
 
 .page {
   min-height: 100vh;
-  background: #f5f5f5;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--surface-alt);
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ── Header ── */
+/* ══════════════════════════════════════
+   HEADER — Fixed overlap: padding-top accounts for device status bar / app bar
+   ══════════════════════════════════════ */
 .header {
-  background: #E75525;
+  background: linear-gradient(155deg, #E75525 0%, #C94418 55%, #A83510 100%);
   position: relative;
+  overflow: hidden;
+  /* Safe-area support for notched phones */
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Decorative orbs */
+.header::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+  pointer-events: none;
 }
 
 .header::after {
   content: '';
   position: absolute;
-  bottom: -30px;
-  right: -30px;
-  width: 130px;
-  height: 130px;
+  bottom: -50px;
+  left: 30px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.05);
   pointer-events: none;
 }
 
-.header::before {
-  content: '';
+/* Extra decorative ring — top-left */
+.headerRing {
   position: absolute;
-  top: -20px;
-  left: -20px;
+  top: 12px;
+  left: -24px;
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.06);
+  border: 2px solid rgba(255,255,255,0.08);
   pointer-events: none;
 }
 
 .headerContent {
   position: relative;
   z-index: 1;
-  padding: 20px 20px 24px;
-  padding-top: max(20px, env(safe-area-inset-top, 20px));
+  /* 
+    KEY FIX: Was 52px top-padding (which caused hero to visually collide 
+    with whatever app-bar/nav sits above).
+    Now uses 16px + safe-area so content never hides under the top bar.
+  */
+  padding: 16px 20px 28px;
 }
 
 .pageTitle {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.7);
-  margin: 0 0 16px;
+  color: rgba(255,255,255,0.6);
+  margin: 0 0 18px;
 }
 
-/* Logged-in */
+/* ── Logged-in state ── */
 .userCard {
   display: flex;
   align-items: center;
@@ -60,18 +103,20 @@
 }
 
 .avatar {
-  width: 52px;
-  height: 52px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.2);
-  border: 2.5px solid rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.18);
+  border: 2.5px solid rgba(255,255,255,0.45);
   color: white;
-  font-size: 20px;
-  font-weight: 800;
+  font-size: 21px;
+  font-weight: 900;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  backdrop-filter: blur(6px);
 }
 
 .userInfo {
@@ -83,16 +128,17 @@
 
 .userName {
   font-size: 17px;
-  font-weight: 700;
+  font-weight: 800;
   color: white;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: -0.02em;
 }
 
 .userEmail {
   font-size: 12px;
-  color: rgba(255,255,255,0.65);
+  color: rgba(255,255,255,0.6);
   margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
@@ -103,30 +149,35 @@
   font-size: 12px;
   font-weight: 700;
   color: white;
-  border: 1.5px solid rgba(255,255,255,0.5);
+  border: 1.5px solid rgba(255,255,255,0.45);
   border-radius: 20px;
-  padding: 5px 14px;
+  padding: 6px 16px;
   text-decoration: none;
   white-space: nowrap;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  transition: background 0.2s;
 }
 
-/* Guest */
+.editBtn:active { background: rgba(255,255,255,0.22); }
+
+/* ── Guest state ── */
 .guestCard {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .guestIcon {
-  width: 54px;
-  height: 54px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.15);
-  border: 2px solid rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.14);
+  border: 2px solid rgba(255,255,255,0.3);
   display: flex;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(6px);
 }
 
 .guestText {
@@ -135,184 +186,260 @@
 }
 
 .guestTitle {
-  font-size: 20px;
-  font-weight: 800;
+  font-size: 22px;
+  font-weight: 900;
   color: white;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
 }
 
 .guestSub {
   font-size: 13px;
-  color: rgba(255,255,255,0.65);
-  margin-top: 3px;
+  color: rgba(255,255,255,0.62);
+  margin-top: 4px;
+  font-weight: 400;
 }
 
 .authButtons {
   display: flex;
   gap: 10px;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .signInBtn {
   flex: 1;
   background: white;
-  color: #E75525;
+  color: var(--brand);
   font-size: 14px;
   font-weight: 800;
-  border-radius: 12px;
-  padding: 13px;
+  border-radius: var(--radius-md);
+  padding: 14px;
   text-align: center;
   text-decoration: none;
-  transition: opacity 0.2s;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+  letter-spacing: -0.01em;
 }
 
-.signInBtn:active { opacity: 0.9; }
+.signInBtn:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
 
 .signUpBtn {
   flex: 1;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.13);
   color: white;
   font-size: 14px;
   font-weight: 700;
-  border-radius: 12px;
-  padding: 13px;
+  border-radius: var(--radius-md);
+  padding: 14px;
   text-align: center;
   text-decoration: none;
-  border: 1.5px solid rgba(255,255,255,0.35);
+  border: 1.5px solid rgba(255,255,255,0.32);
+  backdrop-filter: blur(8px);
+  transition: background 0.2s;
 }
 
-/* ── Stats bar ── */
+.signUpBtn:active { background: rgba(255,255,255,0.22); }
+
+/* ══════════════════════════════════════
+   STATS BAR
+   ══════════════════════════════════════ */
 .statsBar {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  background: white;
-  border-bottom: 1px solid #eee;
-  padding: 14px 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  background: var(--surface);
+  padding: 16px 0;
+  box-shadow: var(--shadow-md);
+  border-bottom: 1px solid var(--border);
 }
 
 .statItem {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
   flex: 1;
 }
 
 .statNum {
-  font-size: 20px;
-  font-weight: 800;
-  color: #E75525;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--brand);
+  letter-spacing: -0.04em;
 }
 
 .statLabel {
-  font-size: 11px;
-  color: #9ca3af;
-  font-weight: 500;
+  font-size: 10.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .statDivider {
   width: 1px;
-  height: 28px;
-  background: #eee;
+  height: 30px;
+  background: var(--border);
 }
 
-/* ── Affiliate banner ── */
+/* ══════════════════════════════════════
+   AFFILIATE BANNER
+   ══════════════════════════════════════ */
 .affiliateBanner {
   margin: 16px 16px 0;
-  background: #10182B;
-  border-radius: 16px;
-  padding: 16px 18px;
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 28px rgba(15,23,42,0.22);
+}
+
+.affiliateBanner::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  right: 90px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(231,85,37,0.1);
+  pointer-events: none;
+}
+
+.affiliateBanner::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(231,85,37,0.07);
+  pointer-events: none;
 }
 
 .affiliateLeft {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   flex: 1;
   min-width: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .affiliateEarn {
   font-size: 14px;
   font-weight: 800;
-  color: #E75525;
+  color: var(--brand);
+  letter-spacing: -0.01em;
 }
 
 .affiliateDesc {
-  font-size: 11.5px;
-  color: rgba(255,255,255,0.55);
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
   line-height: 1.4;
+  font-weight: 400;
 }
 
 .affiliateJoin {
   font-size: 13px;
   font-weight: 800;
   color: white;
-  background: #E75525;
-  border-radius: 20px;
-  padding: 8px 16px;
+  background: linear-gradient(135deg, var(--brand) 0%, #FF7043 100%);
+  border-radius: 22px;
+  padding: 10px 18px;
   text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(231,85,37,0.45);
+  box-shadow: var(--shadow-brand);
+  position: relative;
+  z-index: 1;
+  transition: transform 0.15s, box-shadow 0.15s;
+  letter-spacing: -0.01em;
 }
 
-/* ── Sections ── */
+.affiliateJoin:active {
+  transform: scale(0.96);
+  box-shadow: 0 3px 10px var(--brand-glow);
+}
+
+/* ══════════════════════════════════════
+   SECTIONS
+   ══════════════════════════════════════ */
 .sections {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 16px 16px 0;
+  gap: 8px;
+  padding: 18px 16px 0;
 }
 
 .group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .groupLabel {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #9ca3af;
+  color: var(--text-muted);
   padding: 0 4px;
   display: block;
 }
 
 .groupCard {
-  background: white;
-  border-radius: 16px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
 }
 
+/* ── Link row ── */
 .linkRow {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 13px 16px;
+  gap: 13px;
+  padding: 14px 16px;
   text-decoration: none;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid #F7F8FA;
   transition: background 0.15s;
+  position: relative;
 }
 
 .linkRow:last-child { border-bottom: none; }
-.linkRow:active { background: #fdf2ee; }
+
+.linkRow:active { background: var(--brand-light); }
+
+/* Subtle left accent line on active */
+.linkRow:active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--brand);
+  border-radius: 0 3px 3px 0;
+}
 
 .linkIcon {
-  font-size: 18px;
-  width: 36px;
-  height: 36px;
-  background: #fdf2ee;
-  border-radius: 10px;
+  font-size: 19px;
+  width: 40px;
+  height: 40px;
+  background: var(--brand-light);
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -324,36 +451,48 @@
   flex-direction: column;
   flex: 1;
   min-width: 0;
-  gap: 1.5px;
+  gap: 2px;
 }
 
 .linkLabel {
   font-size: 14px;
-  font-weight: 600;
-  color: #111;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
 .linkDesc {
   font-size: 11.5px;
-  color: #9ca3af;
+  color: var(--text-muted);
+  font-weight: 400;
 }
 
 .badge {
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 800;
-  background: #E75525;
+  background: linear-gradient(135deg, var(--brand), #FF7043);
   color: white;
   border-radius: 20px;
-  padding: 3px 8px;
+  padding: 3px 9px;
   margin-right: 4px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .chevron {
-  color: #d1d5db;
+  color: #D1D5DB;
   flex-shrink: 0;
+  transition: transform 0.2s;
 }
 
-/* ── Sign out ── */
+.linkRow:active .chevron {
+  transform: translateX(2px);
+  color: var(--brand);
+}
+
+/* ══════════════════════════════════════
+   SIGN OUT
+   ══════════════════════════════════════ */
 .signOutBtn {
   display: flex;
   align-items: center;
@@ -361,38 +500,49 @@
   gap: 8px;
   margin: 20px 16px 0;
   width: calc(100% - 32px);
-  padding: 14px;
-  background: white;
-  border: 1.5px solid #fecaca;
-  border-radius: 14px;
+  padding: 15px;
+  background: var(--surface);
+  border: 1.5px solid #FECACA;
+  border-radius: var(--radius-md);
   font-size: 14px;
   font-weight: 700;
-  color: #ef4444;
+  color: #EF4444;
   cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, border-color 0.2s;
 }
 
-.signOutBtn:hover { background: #fff5f5; }
+.signOutBtn:hover {
+  background: #FFF5F5;
+  border-color: #FCA5A5;
+}
 
-/* ── Footer ── */
+.signOutBtn:active { background: #FEE2E2; }
+
+/* ══════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════ */
 .footer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 28px 20px 12px;
+  gap: 5px;
+  padding: 30px 20px 14px;
 }
 
 .footerLogo {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 900;
-  color: #E75525;
-  letter-spacing: -0.02em;
+  color: var(--brand);
+  letter-spacing: -0.04em;
 }
 
 .footerSub {
   font-size: 10.5px;
-  color: #b0b8c1;
+  color: #C0C8D0;
   text-align: center;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 .footerLinks {
@@ -400,13 +550,15 @@
   align-items: center;
   gap: 6px;
   font-size: 11px;
-  color: #9ca3af;
+  color: var(--text-muted);
 }
 
 .footerLinks a {
-  color: #E75525;
+  color: var(--brand);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
 }
+
+.footerLinks a:hover { text-decoration: underline; }
 
 .bottomPad { height: 90px; }
