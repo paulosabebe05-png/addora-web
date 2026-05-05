@@ -33,25 +33,34 @@
   margin-bottom: 32px;
 }
 
-/* Logomark container — transparent, image carries its own background */
+
+/* Logomark container */
 .logoMark {
-  width: 60px;
-  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-/* The <img> fills the mark cleanly */
+/* Premium 3D glow on the image itself */
 .logoImg {
-  width: 34px;
-  height: 34px;
+  width: 72px;
+  height: 72px;
   object-fit: contain;
-  position: relative;
-  z-index: 1;
-  /* If image has a dark/colored bg, use mix-blend-mode to integrate */
-  /* mix-blend-mode: luminosity; */
+  border-radius: 20px;
+  box-shadow:
+    0 12px 32px rgba(231, 85, 37, 0.45),
+    0 4px 10px  rgba(231, 85, 37, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.logoImg:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 18px 40px rgba(231, 85, 37, 0.52),
+    0 6px 14px  rgba(231, 85, 37, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 /* SVG fallback sits in same space */
