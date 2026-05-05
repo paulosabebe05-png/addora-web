@@ -52,7 +52,6 @@ function SignInContent() {
         {/* ── Premium Centered Logo Lockup ── */}
         <div className={styles.logoCenter}>
           <div className={styles.logoMark}>
-            {/* Place your logo image at /public/logo.png */}
             <img
               src="/logo.png"
               alt="Addora logo"
