@@ -84,34 +84,6 @@ function SignInContent() {
           <p>Sign in to your Addora account</p>
         </div>
 
-        {/* Terms checkbox — must agree before any sign-in method */}
-        <label className={`${styles.agreeRow} ${agreeError ? styles.agreeRowError : ''}`}>
-          <span className={`${styles.checkbox} ${agreed ? styles.checkboxChecked : ''}`}
-            onClick={() => { setAgreed(!agreed); setAgreeError(false) }}
-            role="checkbox"
-            aria-checked={agreed}
-            tabIndex={0}
-            onKeyDown={e => e.key === ' ' && (setAgreed(!agreed), setAgreeError(false))}
-          >
-            {agreed && (
-              <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
-                <path d="M1 4L4 7.5L10 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            )}
-          </span>
-          <span className={styles.agreeText}>
-            I agree to Addora's{' '}
-            <Link href="/terms" className={styles.agreeLink}>Terms of Service</Link>
-            {' '}and{' '}
-            <Link href="/privacy" className={styles.agreeLink}>Privacy Policy</Link>
-          </span>
-        </label>
-        {agreeError && (
-          <p className={styles.agreeErrorMsg}>
-            Please accept the Terms of Service and Privacy Policy to continue.
-          </p>
-        )}
-
         <button className={styles.googleBtn} onClick={handleGoogle} disabled={googleLoading} type="button">
           {googleLoading ? <span className={styles.spinner} /> : (
             <svg width="18" height="18" viewBox="0 0 24 24">
@@ -146,6 +118,33 @@ function SignInContent() {
               </button>
             </div>
           </div>
+          {/* Terms checkbox */}
+          <label className={`${styles.agreeRow} ${agreeError ? styles.agreeRowError : ''}`}>
+            <span className={`${styles.checkbox} ${agreed ? styles.checkboxChecked : ''}`}
+              onClick={() => { setAgreed(!agreed); setAgreeError(false) }}
+              role="checkbox"
+              aria-checked={agreed}
+              tabIndex={0}
+              onKeyDown={e => e.key === ' ' && (setAgreed(!agreed), setAgreeError(false))}
+            >
+              {agreed && (
+                <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+                  <path d="M1 4L4 7.5L10 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </span>
+            <span className={styles.agreeText}>
+              I agree to Addora's{' '}
+              <Link href="/terms" className={styles.agreeLink}>Terms of Service</Link>
+              {' '}and{' '}
+              <Link href="/privacy" className={styles.agreeLink}>Privacy Policy</Link>
+            </span>
+          </label>
+          {agreeError && (
+            <p className={styles.agreeErrorMsg}>
+              Please accept the Terms &amp; Privacy Policy to continue.
+            </p>
+          )}
           {error && <div className={styles.error}>{error}</div>}
           <button type="submit" className={styles.submitBtn} disabled={loading}>
             {loading ? <span className={styles.spinner} /> : 'Sign In'}
