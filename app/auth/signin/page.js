@@ -48,21 +48,38 @@ function SignInContent() {
   return (
     <div className={styles.page}>
       <div className={styles.card}>
-        <div className={styles.brand}>
-          <div className={styles.brandMark}>
-            <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
-              <path d="M8 24 Q16 8 24 24" stroke="white" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
-              <circle cx="8"  cy="24" r="2.8" fill="white"/>
-              <circle cx="16" cy="13" r="2.8" fill="white"/>
-              <circle cx="24" cy="24" r="2.8" fill="white"/>
-            </svg>
+
+        {/* ── Premium Centered Logo Lockup ── */}
+        <div className={styles.logoCenter}>
+          <div className={styles.logoMark}>
+            <img
+              src="/logo.png"           {/* ← place your image in /public/logo.png */}
+              alt="Addora logo"
+              className={styles.logoImg}
+              onError={(e) => {
+                /* Graceful fallback: hide broken img, show SVG mark */
+                e.currentTarget.style.display = 'none'
+                e.currentTarget.nextSibling.style.display = 'flex'
+              }}
+            />
+            {/* SVG fallback (hidden by default, shown if image 404s) */}
+            <span className={styles.logoFallback} style={{ display: 'none' }}>
+              <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+                <path d="M8 24 Q16 8 24 24" stroke="white" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
+                <circle cx="8"  cy="24" r="2.8" fill="white"/>
+                <circle cx="16" cy="13" r="2.8" fill="white"/>
+                <circle cx="24" cy="24" r="2.8" fill="white"/>
+              </svg>
+            </span>
           </div>
-          <span>Addora</span>
+          <span className={styles.logoWordmark}>Addora</span>
         </div>
+
         <div className={styles.header}>
           <h1>Welcome back</h1>
           <p>Sign in to your Addora account</p>
         </div>
+
         <button className={styles.googleBtn} onClick={handleGoogle} disabled={googleLoading} type="button">
           {googleLoading ? <span className={styles.spinner} /> : (
             <svg width="18" height="18" viewBox="0 0 24 24">
@@ -74,7 +91,9 @@ function SignInContent() {
           )}
           {googleLoading ? 'Connecting…' : 'Continue with Google'}
         </button>
+
         <div className={styles.orDivider}><span /><p>or sign in with email</p><span /></div>
+
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
             <label>Email Address</label>
@@ -100,6 +119,7 @@ function SignInContent() {
             {loading ? <span className={styles.spinner} /> : 'Sign In'}
           </button>
         </form>
+
         <p className={styles.switchLink}>Don't have an account? <Link href="/auth/signup">Create one</Link></p>
       </div>
     </div>
