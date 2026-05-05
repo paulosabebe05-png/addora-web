@@ -172,7 +172,7 @@ export default function PrivacyPage() {
       </div>
 
       {/* Main */}
-      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 24px 80px', display: 'grid', gridTemplateColumns: '240px 1fr', gap: '48px', alignItems: 'start' }}>
+      <div className="page-grid" style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 24px 80px', display: 'grid', gridTemplateColumns: '240px 1fr', gap: '48px', alignItems: 'start' }}>
 
         {/* Sidebar */}
         <aside style={{ position: 'sticky', top: '88px' }}>
@@ -196,7 +196,7 @@ export default function PrivacyPage() {
 
         {/* Content */}
         <div>
-          <div style={{ background: 'linear-gradient(135deg, #10182B, #1a2a42)', borderRadius: '16px', padding: '28px 32px', marginBottom: '32px', border: '1px solid rgba(231,85,37,0.2)' }}>
+          <div style={{ background: 'linear-gradient(135deg, #10182B, #1a2a42)', borderRadius: '16px', padding: '28px 24px', marginBottom: '32px', border: '1px solid rgba(231,85,37,0.2)' }}>
             <div style={{ fontSize: '22px', marginBottom: '10px' }}>👋</div>
             <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '15px', lineHeight: 1.7, margin: 0 }}>
               Addora Technology PLC operates the Addora marketplace at <strong style={{ color: 'white' }}>addora.com.et</strong>. We are committed to protecting your privacy and being transparent about our data practices. By using Addora, you agree to the terms described in this policy.
@@ -204,7 +204,7 @@ export default function PrivacyPage() {
           </div>
 
           {sections.map((section) => (
-            <div key={section.id} id={section.id} style={{ background: 'white', borderRadius: '16px', padding: '32px', marginBottom: '16px', boxShadow: '0 2px 16px rgba(16,24,43,0.06)', border: '1px solid rgba(16,24,43,0.05)', scrollMarginTop: '88px' }}>
+            <div key={section.id} id={section.id} style={{ background: 'white', borderRadius: '16px', padding: '24px', marginBottom: '16px', boxShadow: '0 2px 16px rgba(16,24,43,0.06)', border: '1px solid rgba(16,24,43,0.05)', scrollMarginTop: '88px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
                 <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(231,85,37,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>
                   {section.icon}
@@ -217,7 +217,8 @@ export default function PrivacyPage() {
                   <p style={{ color: '#6b7280', fontSize: '15px', lineHeight: 1.7, marginBottom: '20px' }}>
                     {section.content[0].text}
                   </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  {/* FIXED: was grid 1fr 1fr on mobile — now stacks to 1 col */}
+                  <div className="contact-grid">
                     {[
                       { icon: '📧', label: 'Email', value: 'addora@addora.com.et', href: 'mailto:addora@addora.com.et' },
                       { icon: '📞', label: 'Phone', value: '+251 926 635 307', href: 'tel:+251926635307' },
@@ -247,7 +248,8 @@ export default function PrivacyPage() {
             </div>
           ))}
 
-          <div style={{ background: '#10182B', borderRadius: '16px', padding: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+          {/* Bottom CTA */}
+          <div style={{ background: '#10182B', borderRadius: '16px', padding: '28px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
             <div>
               <div style={{ color: 'white', fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>Still have questions about your privacy?</div>
               <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px' }}>Our team is ready to help you.</div>
@@ -262,11 +264,13 @@ export default function PrivacyPage() {
       <style>{`
         .toc-link { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; margin-bottom: 2px; text-decoration: none; color: #374151; font-size: 13px; font-weight: 500; transition: background 0.15s, color 0.15s; }
         .toc-link:hover { background: #fff5f0; color: #E75525; }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .contact-card { display: flex; align-items: center; gap: 12px; background: #f8f8f6; border-radius: 12px; padding: 14px 16px; text-decoration: none; border: 1px solid #f0f0ee; transition: border-color 0.15s; }
         .contact-card:hover { border-color: #E75525; }
         @media (max-width: 768px) {
           aside { display: none !important; }
-          div[style*="gridTemplateColumns: 240px"] { grid-template-columns: 1fr !important; }
+          .page-grid { grid-template-columns: 1fr !important; padding: 24px 16px 60px !important; gap: 0 !important; }
+          .contact-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </div>
