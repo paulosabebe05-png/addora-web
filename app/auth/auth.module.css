@@ -22,7 +22,79 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Brand */
+/* ─────────────────────────────────────────
+   Premium Centered Logo Lockup
+───────────────────────────────────────── */
+.logoCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+/* Logomark container — orange pill with subtle glow */
+.logoMark {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(145deg, #ff6b3d 0%, #E75525 55%, #c94010 100%);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 8px 24px rgba(231, 85, 37, 0.40),
+    0 2px 6px  rgba(231, 85, 37, 0.25),
+    inset 0 1px 0 rgba(255,255,255,0.18);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Subtle sheen on the mark */
+.logoMark::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 55%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* The <img> fills the mark cleanly */
+.logoImg {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+  /* If image has a dark/colored bg, use mix-blend-mode to integrate */
+  /* mix-blend-mode: luminosity; */
+}
+
+/* SVG fallback sits in same space */
+.logoFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* Wordmark beneath the mark */
+.logoWordmark {
+  font-family: 'Space Grotesk', 'DM Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #10182B;
+  line-height: 1;
+}
+
+
+/* ─────────────────────────────────────────
+   Legacy inline brand (keep for other pages)
+───────────────────────────────────────── */
 .brand {
   display: flex;
   align-items: center;
@@ -46,7 +118,7 @@
 }
 
 /* Header */
-.header { margin-bottom: 24px; }
+.header { margin-bottom: 24px; text-align: center; }
 .header h1 {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 24px;
