@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import styles from './Footer.module.css'
 
 export default function Footer() {
@@ -7,13 +8,13 @@ export default function Footer() {
       <div className={styles.inner}>
         <div className={styles.brand}>
           <div className={styles.logo}>
-            <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-              <rect width="32" height="32" rx="8" fill="#E75525"/>
-              <path d="M8 24 Q16 8 24 24" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none"/>
-              <circle cx="8" cy="24" r="2.5" fill="white"/>
-              <circle cx="16" cy="13" r="2.5" fill="white"/>
-              <circle cx="24" cy="24" r="2.5" fill="white"/>
-            </svg>
+            <Image
+              src="/logo.png"
+              alt="Addora"
+              width={28}
+              height={28}
+              className={styles.logoImg}
+            />
             <span>Addora</span>
           </div>
           <p>Ethiopia's trusted local eCommerce platform. Shop confidently, pay when delivered.</p>
@@ -42,7 +43,7 @@ export default function Footer() {
 
           <div className={styles.col}>
             <h4>Contact</h4>
-            <a href="tel:+251926635307">+251 926 635 307</a>
+            <a href="tel:+251900000000">+251 926 635 307</a>
             <a href="mailto:addora@addora.com.et">addora@addora.com.et</a>
             <p>Addis Ababa, Ethiopia</p>
           </div>
@@ -52,9 +53,8 @@ export default function Footer() {
       <div className={styles.bottom}>
         <p>© {new Date().getFullYear()} Addora Technology PLC. All rights reserved.</p>
         <div className={styles.bottomLinks}>
-          <Link href="/privacy">Privacy Policy</Link>
-          <Link href="/terms">Terms of Service</Link>
-          <Link href="/refund-policy">Refund Policy</Link>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
         </div>
       </div>
     </footer>
