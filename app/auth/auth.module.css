@@ -33,32 +33,14 @@
   margin-bottom: 32px;
 }
 
-/* Logomark container — orange pill with subtle glow */
+/* Logomark container — transparent, image carries its own background */
 .logoMark {
   width: 60px;
   height: 60px;
-  background: linear-gradient(145deg, #ff6b3d 0%, #E75525 55%, #c94010 100%);
-  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow:
-    0 8px 24px rgba(231, 85, 37, 0.40),
-    0 2px 6px  rgba(231, 85, 37, 0.25),
-    inset 0 1px 0 rgba(255,255,255,0.18);
-  position: relative;
-  overflow: hidden;
   flex-shrink: 0;
-}
-
-/* Subtle sheen on the mark */
-.logoMark::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 55%);
-  border-radius: inherit;
-  pointer-events: none;
 }
 
 /* The <img> fills the mark cleanly */
