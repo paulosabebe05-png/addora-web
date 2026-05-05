@@ -10,7 +10,6 @@
 .header {
   background: #E75525;
   position: relative;
-  overflow: hidden;
 }
 
 .header::after {
@@ -40,7 +39,8 @@
 .headerContent {
   position: relative;
   z-index: 1;
-  padding: 52px 20px 24px;
+  padding: 20px 20px 24px;
+  padding-top: max(20px, env(safe-area-inset-top, 20px));
 }
 
 .pageTitle {
