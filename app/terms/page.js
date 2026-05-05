@@ -125,7 +125,7 @@ export default function TermsPage() {
       </div>
 
       {/* Main */}
-      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 24px 80px', display: 'grid', gridTemplateColumns: '240px 1fr', gap: '48px', alignItems: 'start' }}>
+      <div className="page-grid" style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 24px 80px', display: 'grid', gridTemplateColumns: '240px 1fr', gap: '48px', alignItems: 'start' }}>
 
         {/* Sidebar */}
         <aside style={{ position: 'sticky', top: '88px' }}>
@@ -149,12 +149,13 @@ export default function TermsPage() {
 
         {/* Content */}
         <div>
-          <div style={{ background: 'linear-gradient(135deg, #10182B, #1a2a42)', borderRadius: '16px', padding: '28px 32px', marginBottom: '32px', border: '1px solid rgba(231,85,37,0.2)' }}>
+          {/* FIXED: summary grid was 1fr 1fr — now stacks on mobile */}
+          <div style={{ background: 'linear-gradient(135deg, #10182B, #1a2a42)', borderRadius: '16px', padding: '28px 24px', marginBottom: '32px', border: '1px solid rgba(231,85,37,0.2)' }}>
             <div style={{ fontSize: '22px', marginBottom: '10px' }}>📝</div>
             <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '15px', lineHeight: 1.7, margin: '0 0 16px' }}>
               These Terms of Service constitute a legally binding agreement between you and <strong style={{ color: 'white' }}>Addora Technology PLC</strong>, governing your use of the Addora marketplace at <strong style={{ color: 'white' }}>addora.com.et</strong>. These terms apply to all buyers, visitors, and users of our platform.
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <div className="summary-grid">
               {[
                 '✓ Cash on Delivery — pay when you receive',
                 '✓ 7-day return window for defective items',
@@ -169,7 +170,7 @@ export default function TermsPage() {
           </div>
 
           {sections.map((section) => (
-            <div key={section.id} id={section.id} style={{ background: 'white', borderRadius: '16px', padding: '32px', marginBottom: '16px', boxShadow: '0 2px 16px rgba(16,24,43,0.06)', border: '1px solid rgba(16,24,43,0.05)', scrollMarginTop: '88px' }}>
+            <div key={section.id} id={section.id} style={{ background: 'white', borderRadius: '16px', padding: '24px', marginBottom: '16px', boxShadow: '0 2px 16px rgba(16,24,43,0.06)', border: '1px solid rgba(16,24,43,0.05)', scrollMarginTop: '88px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
                 <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(231,85,37,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>
                   {section.icon}
@@ -194,7 +195,8 @@ export default function TermsPage() {
             </div>
           ))}
 
-          <div style={{ background: '#10182B', borderRadius: '16px', padding: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+          {/* Bottom CTA */}
+          <div style={{ background: '#10182B', borderRadius: '16px', padding: '28px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
             <div>
               <div style={{ color: 'white', fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>Questions about our Terms?</div>
               <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px' }}>Our support team is available to help.</div>
@@ -214,9 +216,11 @@ export default function TermsPage() {
       <style>{`
         .toc-link { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; margin-bottom: 2px; text-decoration: none; color: #374151; font-size: 13px; font-weight: 500; transition: background 0.15s, color 0.15s; }
         .toc-link:hover { background: #fff5f0; color: #E75525; }
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         @media (max-width: 768px) {
           aside { display: none !important; }
-          div[style*="gridTemplateColumns: 240px"] { grid-template-columns: 1fr !important; }
+          .page-grid { grid-template-columns: 1fr !important; padding: 24px 16px 60px !important; gap: 0 !important; }
+          .summary-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </div>
