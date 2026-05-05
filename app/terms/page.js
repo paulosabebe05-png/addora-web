@@ -92,19 +92,10 @@ const sections = [
 
 export default function TermsPage() {
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#f8f8f6',
-      fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif",
-    }}>
+    <div style={{ minHeight: '100vh', background: '#f8f8f6', fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif" }}>
 
       {/* Hero */}
-      <div style={{
-        background: 'linear-gradient(135deg, #10182B 0%, #1a2a42 60%, #10182B 100%)',
-        padding: '100px 24px 64px',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
+      <div style={{ background: 'linear-gradient(135deg, #10182B 0%, #1a2a42 60%, #10182B 100%)', padding: '100px 24px 64px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: '-80px', left: '-80px', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(231,85,37,0.15) 0%, transparent 70%)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: '-60px', right: '8%', width: '250px', height: '250px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(231,85,37,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
@@ -115,28 +106,20 @@ export default function TermsPage() {
             <span style={{ color: '#E75525', fontSize: '13px', fontWeight: 600 }}>Terms of Service</span>
           </div>
 
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', background: 'rgba(231,85,37,0.15)', border: '1px solid rgba(231,85,37,0.3)', color: '#FF8A65', fontSize: '12px', fontWeight: 600, padding: '5px 14px', borderRadius: '100px', marginBottom: '20px' }}>
-            ⚖️ Legal Agreement
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', background: 'rgba(231,85,37,0.15)', border: '1px solid rgba(231,85,37,0.3)', color: '#FF8A65', fontSize: '12px', fontWeight: 600, padding: '6px 14px', borderRadius: '100px', marginBottom: '20px' }}>
+            📄 Terms of Service
           </div>
 
-          <h1 style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 800, color: 'white', lineHeight: 1.1, letterSpacing: '-1px', marginBottom: '16px' }}>
-            Terms of <span style={{ color: '#E75525' }}>Service</span>
+          <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, color: 'white', margin: '0 0 16px', lineHeight: 1.15, letterSpacing: '-0.5px' }}>
+            Terms of Service
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '16px', lineHeight: 1.6, maxWidth: '520px' }}>
-            Please read these terms carefully before using Addora. They govern your use of our marketplace and your relationship with us.
+          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '16px', lineHeight: 1.6, margin: '0 0 28px', maxWidth: '560px' }}>
+            Please read these terms carefully before using the Addora marketplace.
           </p>
-
-          <div style={{ display: 'flex', gap: '24px', marginTop: '28px', flexWrap: 'wrap' }}>
-            {[
-              { label: 'Last updated', value: 'May 1, 2026' },
-              { label: 'Effective', value: 'May 1, 2026' },
-              { label: 'Jurisdiction', value: 'Ethiopia' },
-            ].map(item => (
-              <div key={item.label}>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', marginBottom: '2px' }}>{item.label}</div>
-                <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>{item.value}</div>
-              </div>
-            ))}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>
+            <span>Last updated: January 2025</span>
+            <span>·</span>
+            <span>Addora Technology PLC</span>
           </div>
         </div>
       </div>
@@ -144,7 +127,7 @@ export default function TermsPage() {
       {/* Main */}
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 24px 80px', display: 'grid', gridTemplateColumns: '240px 1fr', gap: '48px', alignItems: 'start' }}>
 
-        {/* Sidebar — CSS hover only, no JS handlers */}
+        {/* Sidebar */}
         <aside style={{ position: 'sticky', top: '88px' }}>
           <div style={{ background: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 2px 20px rgba(16,24,43,0.08)', border: '1px solid rgba(16,24,43,0.06)' }}>
             <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af', marginBottom: '16px' }}>
@@ -169,9 +152,7 @@ export default function TermsPage() {
           <div style={{ background: 'linear-gradient(135deg, #10182B, #1a2a42)', borderRadius: '16px', padding: '28px 32px', marginBottom: '32px', border: '1px solid rgba(231,85,37,0.2)' }}>
             <div style={{ fontSize: '22px', marginBottom: '10px' }}>📝</div>
             <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '15px', lineHeight: 1.7, margin: '0 0 16px' }}>
-              These Terms of Service constitute a legally binding agreement between you and <strong style={{ color: 'white' }}>Addora Technology PLC</strong>,
-              governing your use of the Addora marketplace at <strong style={{ color: 'white' }}>addora.com.et</strong>.
-              These terms apply to all buyers, visitors, and users of our platform.
+              These Terms of Service constitute a legally binding agreement between you and <strong style={{ color: 'white' }}>Addora Technology PLC</strong>, governing your use of the Addora marketplace at <strong style={{ color: 'white' }}>addora.com.et</strong>. These terms apply to all buyers, visitors, and users of our platform.
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               {[
@@ -231,25 +212,11 @@ export default function TermsPage() {
       </div>
 
       <style>{`
-        .toc-link {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 8px 10px;
-          border-radius: 8px;
-          margin-bottom: 2px;
-          text-decoration: none;
-          color: #374151;
-          font-size: 13px;
-          font-weight: 500;
-          transition: background 0.15s, color 0.15s;
-        }
-        .toc-link:hover {
-          background: #fff5f0;
-          color: #E75525;
-        }
+        .toc-link { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; margin-bottom: 2px; text-decoration: none; color: #374151; font-size: 13px; font-weight: 500; transition: background 0.15s, color 0.15s; }
+        .toc-link:hover { background: #fff5f0; color: #E75525; }
         @media (max-width: 768px) {
-          aside { display: none; }
+          aside { display: none !important; }
+          div[style*="gridTemplateColumns: 240px"] { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </div>
