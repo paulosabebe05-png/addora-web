@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import styles from './Footer.module.css'
 
 export default function Footer() {
@@ -8,13 +7,13 @@ export default function Footer() {
       <div className={styles.inner}>
         <div className={styles.brand}>
           <div className={styles.logo}>
-            <Image
-              src="/logo.png"
-              alt="Addora"
-              width={28}
-              height={28}
-              className={styles.logoImg}
-            />
+            <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+              <rect width="32" height="32" rx="8" fill="#E75525"/>
+              <path d="M8 24 Q16 8 24 24" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none"/>
+              <circle cx="8" cy="24" r="2.5" fill="white"/>
+              <circle cx="16" cy="13" r="2.5" fill="white"/>
+              <circle cx="24" cy="24" r="2.5" fill="white"/>
+            </svg>
             <span>Addora</span>
           </div>
           <p>Ethiopia's trusted local eCommerce platform. Shop confidently, pay when delivered.</p>
@@ -55,7 +54,6 @@ export default function Footer() {
         <div className={styles.bottomLinks}>
           <a href="#">Privacy Policy</a>
           <a href="#">Terms of Service</a>
-          <a href="/refund-policy">Refund Policy</a>
         </div>
       </div>
     </footer>
