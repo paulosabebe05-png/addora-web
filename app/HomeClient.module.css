@@ -134,9 +134,9 @@
 }
 
 .heroBannerTitle {
-  font-family: 'Playfair Display', 'Georgia', serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 32px;
-  font-weight: 700;
+  font-weight: 800;
   color: white;
   line-height: 1.15;
   margin: 0;
@@ -336,13 +336,13 @@
 }
 
 .sectionTitle {
-  font-family: 'Playfair Display', 'Georgia', serif;
-  font-size: 24px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
   font-weight: 700;
   color: #10182B;
   margin: 0;
   line-height: 1.2;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.3px;
 }
 
 .seeAll {
@@ -520,13 +520,13 @@
 }
 
 .promoTitle {
-  font-family: 'Playfair Display', 'Georgia', serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 32px;
-  font-weight: 700;
+  font-weight: 800;
   color: white;
   line-height: 1.15;
   margin: 0;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.5px;
 }
 
 .promoStats {
@@ -886,4 +886,43 @@
   .hScrollItem { width: 136px !important; }
   .skeletonCard { width: 136px; }
   .sectionTitle { font-size: 14px; }
+}
+
+/* ── Promo feature list ── */
+.promoFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 4px 0 8px;
+}
+
+.promoFeatureItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.promoFeatureIcon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.promoFeatureText {
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
+}
+
+.promoIconStack {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  .promoFeatures { gap: 6px; }
+  .promoFeatureText { font-size: 12px; }
 }
