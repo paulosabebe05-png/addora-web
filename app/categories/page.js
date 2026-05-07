@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState, useRef, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import styles from './categories.module.css'
@@ -11,29 +11,37 @@ const PASTELS = [
   '#FFF0FB', '#EDFFFA', '#FFFAED', '#F0EEFF',
 ]
 
+const FLAT_CATEGORIES = [
+  { name: "Women's Fashion", icon: '👗' },
+  { name: "Men's Fashion",   icon: '👔' },
+  { name: 'Electronics',     icon: '📱' },
+  { name: 'Home & Lifestyle',icon: '🏠' },
+  { name: 'Medicine',        icon: '💊' },
+  { name: 'Sports & Outdoor',icon: '⚽' },
+  { name: "Baby's & Toys",   icon: '🧸' },
+  { name: 'Groceries & Pets',icon: '🛒' },
+  { name: 'Health & Beauty', icon: '💄' },
+]
+
 function CategoriesContent() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const catParam = searchParams.get('cat')
 
-  const [categories, setCategories]           = useState([])
-  const [subcategories, setSubcategories]     = useState([])
-  const [products, setProducts]               = useState([])
-  const [allProducts, setAllProducts]         = useState([])
-  const [activeCat, setActiveCat]             = useState(null)
-  const [activeSubcat, setActiveSubcat]       = useState(null)
-  const [loading, setLoading]                 = useState(true)
+  const [categories, setCategories] = useState([])
+  const [products, setProducts]     = useState([])
+  const [allProducts, setAllProducts] = useState([])
+  const [activeCat, setActiveCat]   = useState(null)
+  const [loading, setLoading]       = useState(true)
   const [productsLoading, setProductsLoading] = useState(false)
   const rightRef = useRef(null)
 
-  // Load parent categories + initial products
+  // Load categories + initial products
   useEffect(() => {
     async function load() {
       const [{ data: cats }, { data: prods }] = await Promise.all([
         supabase
           .from('categories')
           .select('id, name, icon, sort_order')
-          .is('parent_id', null)
           .order('sort_order', { ascending: true }),
         supabase
           .from('products')
@@ -42,57 +50,34 @@ function CategoriesContent() {
           .order('created_at', { ascending: false })
           .limit(40),
       ])
-      setCategories(cats || [])
+
+      // Filter to only the 9 flat categories we want, in correct order
+      const ordered = FLAT_CATEGORIES
+        .map(fc => (cats || []).find(c => c.name === fc.name))
+        .filter(Boolean)
+
+      setCategories(ordered)
       setAllProducts(prods || [])
       setLoading(false)
 
-      // If URL has ?cat=id, auto-select that category
-      if (catParam && cats) {
-        const found = cats.find(c => c.id === catParam)
-        if (found) selectCategory(found, prods || [])
+      // Auto-select from URL ?cat=id
+      if (catParam && ordered.length) {
+        const found = ordered.find(c => c.id === catParam)
+        if (found) selectCategory(found)
       }
     }
     load()
   }, [])
 
-  // Load subcategories when a parent category is selected
-  async function selectCategory(cat, currentAllProducts = allProducts) {
+  async function selectCategory(cat) {
     setActiveCat(cat)
-    setActiveSubcat(null)
     setProductsLoading(true)
     rightRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
 
-    // Fetch subcategories for this parent
-    const { data: subs } = await supabase
-      .from('categories')
-      .select('id, name, icon')
-      .eq('parent_id', cat.id)
-      .order('sort_order', { ascending: true })
-
-    setSubcategories(subs || [])
-
-    // Fetch products for this category
     const { data: prods } = await supabase
       .from('products')
       .select('id, name, image_url, price, discount, category_id')
       .eq('category_id', cat.id)
-      .eq('active', true)
-      .order('created_at', { ascending: false })
-
-    setProducts(prods || [])
-    setProductsLoading(false)
-  }
-
-  // Load products for subcategory
-  async function selectSubcategory(sub) {
-    setActiveSubcat(sub)
-    setProductsLoading(true)
-    rightRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
-
-    const { data: prods } = await supabase
-      .from('products')
-      .select('id, name, image_url, price, discount, category_id')
-      .eq('category_id', sub.id)
       .eq('active', true)
       .order('created_at', { ascending: false })
 
@@ -105,30 +90,27 @@ function CategoriesContent() {
   if (!activeCat) {
     allProducts.forEach(p => {
       const cat = categories.find(c => c.id === p.category_id)
-      const key = cat ? cat.name : null
-      if (!key) return
-      if (!grouped[key]) grouped[key] = { cat, items: [] }
-      if (grouped[key].items.length < 5) grouped[key].items.push(p)
+      if (!cat) return
+      if (!grouped[cat.name]) grouped[cat.name] = { cat, items: [] }
+      if (grouped[cat.name].items.length < 5) grouped[cat.name].items.push(p)
     })
   }
-
-  const displayProducts = products
 
   return (
     <div className={styles.page}>
 
-      {/* ── Left sidebar — parent categories ── */}
+      {/* ── Left sidebar ── */}
       <aside className={styles.sidebar}>
         <button
           className={`${styles.sideItem} ${!activeCat ? styles.sideActive : ''}`}
-          onClick={() => { setActiveCat(null); setActiveSubcat(null); setProducts([]); setSubcategories([]) }}
+          onClick={() => { setActiveCat(null); setProducts([]) }}
         >
           <span className={styles.sideIcon}>🏠</span>
           <span className={styles.sideLabel}>Recommend</span>
         </button>
 
         {loading
-          ? Array.from({ length: 8 }).map((_, i) => <div key={i} className={styles.sideSkeleton} />)
+          ? Array.from({ length: 9 }).map((_, i) => <div key={i} className={styles.sideSkeleton} />)
           : categories.map(cat => (
               <button
                 key={cat.id}
@@ -145,7 +127,7 @@ function CategoriesContent() {
       {/* ── Right panel ── */}
       <main className={styles.main} ref={rightRef}>
 
-        {/* ── Recommend / default grouped view ── */}
+        {/* ── Recommend view ── */}
         {!activeCat && !loading && (
           Object.keys(grouped).length === 0
             ? <div className={styles.empty}><span>🛍️</span><p>No products yet</p></div>
@@ -181,59 +163,28 @@ function CategoriesContent() {
         {/* ── Selected category view ── */}
         {activeCat && (
           <>
-            {/* Category header */}
             <div className={styles.catHeader}>
-              <div>
-                <h2 className={styles.catTitle}>
-                  {activeCat.icon && <span style={{ marginRight: 6 }}>{activeCat.icon}</span>}
-                  {activeCat.name}
-                </h2>
-                {activeSubcat && (
-                  <span className={styles.subcatBreadcrumb}>
-                    → {activeSubcat.name}
-                  </span>
-                )}
-              </div>
+              <h2 className={styles.catTitle}>
+                {activeCat.icon && <span style={{ marginRight: 6 }}>{activeCat.icon}</span>}
+                {activeCat.name}
+              </h2>
               <span className={styles.catCount}>
-                {productsLoading ? '…' : `${displayProducts.length} items`}
+                {productsLoading ? '…' : `${products.length} items`}
               </span>
             </div>
 
-            {/* Subcategory pills — show if subcategories exist */}
-            {subcategories.length > 0 && (
-              <div className={styles.subcatRow}>
-                <button
-                  className={`${styles.subcatPill} ${!activeSubcat ? styles.subcatPillActive : ''}`}
-                  onClick={() => { setActiveSubcat(null); selectCategory(activeCat) }}
-                >
-                  All
-                </button>
-                {subcategories.map(sub => (
-                  <button
-                    key={sub.id}
-                    className={`${styles.subcatPill} ${activeSubcat?.id === sub.id ? styles.subcatPillActive : ''}`}
-                    onClick={() => selectSubcategory(sub)}
-                  >
-                    {sub.icon && <span>{sub.icon} </span>}
-                    {sub.name}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {/* Products */}
             {productsLoading ? (
               <div className={styles.productGrid}>
                 {Array.from({ length: 9 }).map((_, i) => <div key={i} className={styles.productSkeleton} />)}
               </div>
-            ) : displayProducts.length === 0 ? (
+            ) : products.length === 0 ? (
               <div className={styles.empty}>
                 <span>📦</span>
                 <p>No products in this category yet</p>
               </div>
             ) : (
               <div className={styles.productGrid}>
-                {displayProducts.map((p, i) => (
+                {products.map((p, i) => (
                   <Link key={p.id} href={`/products/${p.id}`} className={styles.productItem}>
                     <div className={styles.productImgWrap} style={{ background: PASTELS[i % PASTELS.length] }}>
                       {p.image_url
