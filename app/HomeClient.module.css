@@ -808,7 +808,7 @@
   .catPillActive { background: #10182B !important; color: white !important; border-color: #10182B !important; }
 
   /* Main content */
-  .main { padding: 0 0 80px; }
+  .main { padding: 24px 0 80px; }
 
   .section {
     padding: 16px 0 8px;
