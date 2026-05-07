@@ -12,7 +12,7 @@ const supabase = createClient(
 )
 
 const PRODUCT_FIELDS =
-  'id, name, price, image_url, discount, section, rating, sold, reviews, created_at, category_id, stock, active, badge'
+  'id, name, price, image_url, discount, section, rating, sold, created_at, category_id, stock, active'
 
 const CATEGORIES = [
   { label: "Women's Fashion", icon: '👗', slug: 'fashion' },
