@@ -729,8 +729,8 @@
     flex-direction: column;
     gap: 14px;
 
-    /* MORE BREATHING SPACE — telebirr-style */
-    padding: 88px 16px 28px;
+    /* TOP SPACE FOR HEADER, SIDES/BOTTOM FOR BREATHING */
+    padding: 88px 14px 24px;
 
     /* SOFT PREMIUM BACKGROUND */
     background: linear-gradient(
@@ -741,23 +741,27 @@
     );
 
     position: relative;
-    overflow: hidden;
+    /* keep visible so mobileBannerWrap box-shadow isn't clipped */
+    overflow: visible;
   }
 
-  /* soft ambient glow like telebirr feeling */
+  /* soft ambient glow */
   .mobileHero::before {
     content: "";
     position: absolute;
-    inset: 0;
+    top: 0;
+    right: 0;
+    width: 60%;
+    height: 200px;
 
-    background:
-      radial-gradient(
+    background: radial-gradient(
         circle at top right,
         rgba(231,85,37,0.07),
-        transparent 40%
+        transparent 70%
       );
 
     pointer-events: none;
+    z-index: 0;
   }
 
   /* ─────────────────────────────
@@ -768,16 +772,17 @@
     border-radius: 20px;
     overflow: hidden;
     position: relative;
+    z-index: 1;
 
     background: white;
 
-    /* FLOATING PREMIUM EFFECT */
-    box-shadow:
-      0 12px 36px rgba(16,24,43,0.10),
-      0 2px 8px rgba(16,24,43,0.05);
+    /* FLOATING CARD — proper inset from screen edges */
+    margin: 0 0 8px;
 
-    /* BREATHABLE HORIZONTAL INSET — like Telebirr card */
-    margin: 0 2px 8px;
+    /* PREMIUM SHADOW */
+    box-shadow:
+      0 8px 28px rgba(16,24,43,0.10),
+      0 2px 8px rgba(16,24,43,0.05);
   }
 
   /* Override hero banner for mobile */
