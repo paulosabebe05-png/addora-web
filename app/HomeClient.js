@@ -95,7 +95,7 @@ function useAllProducts() {
   return { products, loading }
 }
 
-// ── Banners hook ──
+// ── Banners hook — fetches device-specific + 'all' banners ──
 function useBanners(device) {
   const [banners, setBanners] = useState([])
   const [loadingBanners, setLoadingBanners] = useState(true)
@@ -161,7 +161,6 @@ function HeroBannerCarousel({ banners, loading }) {
 
   if (loading) return <div className={styles.heroBannerSkeleton} />
   if (!banners.length) {
-    // Fallback placeholder banner
     return (
       <div className={styles.heroBannerFallback}>
         <div className={styles.heroBannerFallbackContent}>
@@ -210,7 +209,7 @@ function HeroBannerCarousel({ banners, loading }) {
   )
 }
 
-// ── Section header (mockup style with red accent bar) ──
+// ── Section header ──
 function SectionHeader({ label, title, countdown, seeAllHref }) {
   const pad = (n) => String(n).padStart(2, '0')
   return (
@@ -261,7 +260,7 @@ function ProductRow({ products, loading, itemWidth = 200 }) {
   )
 }
 
-// ── Category icon grid (Browse by Category) ──
+// ── Category icon grid ──
 function CategoryGrid() {
   const icons = [
     { label: 'Phones',     icon: '📱', slug: 'electronics' },
@@ -291,80 +290,57 @@ function CategoryGrid() {
   )
 }
 
-// ── Promo banner hook — fetches 'promo' device banner from DB ──
-function usePromoBanner() {
-  const [banner, setBanner] = useState(null)
-  const [loading, setLoading] = useState(true)
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const { data, error } = await supabase
-          .from('banners')
-          .select('id, image_url, target_url, title')
-          .eq('active', true)
-          .eq('device', 'promo')
-          .order('sort_order', { ascending: true })
-          .limit(1)
-          .maybeSingle()
-        if (error) throw error
-        setBanner(data)
-      } catch {
-        setBanner(null)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchData()
-  }, [])
-  return { banner, loading }
-}
-
-// ── Featured promo banner — connected to banners table ──
+// ── Promo Banner — hardcoded, no DB needed ──
 function PromoBanner() {
-  const { banner, loading } = usePromoBanner()
-
-  // Always show the static fallback if no promo banner in DB
-  const title  = banner?.title      || 'Enhance Your\nShopping Experience'
-  const href   = banner?.target_url || '/categories'
-  const imgUrl = banner?.image_url  || null
-
-  if (loading) return (
-    <div className={styles.promoBanner} style={{ minHeight: 140, opacity: 0.5 }} />
-  )
-
+  const STATS = [
+    { n: '200+', l: 'Products' },
+    { n: '1–3',  l: 'Day Delivery' },
+    { n: '100%', l: 'Cash on Delivery' },
+    { n: '4.9★', l: 'Rating' },
+  ]
+  const FEATURES = [
+    { icon: '🚀', text: 'Fast delivery across Addis Ababa' },
+    { icon: '💳', text: 'Pay cash when order arrives' },
+    { icon: '✅', text: 'Verified local vendors only' },
+    { icon: '🔄', text: '30-day return guarantee' },
+  ]
   return (
     <div className={styles.promoBanner}>
       <div className={styles.promoBannerLeft}>
-        <span className={styles.promoLabel}>Categories</span>
+        <span className={styles.promoLabel}>Why Shop With Us</span>
         <h3 className={styles.promoTitle}>
-          {title.split('\n').map((line, i) => (
-            <span key={i}>{line}{i === 0 && <br />}</span>
-          ))}
+          Ethiopia's Most<br />Trusted Marketplace
         </h3>
+        {/* Feature list */}
+        <div className={styles.promoFeatures}>
+          {FEATURES.map((f, i) => (
+            <div key={i} className={styles.promoFeatureItem}>
+              <span className={styles.promoFeatureIcon}>{f.icon}</span>
+              <span className={styles.promoFeatureText}>{f.text}</span>
+            </div>
+          ))}
+        </div>
+        {/* Stats row */}
         <div className={styles.promoStats}>
-          {[
-            { n: '200+', l: 'Products' },
-            { n: '1–3',  l: 'Day Delivery' },
-            { n: '100%', l: 'Cash on Delivery' },
-            { n: '4.9★', l: 'Rating' },
-          ].map((s, i) => (
+          {STATS.map((s, i) => (
             <div key={i} className={styles.promoStat}>
               <span className={styles.promoStatNum}>{s.n}</span>
               <span className={styles.promoStatLabel}>{s.l}</span>
             </div>
           ))}
         </div>
-        <Link href={href} className={styles.promoCta}>Shop Now →</Link>
+        <Link href="/categories" className={styles.promoCta}>
+          Start Shopping →
+        </Link>
       </div>
       <div className={styles.promoBannerRight}>
         <div className={styles.promoImgOrb} />
-        {imgUrl ? (
-          <img src={imgUrl} alt={title} style={{ width: 160, height: 160, objectFit: 'cover', borderRadius: '50%', position: 'relative', zIndex: 1 }} />
-        ) : (
-          <div className={styles.promoImgPlaceholder}>
-            <span style={{ fontSize: 64 }}>🛍️</span>
+        <div className={styles.promoImgPlaceholder}>
+          <div className={styles.promoIconStack}>
+            <span style={{ fontSize: 52 }}>🛍️</span>
+            <span style={{ fontSize: 28, position: 'absolute', bottom: 10, right: 10 }}>✅</span>
           </div>
-        )}
+        </div>
       </div>
     </div>
   )
@@ -403,15 +379,14 @@ export default function HomeClient() {
   const { banners: desktopBanners, loadingBanners: loadingDesktop } = useBanners('desktop')
   const { banners: mobileBanners,  loadingBanners: loadingMobile  } = useBanners('mobile')
 
-  const { products: flashProducts,  loading: loadingFlash }      = useSectionProducts('flash_sale',   { orderCol: 'discount',   ascending: false })
-  const { products: bestSellers,    loading: loadingBest }        = useSectionProducts('best_sellers', { orderCol: 'sold',        ascending: false })
-  const { products: newArrivals,    loading: loadingNew }         = useSectionProducts('new_arrivals', { orderCol: 'created_at',  ascending: false })
-  const { products: todayDeals,     loading: loadingDeals }       = useSectionProducts('todays_deals', { orderCol: 'discount',   ascending: false })
-
-  const { products: allProducts, loading: loadingAll } = useAllProducts()
+  const { products: flashProducts,  loading: loadingFlash }  = useSectionProducts('flash_sale',   { orderCol: 'discount',  ascending: false })
+  const { products: bestSellers,    loading: loadingBest }   = useSectionProducts('best_sellers', { orderCol: 'sold',       ascending: false })
+  const { products: newArrivals,    loading: loadingNew }    = useSectionProducts('new_arrivals', { orderCol: 'created_at', ascending: false })
+  const { products: todayDeals,     loading: loadingDeals }  = useSectionProducts('todays_deals', { orderCol: 'discount',  ascending: false })
+  const { products: allProducts,    loading: loadingAll }    = useAllProducts()
 
   const filtered = allProducts.filter(p => {
-    const matchCat = activeCategory === 'All' || p.name.toLowerCase().includes(activeCategory.toLowerCase())
+    const matchCat    = activeCategory === 'All' || p.name.toLowerCase().includes(activeCategory.toLowerCase())
     const matchSearch = !search.trim() || p.name.toLowerCase().includes(search.toLowerCase())
     return matchCat && matchSearch
   })
@@ -423,8 +398,6 @@ export default function HomeClient() {
 
       {/* ══ DESKTOP LAYOUT ══ */}
       <div className={styles.desktopLayout}>
-
-        {/* Left sidebar — category list */}
         <aside className={styles.sidebar}>
           <ul className={styles.sidebarList}>
             {CATEGORIES.map(cat => (
@@ -438,8 +411,6 @@ export default function HomeClient() {
             ))}
           </ul>
         </aside>
-
-        {/* Right — hero banner */}
         <div className={styles.heroArea}>
           <HeroBannerCarousel banners={desktopBanners} loading={loadingDesktop} />
         </div>
@@ -450,7 +421,6 @@ export default function HomeClient() {
         <div className={styles.mobileBannerWrap}>
           <HeroBannerCarousel banners={mobileBanners} loading={loadingMobile} />
         </div>
-        {/* Mobile trust strip */}
         <div className={styles.mobileTrustRow}>
           {[
             { icon: '✓', label: 'Cash on Delivery' },
@@ -464,7 +434,6 @@ export default function HomeClient() {
             </div>
           ))}
         </div>
-        {/* Mobile category pills */}
         <div className={styles.mobileCatRow}>
           {CAT_PILLS.map(cat => (
             <button key={cat.label}
@@ -519,19 +488,16 @@ export default function HomeClient() {
           </section>
         ) : (
           <>
-            {/* ── Flash Sale ── */}
             <section className={styles.section}>
               <SectionHeader label="Today's" title="Flash Sales" countdown={countdown} seeAllHref="/?cat=sale" />
               <ProductRow products={flashProducts} loading={loadingFlash} itemWidth={220} />
             </section>
 
-            {/* ── Browse by Category ── */}
             <section className={styles.section}>
               <SectionHeader label="Categories" title="Browse By Category" seeAllHref="/categories" />
               <CategoryGrid />
             </section>
 
-            {/* ── Best Selling Products ── */}
             <section className={styles.section}>
               <SectionHeader label="This Month" title="Best Selling Products" seeAllHref="/?cat=bestsellers" />
               <ProductRow products={bestSellers} loading={loadingBest} itemWidth={220} />
@@ -540,22 +506,18 @@ export default function HomeClient() {
             {/* ── Promo Banner ── */}
             <PromoBanner />
 
-            {/* ── Today's Deals ── */}
             <section className={styles.section}>
               <SectionHeader label="Only Today" title="Today's Deals" seeAllHref="/?cat=deals" />
               <ProductRow products={todayDeals} loading={loadingDeals} itemWidth={220} />
             </section>
 
-            {/* ── New Arrivals ── */}
             <section className={styles.section}>
               <SectionHeader label="Fresh" title="New Arrivals" seeAllHref="/?cat=new" />
               <ProductRow products={newArrivals} loading={loadingNew} itemWidth={220} />
             </section>
 
-            {/* ── Trust badges ── */}
             <TrustStrip />
 
-            {/* ── All Products grid ── */}
             <section className={styles.section} id="all-products">
               <SectionHeader title="All Products" label={loadingAll ? '' : `${allProducts.length} items`} />
               {loadingAll ? (
