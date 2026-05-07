@@ -1,10 +1,9 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import ProductCard from '../components/ui/ProductCard'
-import { useCart } from '../../lib/cart'
 import styles from './HomeClient.module.css'
 
 const supabase = createClient(
@@ -13,7 +12,7 @@ const supabase = createClient(
 )
 
 const PRODUCT_FIELDS =
-  'id, name, price, image_url, discount, section, rating, reviews, sold, badge, created_at, category_id, stock, active'
+  'id, name, price, image_url, discount, section, rating, sold, created_at, category_id, stock, active'
 
 // ── Categories hook — fetches from DB (parent categories only) ──
 function useCategories() {
@@ -30,14 +29,14 @@ function useCategories() {
 }
 
 const CAT_PILLS = [
-  { label: 'All',           icon: '🛍️' },
-  { label: 'Kids',          icon: '🧸' },
-  { label: 'Electronics',   icon: '📱' },
-  { label: 'Home & Living', icon: '🛋️' },
-  { label: 'Beauty',        icon: '💄' },
-  { label: 'Fashion',       icon: '👗' },
-  { label: 'Watches',       icon: '⌚' },
-  { label: 'Sports',        icon: '⚽' },
+  { label: 'All',          icon: '🛍️' },
+  { label: 'Kids',         icon: '🧸' },
+  { label: 'Electronics',  icon: '📱' },
+  { label: 'Home & Living',icon: '🛋️' },
+  { label: 'Beauty',       icon: '💄' },
+  { label: 'Fashion',      icon: '👗' },
+  { label: 'Watches',      icon: '⌚' },
+  { label: 'Sports',       icon: '⚽' },
 ]
 
 // ── Countdown timer ──
@@ -314,6 +313,7 @@ function PromoBanner() {
         <h3 className={styles.promoTitle}>
           Ethiopia's Most<br />Trusted Marketplace
         </h3>
+        {/* Feature list */}
         <div className={styles.promoFeatures}>
           {FEATURES.map((f, i) => (
             <div key={i} className={styles.promoFeatureItem}>
@@ -322,6 +322,7 @@ function PromoBanner() {
             </div>
           ))}
         </div>
+        {/* Stats row */}
         <div className={styles.promoStats}>
           {STATS.map((s, i) => (
             <div key={i} className={styles.promoStat}>
@@ -368,100 +369,6 @@ function TrustStrip() {
         </div>
       ))}
     </div>
-  )
-}
-
-// ══════════════════════════════════════════
-// MOBILE BOTTOM NAVIGATION BAR  ← NEW
-// ══════════════════════════════════════════
-function MobileBottomNav() {
-  const pathname = usePathname()
-  const { count } = useCart()
-
-  const tabs = [
-    {
-      href: '/',
-      label: 'Home',
-      icon: (active) => (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? '#E75525' : 'none'}
-          stroke={active ? '#E75525' : '#9CA3AF'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
-      ),
-    },
-    {
-      href: '/categories',
-      label: 'Categories',
-      icon: (active) => (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-          stroke={active ? '#E75525' : '#9CA3AF'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="3" width="7" height="7" rx="1.5"/>
-          <rect x="14" y="3" width="7" height="7" rx="1.5"/>
-          <rect x="3" y="14" width="7" height="7" rx="1.5"/>
-          <rect x="14" y="14" width="7" height="7" rx="1.5"/>
-        </svg>
-      ),
-    },
-    {
-      href: '/cart',
-      label: 'Cart',
-      badge: count > 0 ? count : null,
-      icon: (active) => (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-          stroke={active ? '#E75525' : '#9CA3AF'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-          <line x1="3" y1="6" x2="21" y2="6"/>
-          <path d="M16 10a4 4 0 01-8 0"/>
-        </svg>
-      ),
-    },
-    {
-      href: '/orders',
-      label: 'Orders',
-      icon: (active) => (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-          stroke={active ? '#E75525' : '#9CA3AF'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
-          <polyline points="10 9 9 9 8 9"/>
-        </svg>
-      ),
-    },
-    {
-      href: '/auth/signin',
-      label: 'Account',
-      icon: (active) => (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-          stroke={active ? '#E75525' : '#9CA3AF'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
-        </svg>
-      ),
-    },
-  ]
-
-  return (
-    <nav className={styles.mobileBottomNav} aria-label="Mobile navigation">
-      {tabs.map(tab => {
-        const active = pathname === tab.href
-        return (
-          <Link key={tab.href} href={tab.href} className={`${styles.mobileNavItem} ${active ? styles.mobileNavItemActive : ''}`}>
-            <span className={styles.mobileNavIconWrap}>
-              {tab.icon(active)}
-              {tab.badge && (
-                <span className={styles.mobileNavBadge}>
-                  {tab.badge > 9 ? '9+' : tab.badge}
-                </span>
-              )}
-            </span>
-            <span className={styles.mobileNavLabel}>{tab.label}</span>
-          </Link>
-        )
-      })}
-    </nav>
   )
 }
 
@@ -525,7 +432,7 @@ export default function HomeClient() {
             { icon: '🆓', label: 'Free in Addis' },
           ].map((t, i) => (
             <div key={i} className={styles.mobileTrustItem}>
-              <span className={styles.mobileTrustIcon}>{t.icon}</span>
+              <span>{t.icon}</span>
               <span>{t.label}</span>
             </div>
           ))}
@@ -629,9 +536,6 @@ export default function HomeClient() {
           </>
         )}
       </main>
-
-      {/* ══ MOBILE BOTTOM NAV ══ */}
-      <MobileBottomNav />
     </div>
   )
 }
