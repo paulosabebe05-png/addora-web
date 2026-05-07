@@ -729,8 +729,8 @@
     flex-direction: column;
     gap: 14px;
 
-    /* MORE BREATHING SPACE */
-    padding: 88px 14px 18px;
+    /* MORE BREATHING SPACE — telebirr-style */
+    padding: 88px 16px 28px;
 
     /* SOFT PREMIUM BACKGROUND */
     background: linear-gradient(
@@ -765,7 +765,7 @@
      ───────────────────────────── */
 
   .mobileBannerWrap {
-    border-radius: 18px;
+    border-radius: 20px;
     overflow: hidden;
     position: relative;
 
@@ -773,22 +773,22 @@
 
     /* FLOATING PREMIUM EFFECT */
     box-shadow:
-      0 10px 30px rgba(16,24,43,0.08),
-      0 2px 8px rgba(16,24,43,0.04);
+      0 12px 36px rgba(16,24,43,0.10),
+      0 2px 8px rgba(16,24,43,0.05);
 
-    /* SPACE BELOW BANNER */
-    margin-bottom: 6px;
+    /* BREATHABLE HORIZONTAL INSET — like Telebirr card */
+    margin: 0 2px 8px;
   }
 
   /* Override hero banner for mobile */
   .mobileBannerWrap .heroBannerWrap {
     aspect-ratio: 750 / 300;
-    border-radius: 18px;
+    border-radius: 20px;
   }
 
   .mobileBannerWrap .heroBannerFallback {
     aspect-ratio: 750 / 300;
-    border-radius: 18px;
+    border-radius: 20px;
 
     /* MORE INNER BREATHING */
     padding: 24px 22px;
