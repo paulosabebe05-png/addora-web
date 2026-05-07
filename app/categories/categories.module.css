@@ -338,3 +338,67 @@
   .sidebar { width: 180px; }
   .productGrid { grid-template-columns: repeat(5, 1fr); }
 }
+
+/* ── Sidebar icon ── */
+.sideIcon {
+  display: block;
+  font-size: 22px;
+  margin-bottom: 4px;
+  line-height: 1;
+}
+
+.sideItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Subcategory breadcrumb ── */
+.subcatBreadcrumb {
+  font-size: 12px;
+  color: #E75525;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+/* ── Subcategory pills row ── */
+.subcatRow {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 10px 12px;
+  scrollbar-width: none;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fafafa;
+  flex-wrap: nowrap;
+}
+
+.subcatRow::-webkit-scrollbar { display: none; }
+
+.subcatPill {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  border: 1.5px solid #e0e0e0;
+  background: white;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+
+.subcatPill:hover { border-color: #E75525; color: #E75525; }
+
+.subcatPillActive {
+  background: #E75525 !important;
+  color: white !important;
+  border-color: #E75525 !important;
+}
+
+@media (max-width: 768px) {
+  .sideIcon { font-size: 20px; }
+  .subcatPill { font-size: 11px; padding: 5px 12px; }
+}
