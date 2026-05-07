@@ -1,9 +1,17 @@
 import './globals.css'
+import { Playfair_Display } from 'next/font/google'
 import { AuthProvider } from '../lib/auth'
 import { CartProvider } from '../lib/cart'
 import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 import BottomNav from '../components/layout/BottomNav'
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['700'],
+  display: 'swap',
+  variable: '--font-playfair',
+})
 
 export const metadata = {
   title: 'Addora — Shop Local, Pay on Delivery',
@@ -16,7 +24,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={playfair.variable}>
       <body>
         <AuthProvider>
           <CartProvider>
