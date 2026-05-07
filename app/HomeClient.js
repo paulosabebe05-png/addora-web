@@ -103,8 +103,8 @@ function useBanners(device) {
     async function fetchData() {
       try {
         const { data, error } = await supabase
-          .from('banners').select('id, image_url, target_url, title, sort_order')
-          .eq('active', true).eq('device', device).order('sort_order', { ascending: true })
+          .from('banners').select('id, image_url, target_url, title, sort_order, device')
+          .eq('active', true).in('device', [device, 'all']).order('sort_order', { ascending: true })
         if (error) throw error
         setBanners(data || [])
       } catch (err) {
@@ -291,13 +291,56 @@ function CategoryGrid() {
   )
 }
 
-// ── Featured promo banner (the "Enhance Your Music" block) ──
+// ── Promo banner hook — fetches 'promo' device banner from DB ──
+function usePromoBanner() {
+  const [banner, setBanner] = useState(null)
+  const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const { data, error } = await supabase
+          .from('banners')
+          .select('id, image_url, target_url, title')
+          .eq('active', true)
+          .eq('device', 'promo')
+          .order('sort_order', { ascending: true })
+          .limit(1)
+          .maybeSingle()
+        if (error) throw error
+        setBanner(data)
+      } catch {
+        setBanner(null)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
+  return { banner, loading }
+}
+
+// ── Featured promo banner — connected to banners table ──
 function PromoBanner() {
+  const { banner, loading } = usePromoBanner()
+
+  // Always show the static fallback if no promo banner in DB
+  const title  = banner?.title      || 'Enhance Your\nShopping Experience'
+  const href   = banner?.target_url || '/categories'
+  const imgUrl = banner?.image_url  || null
+
+  if (loading) return (
+    <div className={styles.promoBanner} style={{ minHeight: 140, opacity: 0.5 }} />
+  )
+
   return (
     <div className={styles.promoBanner}>
       <div className={styles.promoBannerLeft}>
         <span className={styles.promoLabel}>Categories</span>
-        <h3 className={styles.promoTitle}>Enhance Your<br />Shopping Experience</h3>
+        <h3 className={styles.promoTitle}>
+          {title.split('\n').map((line, i) => (
+            <span key={i}>{line}{i === 0 && <br />}</span>
+          ))}
+        </h3>
         <div className={styles.promoStats}>
           {[
             { n: '200+', l: 'Products' },
@@ -311,13 +354,17 @@ function PromoBanner() {
             </div>
           ))}
         </div>
-        <Link href="/categories" className={styles.promoCta}>Shop Now →</Link>
+        <Link href={href} className={styles.promoCta}>Shop Now →</Link>
       </div>
       <div className={styles.promoBannerRight}>
         <div className={styles.promoImgOrb} />
-        <div className={styles.promoImgPlaceholder}>
-          <span style={{ fontSize: 64 }}>🛍️</span>
-        </div>
+        {imgUrl ? (
+          <img src={imgUrl} alt={title} style={{ width: 160, height: 160, objectFit: 'cover', borderRadius: '50%', position: 'relative', zIndex: 1 }} />
+        ) : (
+          <div className={styles.promoImgPlaceholder}>
+            <span style={{ fontSize: 64 }}>🛍️</span>
+          </div>
+        )}
       </div>
     </div>
   )
