@@ -14,17 +14,19 @@ const supabase = createClient(
 const PRODUCT_FIELDS =
   'id, name, price, image_url, discount, section, rating, sold, created_at, category_id, stock, active'
 
-const CATEGORIES = [
-  { label: "Women's Fashion", icon: '👗', slug: 'fashion' },
-  { label: "Men's Fashion",   icon: '👔', slug: 'mens' },
-  { label: 'Electronics',     icon: '📱', slug: 'electronics' },
-  { label: 'Home & Lifestyle',icon: '🛋️', slug: 'home' },
-  { label: 'Medicine',        icon: '💊', slug: 'medicine' },
-  { label: 'Sports & Outdoor',icon: '⚽', slug: 'sports' },
-  { label: "Baby's & Toys",   icon: '🧸', slug: 'kids' },
-  { label: 'Groceries & Pets',icon: '🛒', slug: 'groceries' },
-  { label: 'Health & Beauty', icon: '💄', slug: 'beauty' },
-]
+// ── Categories hook — fetches from DB (parent categories only) ──
+function useCategories() {
+  const [categories, setCategories] = useState([])
+  useEffect(() => {
+    supabase
+      .from('categories')
+      .select('id, name, icon')
+      .is('parent_id', null)
+      .order('sort_order', { ascending: true })
+      .then(({ data }) => setCategories(data || []))
+  }, [])
+  return categories
+}
 
 const CAT_PILLS = [
   { label: 'All',          icon: '🛍️' },
@@ -375,6 +377,7 @@ export default function HomeClient() {
   const [activeCategory, setActiveCategory] = useState('All')
   const [search, setSearch] = useState('')
   const countdown = useCountdown(6)
+  const dbCategories = useCategories()
 
   const { banners: desktopBanners, loadingBanners: loadingDesktop } = useBanners('desktop')
   const { banners: mobileBanners,  loadingBanners: loadingMobile  } = useBanners('mobile')
@@ -400,11 +403,11 @@ export default function HomeClient() {
       <div className={styles.desktopLayout}>
         <aside className={styles.sidebar}>
           <ul className={styles.sidebarList}>
-            {CATEGORIES.map(cat => (
-              <li key={cat.slug}>
-                <Link href={`/?cat=${cat.slug}`} className={styles.sidebarLink}>
-                  <span>{cat.icon}</span>
-                  {cat.label}
+            {dbCategories.map(cat => (
+              <li key={cat.id}>
+                <Link href={`/categories?cat=${cat.id}`} className={styles.sidebarLink}>
+                  <span>{cat.icon || '🛍️'}</span>
+                  {cat.name}
                   <svg className={styles.sidebarChevron} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
                 </Link>
               </li>
