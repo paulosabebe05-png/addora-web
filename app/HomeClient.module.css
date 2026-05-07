@@ -134,9 +134,9 @@
 }
 
 .heroBannerTitle {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Playfair Display', 'Georgia', serif;
   font-size: 32px;
-  font-weight: 800;
+  font-weight: 700;
   color: white;
   line-height: 1.15;
   margin: 0;
@@ -336,13 +336,13 @@
 }
 
 .sectionTitle {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 22px;
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: 24px;
   font-weight: 700;
   color: #10182B;
   margin: 0;
   line-height: 1.2;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
 }
 
 .seeAll {
@@ -520,13 +520,13 @@
 }
 
 .promoTitle {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Playfair Display', 'Georgia', serif;
   font-size: 32px;
-  font-weight: 800;
+  font-weight: 700;
   color: white;
   line-height: 1.15;
   margin: 0;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
 }
 
 .promoStats {
