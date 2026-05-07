@@ -4,7 +4,78 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '../../../lib/auth'
 import { useCart } from '../../../lib/cart'
+import { supabase } from '../../../lib/supabase'
 import styles from './product.module.css'
+
+/* ─────────────────────────────────────────────────
+   COLOR SWATCH  –  renders hex, rgb(), or gradient
+───────────────────────────────────────────────── */
+function ColorSwatch({ colorHex, colorName, size = 40 }) {
+  // If no hex provided, try to infer from the color name as a fallback
+  const background = colorHex
+    || CSS_COLOR_MAP[colorName?.toLowerCase?.() ?? '']
+    || colorName?.toLowerCase?.().replace(/\s/g, '')
+    || '#ccc'
+
+  const isGradient = background.includes('gradient')
+
+  return (
+    <span
+      className={styles.colorSwatchIcon}
+      style={{
+        width: size,
+        height: size,
+        background,
+        borderRadius: isGradient ? '50%' : '50%',
+        display: 'inline-block',
+        border: '1px solid rgba(0,0,0,.12)',
+        flexShrink: 0,
+      }}
+      title={colorName}
+      aria-label={colorName}
+    />
+  )
+}
+
+// Fallback map for common color names → hex (when color_hex not set in DB)
+const CSS_COLOR_MAP = {
+  black: '#1a1a1a',
+  white: '#f5f0e8',
+  red: '#c0392b',
+  blue: '#2563eb',
+  navy: '#1e2a4a',
+  green: '#16a34a',
+  yellow: '#f59e0b',
+  orange: '#ea580c',
+  pink: '#ec4899',
+  purple: '#7c3aed',
+  brown: '#92400e',
+  gray: '#6b7280',
+  grey: '#6b7280',
+  beige: '#e8dcc8',
+  cream: '#faf7f2',
+  gold: '#c9a84c',
+  silver: '#9ca3af',
+  'light blue': '#93c5fd',
+  'dark blue': '#1e3a5f',
+  'rose gold': 'linear-gradient(135deg,#f4a0b0,#c9a84c)',
+  'space gray': '#4a4a4a',
+  'midnight black': '#0d0d0d',
+  clear: 'linear-gradient(135deg,rgba(255,255,255,.4),rgba(200,210,255,.15))',
+  transparent: 'linear-gradient(135deg,rgba(255,255,255,.4),rgba(200,210,255,.15))',
+}
+
+/* ─────────────────────────────────────────────────
+   SIZE TYPE LABELS
+   Maps size_type → human-readable label for UI
+───────────────────────────────────────────────── */
+const SIZE_TYPE_LABEL = {
+  clothing:  'Size',
+  footwear:  'EU Size',
+  age:       'Age / Size',
+  phone:     'Device Model',
+  universal: 'Size',
+}
 
 export default function ProductDetailClient({ product, variants = [], store = null }) {
   const { user }    = useAuth()
@@ -31,14 +102,12 @@ export default function ProductDetailClient({ product, variants = [], store = nu
     })
   }
 
-  // Open lightbox on mobile tap
   const handleImgClick = () => {
     if (images.length === 0) return
     setLightboxImg(activeImg)
     setLightboxOpen(true)
   }
 
-  // Close lightbox on Escape
   useEffect(() => {
     if (!lightboxOpen) return
     const fn = (e) => { if (e.key === 'Escape') setLightboxOpen(false) }
@@ -53,6 +122,10 @@ export default function ProductDetailClient({ product, variants = [], store = nu
   const allColors   = hasVariants ? [...new Set(variants.map(v => v.color).filter(Boolean))] : []
   const allSizes    = hasVariants ? [...new Set(variants.map(v => v.size).filter(Boolean))]  : []
 
+  // Detect size type from variants (use first variant that has one)
+  const detectedSizeType = variants.find(v => v.size_type)?.size_type ?? null
+  const sizeLabel = SIZE_TYPE_LABEL[detectedSizeType] ?? 'Size'
+
   const [selectedColor, setSelectedColor] = useState(null)
   const [selectedSize,  setSelectedSize]  = useState(null)
 
@@ -64,52 +137,117 @@ export default function ProductDetailClient({ product, variants = [], store = nu
     ? variants.find(v => v.color === selectedColor && v.size === selectedSize) ?? null
     : null
 
+  // If product has no color variants, allow size-only selection
+  const colorless = hasVariants && allColors.length === 0 && allSizes.length > 0
+  const selectedVariantColorless = colorless && selectedSize
+    ? variants.find(v => v.size === selectedSize) ?? null
+    : null
+  const activeVariant = selectedVariant ?? selectedVariantColorless ?? null
+
   useEffect(() => {
     if (!hasVariants) return
     const first = variants.find(v => v.stock > 0)
-    if (first) { setSelectedColor(first.color); setSelectedSize(first.size) }
+    if (first) { setSelectedColor(first.color ?? null); setSelectedSize(first.size ?? null) }
     else { setSelectedColor(variants[0]?.color ?? null); setSelectedSize(variants[0]?.size ?? null) }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleColorChange = (color) => { setSelectedColor(color); setSelectedSize(null) }
 
+  // Build color → hex lookup from variant data
+  const colorHexMap = {}
+  variants.forEach(v => {
+    if (v.color && !colorHexMap[v.color]) {
+      colorHexMap[v.color] = v.color_hex ?? null
+    }
+  })
+
   /* ─────────────────────────────────────────────────
      PRICING
   ───────────────────────────────────────────────── */
   const basePrice  = product.discount > 0 ? product.price * (1 - product.discount / 100) : Number(product.price)
-  const finalPrice = (selectedVariant && Number(selectedVariant.price) > 0) ? Number(selectedVariant.price) : basePrice
+  const finalPrice = (activeVariant && Number(activeVariant.price) > 0) ? Number(activeVariant.price) : basePrice
 
   /* ─────────────────────────────────────────────────
      STOCK
   ───────────────────────────────────────────────── */
-  const stockAvailable = hasVariants ? (selectedVariant ? Number(selectedVariant.stock) : 0) : Number(product.stock ?? 0)
+  const stockAvailable = hasVariants ? (activeVariant ? Number(activeVariant.stock) : 0) : Number(product.stock ?? 0)
   const isOutOfStock   = stockAvailable <= 0
-  const canAdd         = !isOutOfStock && (!hasVariants || !!selectedVariant)
+  const needsColor     = hasVariants && allColors.length > 0 && !selectedColor
+  const needsSize      = hasVariants && allSizes.length > 0 && !selectedSize
+  const canAdd         = !isOutOfStock && (!hasVariants || !!activeVariant)
 
   /* ─────────────────────────────────────────────────
      QUANTITY
   ───────────────────────────────────────────────── */
   const [qty, setQty] = useState(1)
-  useEffect(() => { setQty(1) }, [selectedVariant])
+  useEffect(() => { setQty(1) }, [activeVariant])
 
   /* ─────────────────────────────────────────────────
-     CART
+     CART  +  STOCK DECREMENT
   ───────────────────────────────────────────────── */
   const [added,    setAdded]    = useState(false)
   const [addError, setAddError] = useState('')
 
-  const doAdd = () => {
+  const doAdd = async () => {
     if (!user) { router.push(`/auth/signin?redirect=/products/${product.id}`); return false }
     setAddError('')
-    if (hasVariants && !selectedVariant) {
-      setAddError(!selectedColor ? 'Please select a color' : !selectedSize ? 'Please select a size' : 'Selected combination is out of stock')
+
+    if (hasVariants && !activeVariant) {
+      setAddError(
+        needsColor ? 'Please select a color' :
+        needsSize  ? `Please select a ${sizeLabel.toLowerCase()}` :
+                     'Selected combination is out of stock'
+      )
       return false
     }
     if (isOutOfStock) { setAddError('This item is out of stock'); return false }
+
+    // ── Optimistic stock decrement via Supabase RPC ──
+    try {
+      if (activeVariant) {
+        const { data, error } = await supabase.rpc('decrement_variant_stock', {
+          p_variant_id: activeVariant.id,
+          p_quantity:   qty,
+        })
+        if (error || !data?.ok) {
+          setAddError(data?.error === 'insufficient_stock'
+            ? `Only ${data?.available ?? 0} left in stock`
+            : 'Could not reserve stock. Please try again.')
+          return false
+        }
+      } else {
+        // No-variant product
+        const { data, error } = await supabase.rpc('decrement_product_stock', {
+          p_product_id: product.id,
+          p_quantity:   qty,
+        })
+        if (error || !data?.ok) {
+          setAddError(data?.error === 'insufficient_stock'
+            ? `Only ${data?.available ?? 0} left in stock`
+            : 'Could not reserve stock. Please try again.')
+          return false
+        }
+      }
+    } catch {
+      // If RPC not yet deployed, fall through gracefully
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[stock] RPC not available, skipping decrement')
+      }
+    }
+
     const cartItem = {
-      id: product.id, name: product.name, price: finalPrice, image_url: product.image_url, qty: 1,
-      ...(selectedVariant ? { variant_id: selectedVariant.id, size: selectedVariant.size, color: selectedVariant.color } : {}),
+      id: product.id,
+      name: product.name,
+      price: finalPrice,
+      image_url: product.image_url,
+      qty: 1,
+      ...(activeVariant ? {
+        variant_id: activeVariant.id,
+        size:  activeVariant.size,
+        color: activeVariant.color,
+        color_hex: activeVariant.color_hex ?? colorHexMap[activeVariant.color] ?? null,
+      } : {}),
     }
     for (let i = 0; i < qty; i++) addItem({ ...cartItem })
     setAdded(true)
@@ -118,7 +256,7 @@ export default function ProductDetailClient({ product, variants = [], store = nu
   }
 
   const handleAddToCart = () => doAdd()
-  const handleBuyNow    = () => { if (doAdd()) setTimeout(() => router.push('/checkout'), 120) }
+  const handleBuyNow    = () => { doAdd().then(ok => { if (ok) setTimeout(() => router.push('/checkout'), 120) }) }
 
   /* ─────────────────────────────────────────────────
      RENDER
@@ -131,7 +269,6 @@ export default function ProductDetailClient({ product, variants = [], store = nu
         <div className={styles.lightboxOverlay} onClick={() => setLightboxOpen(false)}>
           <button className={styles.lightboxClose} onClick={() => setLightboxOpen(false)} aria-label="Close">✕</button>
 
-          {/* Prev */}
           {images.length > 1 && (
             <button className={`${styles.lightboxArrow} ${styles.lightboxArrowL}`}
               onClick={e => { e.stopPropagation(); setLightboxImg(i => (i - 1 + images.length) % images.length) }}>‹</button>
@@ -144,13 +281,11 @@ export default function ProductDetailClient({ product, variants = [], store = nu
             onClick={e => e.stopPropagation()}
           />
 
-          {/* Next */}
           {images.length > 1 && (
             <button className={`${styles.lightboxArrow} ${styles.lightboxArrowR}`}
               onClick={e => { e.stopPropagation(); setLightboxImg(i => (i + 1) % images.length) }}>›</button>
           )}
 
-          {/* Dots */}
           {images.length > 1 && (
             <div className={styles.lightboxDots} onClick={e => e.stopPropagation()}>
               {images.map((_, i) => (
@@ -318,7 +453,7 @@ export default function ProductDetailClient({ product, variants = [], store = nu
 
             <div className={styles.hr} />
 
-            {/* COLOR selector */}
+            {/* ── COLOR selector ── */}
             {hasVariants && allColors.length > 0 && (
               <div className={styles.varSection}>
                 <p className={styles.varLabel}>
@@ -328,15 +463,26 @@ export default function ProductDetailClient({ product, variants = [], store = nu
                 <div className={styles.colorRow}>
                   {allColors.map(color => {
                     const colorHasStock = variants.some(v => v.color === color && v.stock > 0)
-                    const colorImg = variants.find(v => v.color === color && v.image_url)?.image_url ?? product.image_url
+                    const colorImg      = variants.find(v => v.color === color && v.image_url)?.image_url ?? null
+                    const hex           = colorHexMap[color] ?? null
+
                     return (
-                      <button key={color} title={color} onClick={() => handleColorChange(color)}
+                      <button key={color} title={color} onClick={() => !(!colorHasStock) && handleColorChange(color)}
                         className={`${styles.colorCard} ${selectedColor === color ? styles.colorOn : ''} ${!colorHasStock ? styles.colorOos : ''}`}>
-                        {colorImg
-                          ? <img src={colorImg} alt={color} className={styles.colorImg} />
-                          : <span className={styles.colorSwatch} style={{ background: color.toLowerCase().replace(/\s/g,'') }} />
-                        }
+
+                        {/* Priority: product image → hex swatch → fallback swatch */}
+                        {colorImg ? (
+                          <img src={colorImg} alt={color} className={styles.colorImg} />
+                        ) : (
+                          <ColorSwatch
+                            colorHex={hex}
+                            colorName={color}
+                            size={40}
+                          />
+                        )}
+
                         <span className={styles.colorLabel}>{color}</span>
+
                         {selectedColor === color && (
                           <span className={styles.colorTick}>
                             <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4">
@@ -351,12 +497,12 @@ export default function ProductDetailClient({ product, variants = [], store = nu
               </div>
             )}
 
-            {/* SIZE selector */}
+            {/* ── SIZE selector ── */}
             {hasVariants && allSizes.length > 0 && (
               <div className={styles.varSection}>
                 <p className={styles.varLabel}>
-                  Size:&nbsp;
-                  <strong>{selectedSize ?? <em className={styles.pick}>Select a size</em>}</strong>
+                  {sizeLabel}:&nbsp;
+                  <strong>{selectedSize ?? <em className={styles.pick}>Select {sizeLabel === 'Device Model' ? 'a model' : 'a size'}</em>}</strong>
                 </p>
                 <div className={styles.sizeRow}>
                   {sizesForColor.map(size => {
@@ -376,15 +522,15 @@ export default function ProductDetailClient({ product, variants = [], store = nu
 
             {/* Stock status */}
             <div className={styles.stockRow}>
-              {hasVariants && !(selectedColor && selectedSize) && (
+              {hasVariants && !(selectedColor || selectedSize) && (
                 <span className={styles.stockNeutral}>Select options to see availability</span>
               )}
-              {hasVariants && selectedColor && selectedSize && (
-                selectedVariant
-                  ? selectedVariant.stock > 0
+              {hasVariants && (selectedColor || selectedSize) && (
+                activeVariant
+                  ? activeVariant.stock > 0
                     ? <span className={styles.stockYes}>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                        In Stock <em>({selectedVariant.stock} available)</em>
+                        In Stock <em>({activeVariant.stock} available)</em>
                       </span>
                     : <span className={styles.stockNo}>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
