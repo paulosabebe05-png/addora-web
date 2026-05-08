@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import styles from './cart.module.css'
 
+const lineKey = (item) => item.variant_id ? `${item.id}__${item.variant_id}` : item.id
+
 export default function CartPage() {
   const { items, removeItem, updateQty, total } = useCart()
   const { user } = useAuth()
@@ -75,39 +77,47 @@ export default function CartPage() {
 
         {/* Items */}
         <div className={styles.items}>
-          {items.map(item => (
-            <div key={item.id} className={styles.item}>
-              <div className={styles.itemImage}>
-                {item.image_url
-                  ? <img src={item.image_url} alt={item.name} />
-                  : <div className={styles.noImg} />
-                }
-              </div>
-              <div className={styles.itemBody}>
-                <h3 className={styles.itemName}>{item.name}</h3>
-                <span className={styles.itemPrice}>ETB {item.price.toLocaleString()}</span>
-                {/* Line total visible on mobile */}
-                <span className={styles.itemLineTotal}>
-                  ETB {(item.price * item.qty).toLocaleString()}
-                </span>
-                <div className={styles.itemActions}>
-                  <div className={styles.qtyControl}>
-                    <button onClick={() => updateQty(item.id, item.qty - 1)}>−</button>
-                    <span>{item.qty}</span>
-                    <button onClick={() => updateQty(item.id, item.qty + 1)}>+</button>
+          {items.map(item => {
+            const key = lineKey(item)
+            return (
+              <div key={key} className={styles.item}>
+                <div className={styles.itemImage}>
+                  {item.image_url
+                    ? <img src={item.image_url} alt={item.name} />
+                    : <div className={styles.noImg} />
+                  }
+                </div>
+                <div className={styles.itemBody}>
+                  <h3 className={styles.itemName}>{item.name}</h3>
+                  {(item.color || item.size) && (
+                    <p className={styles.itemVariant}>
+                      {[item.color, item.size].filter(Boolean).join(' · ')}
+                    </p>
+                  )}
+                  <span className={styles.itemPrice}>ETB {item.price.toLocaleString()}</span>
+                  {/* Line total visible on mobile */}
+                  <span className={styles.itemLineTotal}>
+                    ETB {(item.price * item.qty).toLocaleString()}
+                  </span>
+                  <div className={styles.itemActions}>
+                    <div className={styles.qtyControl}>
+                      <button onClick={() => updateQty(key, item.qty - 1)}>−</button>
+                      <span>{item.qty}</span>
+                      <button onClick={() => updateQty(key, item.qty + 1)}>+</button>
+                    </div>
+                    <button onClick={() => removeItem(key)} className={styles.removeBtn}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                      Remove
+                    </button>
                   </div>
-                  <button onClick={() => removeItem(item.id)} className={styles.removeBtn}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                    Remove
-                  </button>
+                </div>
+                {/* Desktop only line total */}
+                <div className={styles.itemTotal}>
+                  ETB {(item.price * item.qty).toLocaleString()}
                 </div>
               </div>
-              {/* Desktop only line total */}
-              <div className={styles.itemTotal}>
-                ETB {(item.price * item.qty).toLocaleString()}
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </div>
