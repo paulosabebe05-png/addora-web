@@ -319,6 +319,7 @@ function PromoBanner() {
         <h3 className={styles.promoTitle}>
           Ethiopia's Most<br />Trusted Marketplace
         </h3>
+        {/* Feature list */}
         <div className={styles.promoFeatures}>
           {FEATURES.map((f, i) => (
             <div key={i} className={styles.promoFeatureItem}>
@@ -327,6 +328,7 @@ function PromoBanner() {
             </div>
           ))}
         </div>
+        {/* Stats row */}
         <div className={styles.promoStats}>
           {STATS.map((s, i) => (
             <div key={i} className={styles.promoStat}>
@@ -425,6 +427,11 @@ export default function HomeClient() {
 
       {/* ══ MOBILE HERO ══ */}
       <div className={styles.mobileHero}>
+        {/*
+          Inline styles on mobileBannerWrap guarantee the breathing room
+          regardless of CSS module caching. This mirrors how Telebirr's
+          banner card floats away from screen edges with visible side margins.
+        */}
         <div
           className={styles.mobileBannerWrap}
           style={{
@@ -503,45 +510,33 @@ export default function HomeClient() {
           </section>
         ) : (
           <>
-            {/* ── Flash Sales: only shown when loading OR products exist ── */}
-            {(loadingFlash || flashProducts.length > 0) && (
-              <section className={styles.section}>
-                <SectionHeader label="Today's" title="Flash Sales" countdown={countdown} seeAllHref="/?cat=sale" />
-                <ProductRow products={flashProducts} loading={loadingFlash} itemWidth={220} />
-              </section>
-            )}
+            <section className={styles.section}>
+              <SectionHeader label="Today's" title="Flash Sales" countdown={countdown} seeAllHref="/?cat=sale" />
+              <ProductRow products={flashProducts} loading={loadingFlash} itemWidth={220} />
+            </section>
 
             <section className={styles.section}>
               <SectionHeader label="Categories" title="Browse By Category" seeAllHref="/categories" />
               <CategoryGrid />
             </section>
 
-            {/* ── Best Sellers: only shown when loading OR products exist ── */}
-            {(loadingBest || bestSellers.length > 0) && (
-              <section className={styles.section}>
-                <SectionHeader label="This Month" title="Best Selling Products" seeAllHref="/?cat=bestsellers" />
-                <ProductRow products={bestSellers} loading={loadingBest} itemWidth={220} />
-              </section>
-            )}
+            <section className={styles.section}>
+              <SectionHeader label="This Month" title="Best Selling Products" seeAllHref="/?cat=bestsellers" />
+              <ProductRow products={bestSellers} loading={loadingBest} itemWidth={220} />
+            </section>
 
             {/* ── Promo Banner ── */}
             <PromoBanner />
 
-            {/* ── Today's Deals: only shown when loading OR products exist ── */}
-            {(loadingDeals || todayDeals.length > 0) && (
-              <section className={styles.section}>
-                <SectionHeader label="Only Today" title="Today's Deals" seeAllHref="/?cat=deals" />
-                <ProductRow products={todayDeals} loading={loadingDeals} itemWidth={220} />
-              </section>
-            )}
+            <section className={styles.section}>
+              <SectionHeader label="Only Today" title="Today's Deals" seeAllHref="/?cat=deals" />
+              <ProductRow products={todayDeals} loading={loadingDeals} itemWidth={220} />
+            </section>
 
-            {/* ── New Arrivals: only shown when loading OR products exist ── */}
-            {(loadingNew || newArrivals.length > 0) && (
-              <section className={styles.section}>
-                <SectionHeader label="Fresh" title="New Arrivals" seeAllHref="/?cat=new" />
-                <ProductRow products={newArrivals} loading={loadingNew} itemWidth={220} />
-              </section>
-            )}
+            <section className={styles.section}>
+              <SectionHeader label="Fresh" title="New Arrivals" seeAllHref="/?cat=new" />
+              <ProductRow products={newArrivals} loading={loadingNew} itemWidth={220} />
+            </section>
 
             <TrustStrip />
 
