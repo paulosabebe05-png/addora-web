@@ -150,7 +150,7 @@ function BannerDots({ count, active, onSelect }) {
 }
 
 // ── Hero Banner Carousel ──
-function HeroBannerCarousel({ banners, loading }) {
+function HeroBannerCarousel({ banners, loading, isMobile = false }) {
   const router = useRouter()
   const [activeIdx, setActiveIdx] = useState(0)
   const touchStartX = useRef(null)
@@ -164,7 +164,10 @@ function HeroBannerCarousel({ banners, loading }) {
   if (loading) return <div className={styles.heroBannerSkeleton} />
   if (!banners.length) {
     return (
-      <div className={styles.heroBannerFallback}>
+      <div
+        className={styles.heroBannerFallback}
+        style={isMobile ? { borderRadius: 18, overflow: 'hidden' } : {}}
+      >
         <div className={styles.heroBannerFallbackContent}>
           <span className={styles.heroBannerTag}>🔥 Limited Time</span>
           <h2 className={styles.heroBannerTitle}>Up to 50% Off<br />Top Products</h2>
@@ -178,7 +181,10 @@ function HeroBannerCarousel({ banners, loading }) {
 
   const banner = banners[activeIdx]
   return (
-    <div className={styles.heroBannerWrap}>
+    <div
+      className={styles.heroBannerWrap}
+      style={isMobile ? { borderRadius: 18, overflow: 'hidden' } : {}}
+    >
       <div
         className={styles.heroBannerSlide}
         key={activeIdx}
@@ -421,8 +427,21 @@ export default function HomeClient() {
 
       {/* ══ MOBILE HERO ══ */}
       <div className={styles.mobileHero}>
-        <div className={styles.mobileBannerWrap}>
-          <HeroBannerCarousel banners={mobileBanners} loading={loadingMobile} />
+        {/*
+          Inline styles on mobileBannerWrap guarantee the breathing room
+          regardless of CSS module caching. This mirrors how Telebirr's
+          banner card floats away from screen edges with visible side margins.
+        */}
+        <div
+          className={styles.mobileBannerWrap}
+          style={{
+            margin: '0 14px 10px',
+            borderRadius: 18,
+            overflow: 'hidden',
+            boxShadow: '0 6px 20px rgba(0,0,0,0.10)',
+          }}
+        >
+          <HeroBannerCarousel banners={mobileBanners} loading={loadingMobile} isMobile={true} />
         </div>
         <div className={styles.mobileTrustRow}>
           {[
