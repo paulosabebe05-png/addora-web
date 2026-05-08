@@ -710,7 +710,7 @@
 }
 
 /* ══════════════════════════════════════════
-   MOBILE HERO — PREMIUM BREATHABLE VERSION
+   MOBILE (≤ 768px)
    ══════════════════════════════════════════ */
 
 @media (max-width: 768px) {
@@ -720,340 +720,162 @@
   .filterBar { display: none; }
   .trustStrip { display: none; }
 
-  /* ─────────────────────────────
-     MOBILE HERO
-     ───────────────────────────── */
-
+  /* Mobile hero */
   .mobileHero {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-
-    /* TOP SPACE FOR HEADER, SIDES/BOTTOM FOR BREATHING */
-    padding: 88px 14px 24px;
-
-    /* SOFT PREMIUM BACKGROUND */
-    background: linear-gradient(
-      to bottom,
-      #FFF9F5 0%,
-      #FFFDFB 45%,
-      #FFFFFF 100%
-    );
-
-    position: relative;
-    /* keep visible so mobileBannerWrap box-shadow isn't clipped */
-    overflow: visible;
+    gap: 10px;
+    padding: 72px 0 10px;
+    background: #FDFAF6;
   }
-
-  /* soft ambient glow */
-  .mobileHero::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 60%;
-    height: 200px;
-
-    background: radial-gradient(
-        circle at top right,
-        rgba(231,85,37,0.07),
-        transparent 70%
-      );
-
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ─────────────────────────────
-     MOBILE BANNER
-     ───────────────────────────── */
 
   .mobileBannerWrap {
-    border-radius: 20px;
+    border-radius: 14px;
     overflow: hidden;
     position: relative;
-    z-index: 1;
-
-    background: white;
-
-    /* FLOATING CARD — proper inset from screen edges */
-    margin: 0 0 8px;
-
-    /* PREMIUM SHADOW */
-    box-shadow:
-      0 8px 28px rgba(16,24,43,0.10),
-      0 2px 8px rgba(16,24,43,0.05);
+    margin: 0 14px 4px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
   }
 
   /* Override hero banner for mobile */
   .mobileBannerWrap .heroBannerWrap {
-    aspect-ratio: 750 / 300;
-    border-radius: 20px;
+    aspect-ratio: 750 / 280;
+    border-radius: 14px;
   }
 
   .mobileBannerWrap .heroBannerFallback {
-    aspect-ratio: 750 / 300;
-    border-radius: 20px;
-
-    /* MORE INNER BREATHING */
-    padding: 24px 22px;
+    aspect-ratio: 750 / 280;
+    border-radius: 14px;
+    padding: 20px 20px;
   }
 
   .mobileBannerWrap .heroBannerTitle {
-    font-size: 24px;
-    line-height: 1.15;
+    font-size: 22px;
   }
 
-  .mobileBannerWrap .heroBannerSub {
-    font-size: 13px;
-    line-height: 1.5;
-  }
-
-  /* softer arrows */
-  .bannerArrow {
-    width: 42px;
-    height: 42px;
-
-    background: rgba(255,255,255,0.94);
-
-    backdrop-filter: blur(8px);
-
-    box-shadow:
-      0 4px 14px rgba(0,0,0,0.12);
-  }
-
-  .bannerArrowLeft {
-    left: 14px;
-  }
-
-  .bannerArrowRight {
-    right: 14px;
-  }
-
-  /* ─────────────────────────────
-     MOBILE TRUST ROW
-     ───────────────────────────── */
-
+  /* Mobile trust row */
   .mobileTrustRow {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-
-    gap: 8px;
-
-    margin-top: 4px;
+    gap: 6px;
   }
 
   .mobileTrustItem {
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    gap: 5px;
-
-    background: rgba(255,255,255,0.96);
-
-    border-radius: 14px;
-
-    padding: 12px 6px;
-
+    gap: 3px;
+    background: white;
+    border-radius: 10px;
+    padding: 8px 4px;
     font-size: 10px;
     font-weight: 600;
-
     color: #444;
-
     text-align: center;
-
-    border: 1px solid rgba(0,0,0,0.04);
-
-    line-height: 1.25;
-
-    box-shadow:
-      0 1px 3px rgba(0,0,0,0.03);
+    border: 1px solid #f0ebe3;
+    line-height: 1.2;
   }
 
-  /* ─────────────────────────────
-     MOBILE CATEGORY PILLS
-     ───────────────────────────── */
-
+  /* Mobile category pills */
   .mobileCatRow {
     display: flex;
-    gap: 10px;
-
+    gap: 8px;
     overflow-x: auto;
-
     scrollbar-width: none;
     -ms-overflow-style: none;
-
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-bottom: 2px;
   }
 
-  .mobileCatRow::-webkit-scrollbar {
-    display: none;
-  }
+  .mobileCatRow::-webkit-scrollbar { display: none; }
 
   .catPill {
     flex-shrink: 0;
-
     display: flex;
     align-items: center;
-    gap: 6px;
-
-    padding: 9px 16px;
-
+    gap: 4px;
+    padding: 7px 14px;
     border-radius: 100px;
-
     font-size: 12px;
     font-weight: 600;
-
-    border: 1px solid rgba(16,24,43,0.08);
-
-    background: rgba(255,255,255,0.92);
-
+    font-family: inherit;
+    border: 1.5px solid rgba(16,24,43,0.12);
+    background: white;
     color: #555;
-
+    cursor: pointer;
+    transition: all 0.18s;
     white-space: nowrap;
-
-    transition: all 0.18s ease;
   }
 
-  .catPill:active {
-    transform: scale(0.96);
-  }
+  .catPill:active { transform: scale(0.96); }
+  .catPillActive { background: #10182B !important; color: white !important; border-color: #10182B !important; }
 
-  .catPillActive {
-    background: #10182B !important;
-    color: white !important;
-    border-color: #10182B !important;
-  }
-
-  /* ─────────────────────────────
-     MAIN CONTENT
-     ───────────────────────────── */
-
-  .main {
-    padding: 26px 0 80px;
-  }
+  /* Main content */
+  .main { padding: 0 0 80px; }
 
   .section {
-    padding: 18px 0 10px;
-
-    border-bottom: 8px solid #F6F6F6;
+    padding: 16px 0 8px;
+    border-bottom: 8px solid #F5F5F5;
   }
 
   .sectionHead {
-    padding: 0 14px;
-
-    margin-bottom: 14px;
-
+    padding: 0 12px;
+    margin-bottom: 12px;
     align-items: center;
   }
 
-  .sectionAccentBar {
-    width: 12px;
-    height: 32px;
-  }
-
-  .sectionTitle {
-    font-size: 17px;
-  }
-
-  .sectionLabel {
-    font-size: 11px;
-  }
+  .sectionAccentBar { width: 12px; height: 30px; }
+  .sectionTitle { font-size: 16px; }
+  .sectionLabel { font-size: 11px; }
 
   .seeAll {
-    padding: 8px 15px;
-
+    padding: 7px 14px;
     font-size: 11px;
-
-    border-radius: 6px;
-  }
-
-  /* ─────────────────────────────
-     TIMER
-     ───────────────────────────── */
-
-  .timerPill {
-    padding: 5px 8px;
-    gap: 2px;
-
-    border-radius: 10px;
-  }
-
-  .timerLabel {
-    font-size: 9px;
-  }
-
-  .timerBox {
-    width: 24px;
-    height: 24px;
-    min-width: 24px;
-
-    font-size: 11px;
-
     border-radius: 5px;
   }
 
-  /* ─────────────────────────────
-     HORIZONTAL PRODUCT SCROLL
-     ───────────────────────────── */
+  .timerPill { padding: 4px 7px; gap: 2px; }
+  .timerLabel { font-size: 9px; }
+  .timerBox { width: 22px; height: 22px; min-width: 22px; font-size: 11px; border-radius: 4px; }
 
-  .hScrollRow {
-    padding: 0 14px 12px;
+  .hScrollRow { padding: 0 12px 10px; gap: 10px; }
+  .hScrollItem { width: 150px !important; }
+  .skeletonCard { width: 150px; }
 
-    gap: 12px;
+  /* Category grid on mobile — horizontal scroll */
+  .catGrid { padding: 0 12px 4px; gap: 10px; }
+
+  .catGridIcon { width: 58px; height: 58px; }
+  .catGridEmoji { font-size: 22px; }
+  .catGridItem { width: 72px; }
+  .catGridLabel { font-size: 11px; }
+
+  /* Promo banner — mobile stack */
+  .promoBanner {
+    flex-direction: column;
+    padding: 28px 20px;
+    margin: 12px;
+    border-radius: 14px;
+    min-height: unset;
+    gap: 16px;
   }
 
-  .hScrollItem {
-    width: 155px !important;
+  .promoBannerRight { display: none; }
+
+  .promoTitle { font-size: 22px; }
+  .promoStatNum { font-size: 18px; }
+  .promoStats { gap: 14px; }
+
+  .promoCta {
+    padding: 10px 22px;
+    font-size: 13px;
   }
 
-  .skeletonCard {
-    width: 155px;
-  }
-
-  /* ─────────────────────────────
-     CATEGORY GRID
-     ───────────────────────────── */
-
-  .catGrid {
-    padding: 0 14px 6px;
-
-    gap: 12px;
-  }
-
-  .catGridIcon {
-    width: 60px;
-    height: 60px;
-
-    border-radius: 18px;
-  }
-
-  .catGridEmoji {
-    font-size: 23px;
-  }
-
-  .catGridItem {
-    width: 74px;
-  }
-
-  .catGridLabel {
-    font-size: 11px;
-  }
-
-  /* ─────────────────────────────
-     PRODUCT GRID
-     ───────────────────────────── */
-
+  /* Product grid */
   .productGrid {
     display: grid;
-
     grid-template-columns: repeat(2, 1fr);
-
     gap: 1px;
-
-    background: #ECEEF3;
+    background: #e8eaf0;
   }
 
   .productGrid > div {
@@ -1061,6 +883,7 @@
     animation: none;
   }
 }
+
 @media (max-width: 400px) {
   .hScrollItem { width: 136px !important; }
   .skeletonCard { width: 136px; }
