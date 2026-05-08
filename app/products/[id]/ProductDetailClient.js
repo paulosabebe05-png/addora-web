@@ -434,6 +434,14 @@ function RelatedProductCard({ product }) {
         {product.discount > 0 && (
           <span className={styles.relatedBadge}>-{product.discount}%</span>
         )}
+        {/* Cart icon overlay */}
+        <div className={styles.relatedCartBtn} onClick={e => e.preventDefault()}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 01-8 0"/>
+          </svg>
+        </div>
       </div>
       <div className={styles.relatedInfo}>
         <p className={styles.relatedName}>{product.name}</p>
@@ -443,95 +451,106 @@ function RelatedProductCard({ product }) {
             <span className={styles.relatedOrig}>ETB {Number(product.price).toLocaleString()}</span>
           )}
         </div>
-        {product.rating > 0 && (
-          <div className={styles.relatedRating}>
-            <StarRating rating={product.rating} size={10} />
-            <span className={styles.relatedRatingVal}>{Number(product.rating).toFixed(1)}</span>
-          </div>
-        )}
+        <div className={styles.relatedMeta}>
+          {product.rating > 0 && (
+            <div className={styles.relatedRating}>
+              <StarRating rating={product.rating} size={10} />
+              <span className={styles.relatedRatingVal}>{Number(product.rating).toFixed(1)}</span>
+            </div>
+          )}
+          {product.sold_count > 0 && (
+            <span className={styles.relatedSold}>{product.sold_count}+ sold</span>
+          )}
+        </div>
       </div>
     </Link>
   )
 }
 
 /* ─────────────────────────────────────────────────
-   RELATED PRODUCTS SECTION
+   RELATED PRODUCTS SECTION  –  AliExpress-style grid
 ───────────────────────────────────────────────── */
 function RelatedProductsSection({ productId, category, storeId }) {
   const [related,  setRelated]  = useState([])
   const [loading,  setLoading]  = useState(true)
-  const scrollRef = useRef(null)
+  const [showAll,  setShowAll]  = useState(false)
 
   useEffect(() => {
-    const fetch = async () => {
+    const load = async () => {
       setLoading(true)
-      // 1. Try same category, same store, excluding current
+      // 1. Same category
       let { data } = await supabase
         .from('products')
-        .select('id, name, image_url, price, discount, rating, stock, category, store_id')
+        .select('id, name, image_url, price, discount, rating, stock, category, store_id, sold_count')
         .neq('id', productId)
         .eq('category', category)
         .gt('stock', 0)
         .order('rating', { ascending: false })
-        .limit(10)
+        .limit(12)
 
       // 2. Fallback: same store
       if (!data || data.length < 4) {
         const { data: storeData } = await supabase
           .from('products')
-          .select('id, name, image_url, price, discount, rating, stock, category, store_id')
+          .select('id, name, image_url, price, discount, rating, stock, category, store_id, sold_count')
           .neq('id', productId)
           .eq('store_id', storeId)
           .gt('stock', 0)
           .order('rating', { ascending: false })
-          .limit(10)
+          .limit(12)
         data = [...(data ?? []), ...(storeData ?? [])].filter(
           (p, i, arr) => arr.findIndex(x => x.id === p.id) === i
-        ).slice(0, 10)
+        ).slice(0, 12)
       }
 
       // 3. Final fallback: popular items
       if (!data || data.length < 2) {
         const { data: popular } = await supabase
           .from('products')
-          .select('id, name, image_url, price, discount, rating, stock, category, store_id')
+          .select('id, name, image_url, price, discount, rating, stock, category, store_id, sold_count')
           .neq('id', productId)
           .gt('stock', 0)
           .order('rating', { ascending: false })
-          .limit(10)
+          .limit(12)
         data = popular ?? []
       }
 
       setRelated(data ?? [])
       setLoading(false)
     }
-    if (category || storeId) fetch()
+    if (category || storeId) load()
     else setLoading(false)
   }, [productId, category, storeId])
 
-  const scroll = (dir) => {
-    if (!scrollRef.current) return
-    scrollRef.current.scrollBy({ left: dir * 260, behavior: 'smooth' })
-  }
-
   if (!loading && related.length === 0) return null
+
+  const visible = showAll ? related : related.slice(0, 6)
 
   return (
     <section className={styles.relatedSection}>
       <div className={styles.relatedHeader}>
-        <h2 className={styles.sectionTitle}>You May Also Like</h2>
-        <div className={styles.relatedArrows}>
-          <button className={styles.relatedArrow} onClick={() => scroll(-1)} aria-label="Scroll left">‹</button>
-          <button className={styles.relatedArrow} onClick={() => scroll(1)}  aria-label="Scroll right">›</button>
-        </div>
+        <h2 className={styles.sectionTitle}>Related Items</h2>
+        <span className={styles.relatedCount}>{related.length} items</span>
       </div>
 
-      <div className={styles.relatedScroll} ref={scrollRef}>
+      <div className={styles.relatedGrid}>
         {loading
-          ? [1, 2, 3, 4, 5].map(i => <div key={i} className={styles.relatedSkeletonCard} />)
-          : related.map(p => <RelatedProductCard key={p.id} product={p} />)
+          ? [1,2,3,4,5,6].map(i => <div key={i} className={styles.relatedSkeletonCard} />)
+          : visible.map(p => <RelatedProductCard key={p.id} product={p} />)
         }
       </div>
+
+      {!loading && related.length > 6 && (
+        <div className={styles.relatedMore}>
+          <button className={styles.relatedMoreBtn} onClick={() => setShowAll(v => !v)}>
+            {showAll ? 'Show less' : `View all ${related.length} items`}
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+              style={{ transform: showAll ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform .3s' }}>
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+        </div>
+      )}
     </section>
   )
 }
