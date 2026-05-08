@@ -511,35 +511,38 @@
 .colorRow { display: flex; gap: 8px; flex-wrap: wrap; }
 .colorCard {
   position: relative;
-  width: 66px;
+  width: 72px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
-  padding: 4px 4px 7px;
-  border: 1px solid var(--border);
+  gap: 6px;
+  padding: 3px 3px 7px;
+  border: 1.5px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface2);
   cursor: pointer;
-  transition: border-color .2s;
+  transition: border-color .2s, box-shadow .2s;
   font-family: inherit;
+  overflow: hidden;
 }
-.colorCard:hover:not(.colorOos) { border-color: var(--border-hover); }
-.colorOn { border-color: var(--gold) !important; }
-.colorOos { opacity: .3; cursor: not-allowed; }
-.colorImg { width: 56px; height: 56px; object-fit: cover; border-radius: 2px; display: block; }
-.colorSwatch { width: 56px; height: 40px; border-radius: 2px; display: block; border: 1px solid rgba(26,26,26,.1); }
+.colorCard:hover:not(.colorOos) { border-color: var(--border-hover); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+.colorOn { border-color: var(--gold) !important; box-shadow: 0 0 0 1px var(--gold) !important; }
+.colorOos { opacity: .35; cursor: not-allowed; }
+.colorImg { width: 66px; height: 66px; object-fit: cover; border-radius: 3px; display: block; }
+.colorSwatch { width: 66px; height: 44px; border-radius: 3px; display: block; border: 1px solid rgba(26,26,26,.1); }
 .colorLabel {
   font-size: 9px;
   color: var(--text-secondary);
   font-weight: 500;
   text-align: center;
-  max-width: 60px;
+  width: 100%;
+  padding: 0 2px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  letter-spacing: .05em;
+  letter-spacing: .04em;
   text-transform: uppercase;
+  line-height: 1;
 }
 .colorTick {
   position: absolute;
