@@ -8,9 +8,9 @@ import { supabase } from '../../../lib/supabase'
 import styles from './product.module.css'
 
 /* ─────────────────────────────────────────────────
-   COLOR SWATCH  –  renders as a rectangular chip
-   using the existing .colorSwatch CSS class
-   (56×40px, matches colorImg slot height)
+   COLOR SWATCH  –  rectangular chip using the
+   existing .colorSwatch CSS class (66×44px)
+   Only shown when variant has no image_url
 ───────────────────────────────────────────────── */
 function ColorSwatch({ colorHex, colorName }) {
   const background = colorHex
@@ -88,7 +88,6 @@ export default function ProductDetailClient({ product, variants = [], store = nu
   const imgRef = useRef(null)
 
   // Build color → image_url map from variants
-  // Uses the first non-null image_url found for each color
   const colorImgMap = {}
   variants.forEach(v => {
     if (v.color && v.image_url && !colorImgMap[v.color]) {
@@ -479,17 +478,17 @@ export default function ProductDetailClient({ product, variants = [], store = nu
                     const hex           = colorHexMap[color] ?? null
 
                     return (
-                      <button
-                        key={color}
-                        title={color}
-                        onClick={() => colorHasStock && handleColorChange(color)}
-                        className={`${styles.colorCard} ${selectedColor === color ? styles.colorOn : ''} ${!colorHasStock ? styles.colorOos : ''}`}
-                      >
-                        {/* Priority: variant image_url → color_hex swatch → name-based swatch */}
+                      <button key={color} title={color} onClick={() => colorHasStock && handleColorChange(color)}
+                        className={`${styles.colorCard} ${selectedColor === color ? styles.colorOn : ''} ${!colorHasStock ? styles.colorOos : ''}`}>
+
+                        {/* Priority: variant image_url → hex swatch → name-based swatch */}
                         {colorImg ? (
                           <img src={colorImg} alt={color} className={styles.colorImg} />
                         ) : (
-                          <ColorSwatch colorHex={hex} colorName={color} />
+                          <ColorSwatch
+                            colorHex={hex}
+                            colorName={color}
+                          />
                         )}
 
                         <span className={styles.colorLabel}>{color}</span>
