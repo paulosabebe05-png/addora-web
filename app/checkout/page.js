@@ -93,20 +93,27 @@ export default function CheckoutPage() {
         <div className={styles.summary}>
           <h2>Order Summary</h2>
           <div className={styles.summaryItems}>
-            {items.map(item => (
-              <div key={item.id} className={styles.summaryItem}>
+            {items.map(item => {
+              const key = item.variant_id ? `${item.id}__${item.variant_id}` : item.id
+              return (
+              <div key={key} className={styles.summaryItem}>
                 <div className={styles.summaryItemImg}>
                   {item.image_url && <img src={item.image_url} alt={item.name} />}
                 </div>
                 <div className={styles.summaryItemInfo}>
                   <span>{item.name}</span>
-                  <span>×{item.qty}</span>
+                  <span>
+                    {[item.color, item.size].filter(Boolean).join(' · ')}
+                    {[item.color, item.size].filter(Boolean).length > 0 ? ' · ' : ''}
+                    ×{item.qty}
+                  </span>
                 </div>
                 <span className={styles.summaryItemPrice}>
                   ETB {(item.price * item.qty).toLocaleString()}
                 </span>
               </div>
-            ))}
+              )
+            })}
           </div>
 
           <div className={styles.summaryRows}>
