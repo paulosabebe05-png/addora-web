@@ -481,31 +481,76 @@ function RelatedProductsSection({ productId, categoryId, storeId }) {
 
       const base = 'id, name, image_url, price, discount, rating, stock, category_id, store_id, sold'
 
-      /* ── Step 1: resolve sibling category IDs (same parent) ── */
+      /* ══════════════════════════════════════════════════════════════
+         Step 1: Walk UP the category tree to find the best "parent"
+         anchor, then collect ALL descendant category IDs from it.
+
+         Example hierarchy:
+           Electronics (L1, parent_id = null)
+             └─ Phone (L2, parent_id = Electronics)
+                  └─ Phone Cases (L3, parent_id = Phone)  ← product here
+
+         • L3 product  → anchor = Phone (L2)  → siblings: Phone Cases, Chargers…
+         • L2 product  → anchor = Electronics  → siblings: Phone, Headphones…
+         • L1 product  → anchor = itself        → children: Phone, Headphones…
+      ══════════════════════════════════════════════════════════════ */
       let categoryIds = categoryId ? [categoryId] : []
 
       if (categoryId) {
-        // Get the current category to find its parent_id
+        // 1a. Fetch the current category
         const { data: currentCat } = await supabase
           .from('categories')
           .select('id, parent_id')
           .eq('id', categoryId)
           .single()
 
+        let anchorParentId = null   // the ID whose children we'll collect
+
         if (currentCat?.parent_id) {
-          // Fetch all siblings (same parent, including current)
-          const { data: siblings } = await supabase
+          // Has a direct parent → use that parent as anchor
+          anchorParentId = currentCat.parent_id
+
+          // Optional: walk one more level up so L3 products also show
+          // L2-level siblings (Phone Cases → anchor = Electronics).
+          // Comment out the block below if you only want L2 siblings.
+          const { data: parentCat } = await supabase
+            .from('categories')
+            .select('id, parent_id')
+            .eq('id', currentCat.parent_id)
+            .single()
+          if (parentCat?.parent_id) {
+            // L3 product: anchor at L1 (grandparent) so we get all
+            // L2 sub-categories (Phone, Headphones, Laptops…)
+            anchorParentId = parentCat.parent_id
+          }
+        } else {
+          // Already at top level: use self as anchor so we collect children
+          anchorParentId = categoryId
+        }
+
+        // 1b. Collect all direct children of the anchor
+        const { data: children } = await supabase
+          .from('categories')
+          .select('id')
+          .eq('parent_id', anchorParentId)
+
+        if (children?.length) {
+          // Include the anchor itself + all its children
+          const childIds = children.map(c => c.id)
+          categoryIds = [anchorParentId, ...childIds].filter(Boolean)
+
+          // 1c. Also grab grandchildren (one more level deep) so nothing is missed
+          const { data: grandchildren } = await supabase
             .from('categories')
             .select('id')
-            .eq('parent_id', currentCat.parent_id)
-
-          if (siblings?.length) {
-            categoryIds = siblings.map(c => c.id)
+            .in('parent_id', childIds)
+          if (grandchildren?.length) {
+            categoryIds = [...categoryIds, ...grandchildren.map(c => c.id)]
           }
         }
       }
 
-      /* ── Step 2: same category (+ siblings) ── */
+      /* ── Step 2: fetch products from the resolved category tree ── */
       let data = []
       if (categoryIds.length > 0) {
         const { data: catData } = await supabase
@@ -516,11 +561,11 @@ function RelatedProductsSection({ productId, categoryId, storeId }) {
           .eq('active', true)
           .gt('stock', 0)
           .order('sold', { ascending: false })
-          .limit(12)
+          .limit(24)
         data = catData ?? []
       }
 
-      /* ── Step 3: fallback — same store ── */
+      /* ── Step 3: fallback — same store (only if < 4 results) ── */
       if (data.length < 4 && storeId) {
         const { data: storeData } = await supabase
           .from('products')
@@ -535,7 +580,7 @@ function RelatedProductsSection({ productId, categoryId, storeId }) {
         // Merge, deduplicate
         data = [...data, ...(storeData ?? [])]
           .filter((p, i, arr) => arr.findIndex(x => x.id === p.id) === i)
-          .slice(0, 12)
+          .slice(0, 24)
       }
 
       /* ── Step 4: final fallback — top sellers sitewide ── */
@@ -547,7 +592,7 @@ function RelatedProductsSection({ productId, categoryId, storeId }) {
           .eq('active', true)
           .gt('stock', 0)
           .order('sold', { ascending: false })
-          .limit(12)
+          .limit(24)
         data = popular ?? []
       }
 
