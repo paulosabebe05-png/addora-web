@@ -11,7 +11,7 @@ import styles from './product.module.css'
    COLOR SWATCH  –  renders hex, rgb(), or gradient
 ───────────────────────────────────────────────── */
 function ColorSwatch({ colorHex, colorName, size = 40 }) {
-  // Priority: explicit hex from DB → CSS_COLOR_MAP lookup → grey fallback
+  // If no hex provided, try to infer from the color name as a fallback
   const background = colorHex
     || CSS_COLOR_MAP[colorName?.toLowerCase?.() ?? '']
     || '#cccccc'
@@ -84,14 +84,25 @@ export default function ProductDetailClient({ product, variants = [], store = nu
 
   /* ─────────────────────────────────────────────────
      IMAGES
+     When a color is selected its variant image_url
+     is injected at index 0 so the main photo
+     switches instantly — like AliExpress.
   ───────────────────────────────────────────────── */
-  const images = [product.image_url, ...(product.extra_images ?? [])].filter(Boolean)
-  const [activeImg,   setActiveImg]   = useState(0)
-  const [zoomed,      setZoomed]      = useState(false)
-  const [zoomPos,     setZoomPos]     = useState({ x: 50, y: 50 })
+  const baseImages = [product.image_url, ...(product.extra_images ?? [])].filter(Boolean)
+  const [activeImg,    setActiveImg]    = useState(0)
+  const [zoomed,       setZoomed]       = useState(false)
+  const [zoomPos,      setZoomPos]      = useState({ x: 50, y: 50 })
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxImg,  setLightboxImg]  = useState(0)
   const imgRef = useRef(null)
+
+  // Build color → image_url map from variants
+  const colorImgMap = {}
+  variants.forEach(v => {
+    if (v.color && v.image_url && !colorImgMap[v.color]) {
+      colorImgMap[v.color] = v.image_url
+    }
+  })
 
   const onMouseMove = (e) => {
     if (!imgRef.current) return
@@ -161,6 +172,15 @@ export default function ProductDetailClient({ product, variants = [], store = nu
       colorHexMap[v.color] = v.color_hex ?? null
     }
   })
+
+  // Dynamic image list: selected color's image goes first, then base images (deduped)
+  const variantImg = selectedColor ? (colorImgMap[selectedColor] ?? null) : null
+  const images = variantImg
+    ? [variantImg, ...baseImages.filter(u => u !== variantImg)]
+    : baseImages
+
+  // Reset to first image when color changes
+  useEffect(() => { setActiveImg(0) }, [selectedColor])
 
   /* ─────────────────────────────────────────────────
      PRICING
@@ -463,7 +483,7 @@ export default function ProductDetailClient({ product, variants = [], store = nu
                 <div className={styles.colorRow}>
                   {allColors.map(color => {
                     const colorHasStock = variants.some(v => v.color === color && v.stock > 0)
-                    const colorImg      = variants.find(v => v.color === color && v.image_url)?.image_url ?? null
+                    const colorImg      = colorImgMap[color] ?? null
                     const hex           = colorHexMap[color] ?? null
 
                     return (
