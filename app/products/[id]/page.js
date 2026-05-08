@@ -10,7 +10,7 @@ export default async function ProductPage({ params }) {
     await Promise.all([
       supabase.from('products').select('*').eq('id', params.id).single(),
       supabase.from('product_variants')
-        .select('id, product_id, color, size, stock, price, sku')
+        .select('id, product_id, color, size, stock, price, sku, color_hex, image_url, size_type')
         .eq('product_id', params.id)
         .order('color', { ascending: true })
         .order('size',  { ascending: true }),
@@ -23,7 +23,7 @@ export default async function ProductPage({ params }) {
   if (product.store_id) {
     const { data: storeData } = await supabase
       .from('stores')
-      .select('id, product_id, color, size, stock, price, sku, color_hex, image_url, size_type')
+      .select('id, name, logo_url, rating, verified')
       .eq('id', product.store_id)
       .single()
     store = storeData ?? null
