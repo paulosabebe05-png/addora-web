@@ -757,11 +757,12 @@ export default function ProductDetailClient({ product, variants = [], store = nu
       if (process.env.NODE_ENV === 'development') console.warn('[stock] RPC not available, skipping decrement')
     }
 
+    // Single addItem call with the correct qty — never loop addItem
     const cartItem = {
-      id: product.id, name: product.name, price: finalPrice, image_url: product.image_url, qty: 1,
+      id: product.id, name: product.name, price: finalPrice, image_url: product.image_url, qty,
       ...(activeVariant ? { variant_id: activeVariant.id, size: activeVariant.size, color: activeVariant.color, color_hex: activeVariant.color_hex ?? colorHexMap[activeVariant.color] ?? null } : {}),
     }
-    for (let i = 0; i < qty; i++) addItem({ ...cartItem })
+    addItem(cartItem)
     setAdded(true); setTimeout(() => setAdded(false), 2200)
     return true
   }
