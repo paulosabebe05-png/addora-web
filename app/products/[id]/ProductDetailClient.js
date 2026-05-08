@@ -11,11 +11,10 @@ import styles from './product.module.css'
    COLOR SWATCH  –  renders hex, rgb(), or gradient
 ───────────────────────────────────────────────── */
 function ColorSwatch({ colorHex, colorName, size = 40 }) {
-  // If no hex provided, try to infer from the color name as a fallback
+  // Priority: explicit hex from DB → CSS_COLOR_MAP lookup → grey fallback
   const background = colorHex
     || CSS_COLOR_MAP[colorName?.toLowerCase?.() ?? '']
-    || colorName?.toLowerCase?.().replace(/\s/g, '')
-    || '#ccc'
+    || '#cccccc'
 
   const isGradient = background.includes('gradient')
 
@@ -44,6 +43,7 @@ const CSS_COLOR_MAP = {
   red: '#c0392b',
   blue: '#2563eb',
   navy: '#1e2a4a',
+  'navy blue': '#1B2A5E',
   green: '#16a34a',
   yellow: '#f59e0b',
   orange: '#ea580c',
