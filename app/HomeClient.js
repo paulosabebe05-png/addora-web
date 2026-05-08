@@ -6,6 +6,15 @@ import { createClient } from '@supabase/supabase-js'
 import ProductCard from '../components/ui/ProductCard'
 import styles from './HomeClient.module.css'
 
+// ── Guard: if env vars are missing, log clearly so it's obvious ──
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  console.error(
+    '[HomeClient] ❌ Missing Supabase env vars!\n' +
+    '  NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL, '\n' +
+    '  NEXT_PUBLIC_SUPABASE_ANON_KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? '✓ set' : '❌ missing'
+  )
+}
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -14,7 +23,7 @@ const supabase = createClient(
 const PRODUCT_FIELDS =
   'id, name, price, image_url, discount, section, rating, sold, created_at, category_id, stock, active'
 
-// ── Categories hook — fetches from DB (parent categories only) ──
+// ── Categories hook ──
 function useCategories() {
   const [categories, setCategories] = useState([])
   useEffect(() => {
@@ -60,15 +69,17 @@ function useCountdown(targetHours = 6) {
 }
 
 // ── Flash Sale hook ──
-// First tries section = 'flash_sale', falls back to top-discounted active products
+// Step 1: section = 'flash_sale'
+// Step 2: fallback → discount > 0, sorted by highest discount
 function useFlashSaleProducts(limit = 10) {
   const [products, setProducts] = useState([])
   const [loading, setLoading]   = useState(true)
+
   useEffect(() => {
     async function fetchData() {
       setLoading(true)
 
-      // 1️⃣ Try section-based flash_sale
+      // 1️⃣ Section-based fetch
       const { data: sectionData, error: sectionErr } = await supabase
         .from('products')
         .select(PRODUCT_FIELDS)
@@ -77,14 +88,18 @@ function useFlashSaleProducts(limit = 10) {
         .order('discount', { ascending: false })
         .limit(limit)
 
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔥 flash_sale fetch:', { count: sectionData?.length ?? 0, error: sectionErr?.message ?? null })
+      }
+
       if (!sectionErr && sectionData && sectionData.length > 0) {
         setProducts(sectionData)
         setLoading(false)
         return
       }
 
-      // 2️⃣ Fallback: any active product with discount > 0, sorted by highest discount
-      const { data: fallbackData, error: fallbackErr } = await supabase
+      // 2️⃣ Fallback: any product with discount > 0
+      const { data: fallback, error: fallbackErr } = await supabase
         .from('products')
         .select(PRODUCT_FIELDS)
         .eq('active', true)
@@ -92,12 +107,17 @@ function useFlashSaleProducts(limit = 10) {
         .order('discount', { ascending: false })
         .limit(limit)
 
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔥 flash_sale fallback:', { count: fallback?.length ?? 0, error: fallbackErr?.message ?? null })
+      }
+
       if (fallbackErr) console.error('Flash sale fallback error:', fallbackErr)
-      setProducts(fallbackData || [])
+      setProducts(fallback || [])
       setLoading(false)
     }
     fetchData()
   }, [])
+
   return { products, loading }
 }
 
@@ -139,7 +159,7 @@ function useAllProducts() {
   return { products, loading }
 }
 
-// ── Banners hook — fetches device-specific + 'all' banners ──
+// ── Banners hook ──
 function useBanners(device) {
   const [banners, setBanners] = useState([])
   const [loadingBanners, setLoadingBanners] = useState(true)
@@ -151,7 +171,7 @@ function useBanners(device) {
           .eq('active', true).in('device', [device, 'all']).order('sort_order', { ascending: true })
         if (error) throw error
         setBanners(data || [])
-      } catch (err) {
+      } catch {
         setBanners([])
       } finally {
         setLoadingBanners(false)
@@ -206,10 +226,7 @@ function HeroBannerCarousel({ banners, loading, isMobile = false }) {
   if (loading) return <div className={styles.heroBannerSkeleton} />
   if (!banners.length) {
     return (
-      <div
-        className={styles.heroBannerFallback}
-        style={isMobile ? { borderRadius: 18, overflow: 'hidden' } : {}}
-      >
+      <div className={styles.heroBannerFallback} style={isMobile ? { borderRadius: 18, overflow: 'hidden' } : {}}>
         <div className={styles.heroBannerFallbackContent}>
           <span className={styles.heroBannerTag}>🔥 Limited Time</span>
           <h2 className={styles.heroBannerTitle}>Up to 50% Off<br />Top Products</h2>
@@ -223,10 +240,7 @@ function HeroBannerCarousel({ banners, loading, isMobile = false }) {
 
   const banner = banners[activeIdx]
   return (
-    <div
-      className={styles.heroBannerWrap}
-      style={isMobile ? { borderRadius: 18, overflow: 'hidden' } : {}}
-    >
+    <div className={styles.heroBannerWrap} style={isMobile ? { borderRadius: 18, overflow: 'hidden' } : {}}>
       <div
         className={styles.heroBannerSlide}
         key={activeIdx}
@@ -340,7 +354,7 @@ function CategoryGrid() {
   )
 }
 
-// ── Promo Banner — hardcoded, no DB needed ──
+// ── Promo Banner ──
 function PromoBanner() {
   const STATS = [
     { n: '200+', l: 'Products' },
@@ -358,9 +372,7 @@ function PromoBanner() {
     <div className={styles.promoBanner}>
       <div className={styles.promoBannerLeft}>
         <span className={styles.promoLabel}>Why Shop With Us</span>
-        <h3 className={styles.promoTitle}>
-          Ethiopia's Most<br />Trusted Marketplace
-        </h3>
+        <h3 className={styles.promoTitle}>Ethiopia's Most<br />Trusted Marketplace</h3>
         <div className={styles.promoFeatures}>
           {FEATURES.map((f, i) => (
             <div key={i} className={styles.promoFeatureItem}>
@@ -377,9 +389,7 @@ function PromoBanner() {
             </div>
           ))}
         </div>
-        <Link href="/categories" className={styles.promoCta}>
-          Start Shopping →
-        </Link>
+        <Link href="/categories" className={styles.promoCta}>Start Shopping →</Link>
       </div>
       <div className={styles.promoBannerRight}>
         <div className={styles.promoImgOrb} />
@@ -422,18 +432,18 @@ function TrustStrip() {
 export default function HomeClient() {
   const [activeCategory, setActiveCategory] = useState('All')
   const [search, setSearch] = useState('')
-  const countdown = useCountdown(6)
+  const countdown    = useCountdown(6)
   const dbCategories = useCategories()
 
   const { banners: desktopBanners, loadingBanners: loadingDesktop } = useBanners('desktop')
   const { banners: mobileBanners,  loadingBanners: loadingMobile  } = useBanners('mobile')
 
-  // ✅ Flash sale uses smart hook with discount fallback
-  const { products: flashProducts,  loading: loadingFlash }  = useFlashSaleProducts(10)
-  const { products: bestSellers,    loading: loadingBest }   = useSectionProducts('best_sellers', { orderCol: 'sold',       ascending: false })
-  const { products: newArrivals,    loading: loadingNew }    = useSectionProducts('new_arrivals', { orderCol: 'created_at', ascending: false })
-  const { products: todayDeals,     loading: loadingDeals }  = useSectionProducts('todays_deals', { orderCol: 'discount',  ascending: false })
-  const { products: allProducts,    loading: loadingAll }    = useAllProducts()
+  // ✅ Flash sale: section='flash_sale' first, fallback to discount > 0
+  const { products: flashProducts, loading: loadingFlash }  = useFlashSaleProducts(10)
+  const { products: bestSellers,   loading: loadingBest  }  = useSectionProducts('best_sellers', { orderCol: 'sold',       ascending: false })
+  const { products: newArrivals,   loading: loadingNew   }  = useSectionProducts('new_arrivals', { orderCol: 'created_at', ascending: false })
+  const { products: todayDeals,    loading: loadingDeals }  = useSectionProducts('todays_deals', { orderCol: 'discount',   ascending: false })
+  const { products: allProducts,   loading: loadingAll   }  = useAllProducts()
 
   const filtered = allProducts.filter(p => {
     const matchCat    = activeCategory === 'All' || p.name.toLowerCase().includes(activeCategory.toLowerCase())
@@ -470,18 +480,13 @@ export default function HomeClient() {
       <div className={styles.mobileHero}>
         <div
           className={styles.mobileBannerWrap}
-          style={{
-            margin: '0 14px 10px',
-            borderRadius: 18,
-            overflow: 'hidden',
-            boxShadow: '0 6px 20px rgba(0,0,0,0.10)',
-          }}
+          style={{ margin: '0 14px 10px', borderRadius: 18, overflow: 'hidden', boxShadow: '0 6px 20px rgba(0,0,0,0.10)' }}
         >
           <HeroBannerCarousel banners={mobileBanners} loading={loadingMobile} isMobile={true} />
         </div>
         <div className={styles.mobileTrustRow}>
           {[
-            { icon: '✓', label: 'Cash on Delivery' },
+            { icon: '✓',  label: 'Cash on Delivery' },
             { icon: '🚚', label: '1–3 Days' },
             { icon: '🔒', label: 'Verified' },
             { icon: '🆓', label: 'Free in Addis' },
@@ -496,8 +501,7 @@ export default function HomeClient() {
           {CAT_PILLS.map(cat => (
             <button key={cat.label}
               className={`${styles.catPill} ${activeCategory === cat.label ? styles.catPillActive : ''}`}
-              onClick={() => setActiveCategory(cat.label)}
-            >
+              onClick={() => setActiveCategory(cat.label)}>
               <span>{cat.icon}</span>{cat.label}
             </button>
           ))}
@@ -531,7 +535,10 @@ export default function HomeClient() {
 
         {isFiltering ? (
           <section className={styles.section} id="all-products">
-            <SectionHeader title={`${filtered.length} products${activeCategory !== 'All' ? ` in ${activeCategory}` : ''}`} seeAllHref="/categories" />
+            <SectionHeader
+              title={`${filtered.length} products${activeCategory !== 'All' ? ` in ${activeCategory}` : ''}`}
+              seeAllHref="/categories"
+            />
             {loadingAll ? (
               <div className={styles.productGrid}>{[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}</div>
             ) : filtered.length === 0 ? (
@@ -561,7 +568,6 @@ export default function HomeClient() {
               <ProductRow products={bestSellers} loading={loadingBest} itemWidth={220} />
             </section>
 
-            {/* ── Promo Banner ── */}
             <PromoBanner />
 
             <section className={styles.section}>
