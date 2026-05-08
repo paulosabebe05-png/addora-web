@@ -30,7 +30,7 @@ export default function OrderDetailPage() {
     if (!user || !params.id) return
     Promise.all([
       supabase.from('orders').select('*').eq('id', params.id).eq('user_id', user.id).single(),
-      supabase.from('order_items').select('id, order_id, product_id, product_name, product_image, quantity, price, size, color, variant_id').eq('order_id', params.id)
+      supabase.from('order_items').select('id, order_id, product_id, product_name, product_image, quantity, price, size, color, color_hex, variant_id').eq('order_id', params.id)
     ]).then(([{ data: ord }, { data: items }]) => {
       setOrder(ord)
       setOrderItems(items || [])
@@ -110,15 +110,23 @@ export default function OrderDetailPage() {
                   <div className={styles.itemInfo}>
                     <strong>{item.product_name || item.products?.name || 'Product'}</strong>
                     {(item.color || item.size) && (
-                      <span style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 2 }}>
+                      <span style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
                         {item.color && (
-                          <span style={{ fontSize: 12, background: '#f3f4f6', padding: '2px 8px', borderRadius: 4, color: '#374151' }}>
-                            🎨 {item.color}
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, background: '#f3f4f6', padding: '3px 8px', borderRadius: 20, color: '#374151', fontWeight: 500 }}>
+                            <span style={{
+                              width: 10, height: 10, borderRadius: '50%',
+                              background: item.color_hex || item.color.toLowerCase(),
+                              border: '1px solid rgba(0,0,0,0.15)',
+                              flexShrink: 0,
+                              display: 'inline-block'
+                            }} />
+                            {item.color}
                           </span>
                         )}
                         {item.size && (
-                          <span style={{ fontSize: 12, background: '#f3f4f6', padding: '2px 8px', borderRadius: 4, color: '#374151' }}>
-                            📐 Size: {item.size}
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, background: '#f3f4f6', padding: '3px 8px', borderRadius: 20, color: '#374151', fontWeight: 500 }}>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            {item.size}
                           </span>
                         )}
                       </span>
