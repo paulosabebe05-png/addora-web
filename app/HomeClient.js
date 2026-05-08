@@ -59,6 +59,48 @@ function useCountdown(targetHours = 6) {
   return time
 }
 
+// ── Flash Sale hook ──
+// First tries section = 'flash_sale', falls back to top-discounted active products
+function useFlashSaleProducts(limit = 10) {
+  const [products, setProducts] = useState([])
+  const [loading, setLoading]   = useState(true)
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true)
+
+      // 1️⃣ Try section-based flash_sale
+      const { data: sectionData, error: sectionErr } = await supabase
+        .from('products')
+        .select(PRODUCT_FIELDS)
+        .eq('active', true)
+        .eq('section', 'flash_sale')
+        .order('discount', { ascending: false })
+        .limit(limit)
+
+      if (!sectionErr && sectionData && sectionData.length > 0) {
+        setProducts(sectionData)
+        setLoading(false)
+        return
+      }
+
+      // 2️⃣ Fallback: any active product with discount > 0, sorted by highest discount
+      const { data: fallbackData, error: fallbackErr } = await supabase
+        .from('products')
+        .select(PRODUCT_FIELDS)
+        .eq('active', true)
+        .gt('discount', 0)
+        .order('discount', { ascending: false })
+        .limit(limit)
+
+      if (fallbackErr) console.error('Flash sale fallback error:', fallbackErr)
+      setProducts(fallbackData || [])
+      setLoading(false)
+    }
+    fetchData()
+  }, [])
+  return { products, loading }
+}
+
 // ── Section products hook ──
 function useSectionProducts(sectionValue, { orderCol = 'created_at', ascending = false, limit = 10 } = {}) {
   const [products, setProducts] = useState([])
@@ -319,7 +361,6 @@ function PromoBanner() {
         <h3 className={styles.promoTitle}>
           Ethiopia's Most<br />Trusted Marketplace
         </h3>
-        {/* Feature list */}
         <div className={styles.promoFeatures}>
           {FEATURES.map((f, i) => (
             <div key={i} className={styles.promoFeatureItem}>
@@ -328,7 +369,6 @@ function PromoBanner() {
             </div>
           ))}
         </div>
-        {/* Stats row */}
         <div className={styles.promoStats}>
           {STATS.map((s, i) => (
             <div key={i} className={styles.promoStat}>
@@ -388,7 +428,8 @@ export default function HomeClient() {
   const { banners: desktopBanners, loadingBanners: loadingDesktop } = useBanners('desktop')
   const { banners: mobileBanners,  loadingBanners: loadingMobile  } = useBanners('mobile')
 
-  const { products: flashProducts,  loading: loadingFlash }  = useSectionProducts('flash_sale',   { orderCol: 'discount',  ascending: false })
+  // ✅ Flash sale uses smart hook with discount fallback
+  const { products: flashProducts,  loading: loadingFlash }  = useFlashSaleProducts(10)
   const { products: bestSellers,    loading: loadingBest }   = useSectionProducts('best_sellers', { orderCol: 'sold',       ascending: false })
   const { products: newArrivals,    loading: loadingNew }    = useSectionProducts('new_arrivals', { orderCol: 'created_at', ascending: false })
   const { products: todayDeals,     loading: loadingDeals }  = useSectionProducts('todays_deals', { orderCol: 'discount',  ascending: false })
@@ -427,11 +468,6 @@ export default function HomeClient() {
 
       {/* ══ MOBILE HERO ══ */}
       <div className={styles.mobileHero}>
-        {/*
-          Inline styles on mobileBannerWrap guarantee the breathing room
-          regardless of CSS module caching. This mirrors how Telebirr's
-          banner card floats away from screen edges with visible side margins.
-        */}
         <div
           className={styles.mobileBannerWrap}
           style={{
