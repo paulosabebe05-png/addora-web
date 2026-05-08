@@ -73,6 +73,7 @@ export async function POST(request) {
       if (item.variant_id) row.variant_id = item.variant_id
       if (item.size)       row.size       = item.size
       if (item.color)      row.color      = item.color
+      if (item.color_hex)  row.color_hex  = item.color_hex
       return row
     })
 
