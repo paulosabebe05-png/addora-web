@@ -8,28 +8,19 @@ import { supabase } from '../../../lib/supabase'
 import styles from './product.module.css'
 
 /* ─────────────────────────────────────────────────
-   COLOR SWATCH  –  renders hex, rgb(), or gradient
+   COLOR SWATCH  –  renders as a rectangular chip
+   using the existing .colorSwatch CSS class
+   (56×40px, matches colorImg slot height)
 ───────────────────────────────────────────────── */
-function ColorSwatch({ colorHex, colorName, size = 40 }) {
-  // If no hex provided, try to infer from the color name as a fallback
+function ColorSwatch({ colorHex, colorName }) {
   const background = colorHex
     || CSS_COLOR_MAP[colorName?.toLowerCase?.() ?? '']
     || '#cccccc'
 
-  const isGradient = background.includes('gradient')
-
   return (
     <span
-      className={styles.colorSwatchIcon}
-      style={{
-        width: size,
-        height: size,
-        background,
-        borderRadius: isGradient ? '50%' : '50%',
-        display: 'inline-block',
-        border: '1px solid rgba(0,0,0,.12)',
-        flexShrink: 0,
-      }}
+      className={styles.colorSwatch}
+      style={{ background }}
       title={colorName}
       aria-label={colorName}
     />
@@ -97,6 +88,7 @@ export default function ProductDetailClient({ product, variants = [], store = nu
   const imgRef = useRef(null)
 
   // Build color → image_url map from variants
+  // Uses the first non-null image_url found for each color
   const colorImgMap = {}
   variants.forEach(v => {
     if (v.color && v.image_url && !colorImgMap[v.color]) {
@@ -487,18 +479,17 @@ export default function ProductDetailClient({ product, variants = [], store = nu
                     const hex           = colorHexMap[color] ?? null
 
                     return (
-                      <button key={color} title={color} onClick={() => !(!colorHasStock) && handleColorChange(color)}
-                        className={`${styles.colorCard} ${selectedColor === color ? styles.colorOn : ''} ${!colorHasStock ? styles.colorOos : ''}`}>
-
-                        {/* Priority: product image → hex swatch → fallback swatch */}
+                      <button
+                        key={color}
+                        title={color}
+                        onClick={() => colorHasStock && handleColorChange(color)}
+                        className={`${styles.colorCard} ${selectedColor === color ? styles.colorOn : ''} ${!colorHasStock ? styles.colorOos : ''}`}
+                      >
+                        {/* Priority: variant image_url → color_hex swatch → name-based swatch */}
                         {colorImg ? (
                           <img src={colorImg} alt={color} className={styles.colorImg} />
                         ) : (
-                          <ColorSwatch
-                            colorHex={hex}
-                            colorName={color}
-                            size={40}
-                          />
+                          <ColorSwatch colorHex={hex} colorName={color} />
                         )}
 
                         <span className={styles.colorLabel}>{color}</span>
