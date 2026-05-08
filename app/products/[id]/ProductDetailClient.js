@@ -470,7 +470,7 @@ function RelatedProductCard({ product }) {
 /* ─────────────────────────────────────────────────
    RELATED PRODUCTS SECTION  –  AliExpress-style grid
 ───────────────────────────────────────────────── */
-function RelatedProductsSection({ productId, category, storeId }) {
+function RelatedProductsSection({ productId, categoryId, storeId }) {
   const [related,  setRelated]  = useState([])
   const [loading,  setLoading]  = useState(true)
   const [showAll,  setShowAll]  = useState(false)
@@ -478,49 +478,85 @@ function RelatedProductsSection({ productId, category, storeId }) {
   useEffect(() => {
     const load = async () => {
       setLoading(true)
-      // 1. Same category
-      let { data } = await supabase
-        .from('products')
-        .select('id, name, image_url, price, discount, rating, stock, category, store_id, sold_count')
-        .neq('id', productId)
-        .eq('category', category)
-        .gt('stock', 0)
-        .order('rating', { ascending: false })
-        .limit(12)
 
-      // 2. Fallback: same store
-      if (!data || data.length < 4) {
-        const { data: storeData } = await supabase
-          .from('products')
-          .select('id, name, image_url, price, discount, rating, stock, category, store_id, sold_count')
-          .neq('id', productId)
-          .eq('store_id', storeId)
-          .gt('stock', 0)
-          .order('rating', { ascending: false })
-          .limit(12)
-        data = [...(data ?? []), ...(storeData ?? [])].filter(
-          (p, i, arr) => arr.findIndex(x => x.id === p.id) === i
-        ).slice(0, 12)
+      const base = 'id, name, image_url, price, discount, rating, stock, category_id, store_id, sold'
+
+      /* ── Step 1: resolve sibling category IDs (same parent) ── */
+      let categoryIds = categoryId ? [categoryId] : []
+
+      if (categoryId) {
+        // Get the current category to find its parent_id
+        const { data: currentCat } = await supabase
+          .from('categories')
+          .select('id, parent_id')
+          .eq('id', categoryId)
+          .single()
+
+        if (currentCat?.parent_id) {
+          // Fetch all siblings (same parent, including current)
+          const { data: siblings } = await supabase
+            .from('categories')
+            .select('id')
+            .eq('parent_id', currentCat.parent_id)
+
+          if (siblings?.length) {
+            categoryIds = siblings.map(c => c.id)
+          }
+        }
       }
 
-      // 3. Final fallback: popular items
-      if (!data || data.length < 2) {
+      /* ── Step 2: same category (+ siblings) ── */
+      let data = []
+      if (categoryIds.length > 0) {
+        const { data: catData } = await supabase
+          .from('products')
+          .select(base)
+          .neq('id', productId)
+          .in('category_id', categoryIds)
+          .eq('active', true)
+          .gt('stock', 0)
+          .order('sold', { ascending: false })
+          .limit(12)
+        data = catData ?? []
+      }
+
+      /* ── Step 3: fallback — same store ── */
+      if (data.length < 4 && storeId) {
+        const { data: storeData } = await supabase
+          .from('products')
+          .select(base)
+          .neq('id', productId)
+          .eq('store_id', storeId)
+          .eq('active', true)
+          .gt('stock', 0)
+          .order('sold', { ascending: false })
+          .limit(12)
+
+        // Merge, deduplicate
+        data = [...data, ...(storeData ?? [])]
+          .filter((p, i, arr) => arr.findIndex(x => x.id === p.id) === i)
+          .slice(0, 12)
+      }
+
+      /* ── Step 4: final fallback — top sellers sitewide ── */
+      if (data.length < 2) {
         const { data: popular } = await supabase
           .from('products')
-          .select('id, name, image_url, price, discount, rating, stock, category, store_id, sold_count')
+          .select(base)
           .neq('id', productId)
+          .eq('active', true)
           .gt('stock', 0)
-          .order('rating', { ascending: false })
+          .order('sold', { ascending: false })
           .limit(12)
         data = popular ?? []
       }
 
-      setRelated(data ?? [])
+      setRelated(data)
       setLoading(false)
     }
-    if (category || storeId) load()
-    else setLoading(false)
-  }, [productId, category, storeId])
+
+    load()
+  }, [productId, categoryId, storeId])
 
   if (!loading && related.length === 0) return null
 
@@ -530,7 +566,9 @@ function RelatedProductsSection({ productId, category, storeId }) {
     <section className={styles.relatedSection}>
       <div className={styles.relatedHeader}>
         <h2 className={styles.sectionTitle}>Related Items</h2>
-        <span className={styles.relatedCount}>{related.length} items</span>
+        {!loading && related.length > 0 && (
+          <span className={styles.relatedCount}>{related.length} items</span>
+        )}
       </div>
 
       <div className={styles.relatedGrid}>
@@ -1008,7 +1046,7 @@ export default function ProductDetailClient({ product, variants = [], store = nu
           {/* Related Products */}
           <RelatedProductsSection
             productId={product.id}
-            category={product.category ?? null}
+            categoryId={product.category_id ?? null}
             storeId={product.store_id ?? null}
           />
 
