@@ -1,14 +1,15 @@
 /* ── Order Detail — Premium Addora Design ── */
 .page {
+  font-family: 'DM Sans', sans-serif;
   padding: 90px 0 100px;
   background: #f7f7f5; min-height: 100vh;
-  font-family: 'Space Grotesk', sans-serif;
+  
 }
 .guestWrap { min-height: calc(100vh - 58px); display: flex; align-items: center; justify-content: center; }
 .signInBtn {
   padding: 13px 32px; background: var(--orange); color: white;
   font-weight: 700; border-radius: 100px; display: inline-block;
-  font-family: 'Space Grotesk', sans-serif;
+  
   box-shadow: 0 4px 14px rgba(231,85,37,0.35);
 }
 
@@ -16,7 +17,7 @@
   display: flex; align-items: flex-start; gap: 14px;
   background: #f0fdf4; border-bottom: 1px solid #86efac;
   padding: 16px; color: #15803d;
-  font-family: 'Space Grotesk', sans-serif;
+  
 }
 .successBanner strong { display: block; font-size: 14px; font-weight: 700; margin-bottom: 3px; color: #14532d; }
 .successBanner p { font-size: 12px; opacity: 0.8; }
@@ -25,14 +26,16 @@
 .back {
   display: inline-flex; align-items: center; gap: 4px;
   font-size: 13px; font-weight: 600; color: var(--text-muted);
-  margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;
+  margin-bottom: 8px; 
 }
 .title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  
   font-size: 22px; font-weight: 800; color: var(--navy);
   margin-bottom: 4px; letter-spacing: -0.3px;
 }
-.date { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; font-family: 'Space Grotesk', sans-serif; }
+.date { font-size: 12px; color: var(--text-muted); margin-bottom: 16px;  }
 
 .timeline {
   display: flex; align-items: flex-start; background: white;
@@ -47,7 +50,7 @@
   background: #f0f0ee; border: 2px solid #e0e0de; color: #bbb;
   display: flex; align-items: center; justify-content: center;
   font-size: 11px; font-weight: 800; z-index: 1; position: relative;
-  font-family: 'Space Grotesk', sans-serif;
+  
 }
 .done .stepDot { background: #fdf3ee; border-color: var(--orange); color: var(--orange); }
 .active .stepDot { background: var(--orange); border-color: var(--orange); color: white; box-shadow: 0 0 0 6px rgba(231,85,37,0.12); }
@@ -57,7 +60,7 @@
   margin-top: 10px; font-size: 10px; font-weight: 700; color: #bbb;
   text-align: center; white-space: nowrap;
   text-transform: uppercase; letter-spacing: 0.3px;
-  font-family: 'Space Grotesk', sans-serif;
+  
 }
 .done .stepLabel, .active .stepLabel { color: var(--navy); }
 
@@ -66,7 +69,7 @@
 
 .card { background: white; padding: 16px; border-bottom: 1px solid #f0f0ee; }
 .card h2 {
-  font-family: 'Space Grotesk', sans-serif;
+  
   font-size: 11px; font-weight: 700; color: var(--navy);
   text-transform: uppercase; letter-spacing: 0.8px;
   margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f0f0ee;
@@ -84,35 +87,38 @@
 .itemInfo strong {
   font-size: 13px; font-weight: 700; color: var(--navy);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.1px;
+   letter-spacing: -0.1px;
 }
-.itemInfo span { font-size: 11px; color: var(--text-muted); font-family: 'Space Grotesk', sans-serif; }
-.itemPrice { font-size: 14px; font-weight: 800; color: var(--navy); font-family: 'Space Grotesk', sans-serif; white-space: nowrap; }
+.itemInfo span { font-size: 11px; color: var(--text-muted);  }
+.itemPrice { font-size: 14px; font-weight: 800; color: var(--navy);  white-space: nowrap; }
 
-.address { font-size: 14px; line-height: 1.7; color: var(--navy); margin-bottom: 6px; font-family: 'Space Grotesk', sans-serif; }
-.phone { font-size: 13px; color: var(--text-muted); font-family: 'Space Grotesk', sans-serif; }
+.address { font-size: 14px; line-height: 1.7; color: var(--navy); margin-bottom: 6px;  }
+.phone { font-size: 13px; color: var(--text-muted);  }
 
 .sidebar { display: flex; flex-direction: column; }
 .rows { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
-.row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); font-family: 'Space Grotesk', sans-serif; }
+.row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted);  }
 .totalRow {
   font-size: 17px; font-weight: 800; color: var(--navy);
-  font-family: 'Space Grotesk', sans-serif;
+  
   padding-top: 12px; border-top: 2px solid var(--navy);
 }
 .codTag {
   display: flex; align-items: center; gap: 8px;
   background: #fdf3ee; border-radius: 10px; padding: 10px 14px;
   font-size: 12px; font-weight: 600; color: var(--orange);
-  border: 1px solid #fad5c4; font-family: 'Space Grotesk', sans-serif;
+  border: 1px solid #fad5c4; 
 }
 
 @media (min-width: 769px) {
-  .page { padding: 110px 0 100px; }
+  .page {
+  font-family: 'DM Sans', sans-serif; padding: 110px 0 100px; }
   .header { padding: 0; margin-bottom: 32px; }
   .back { margin-bottom: 10px; }
   .back:hover { color: var(--orange); }
-  .title { font-size: 28px; margin-bottom: 6px; }
+  .title {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 28px; margin-bottom: 6px; }
   .date { font-size: 13px; margin-bottom: 0; }
   .successBanner { border-bottom: none; border: 1.5px solid #86efac; border-radius: 16px; padding: 20px 24px; margin-bottom: 28px; }
   .timeline { border-radius: 20px; border: none; box-shadow: 0 2px 20px rgba(0,0,0,0.06); margin-bottom: 28px; padding: 28px 36px; overflow-x: visible; }
