@@ -3,8 +3,11 @@ import Link from 'next/link'
 import { useAuth } from '../../lib/auth'
 import { useCart } from '../../lib/cart'
 import { useRouter, usePathname } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import NotificationBell from './NotificationBell'
+import { useSearch } from './useSearch'
+import SearchDropdown from './SearchDropdown'
+import MobileSearchOverlay from './MobileSearchOverlay'
 import styles from './Header.module.css'
 
 export default function Header() {
@@ -14,16 +17,33 @@ export default function Header() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [search, setSearch] = useState('')
+
+  // Desktop search state
+  const [desktopOpen, setDesktopOpen] = useState(false)
+  const desktopRef = useRef(null)
+  const [activeIndex, setActiveIndex] = useState(-1)
+
+  // Mobile overlay
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  const {
+    query, setQuery,
+    results, loading,
+    recent, saveRecent,
+    clearRecent, removeRecent,
+  } = useSearch()
 
   const isHome = pathname === '/'
+  const transparent = isHome && !scrolled
 
+  // Scroll listener
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // Close user menu on outside click
   useEffect(() => {
     if (!menuOpen) return
     const close = () => setMenuOpen(false)
@@ -31,26 +51,51 @@ export default function Header() {
     return () => window.removeEventListener('click', close)
   }, [menuOpen])
 
+  // Close desktop dropdown on outside click
+  useEffect(() => {
+    const close = (e) => {
+      if (desktopRef.current && !desktopRef.current.contains(e.target)) {
+        setDesktopOpen(false)
+        setActiveIndex(-1)
+      }
+    }
+    document.addEventListener('mousedown', close)
+    return () => document.removeEventListener('mousedown', close)
+  }, [])
+
+  // Keyboard navigation for desktop dropdown
+  const allItems = [...(results.categories || []), ...(results.products || []), ...(recent || [])]
+  const handleDesktopKey = (e) => {
+    if (!desktopOpen) return
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setActiveIndex(i => Math.min(i + 1, allItems.length - 1))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setActiveIndex(i => Math.max(i - 1, -1))
+    } else if (e.key === 'Escape') {
+      setDesktopOpen(false)
+      setActiveIndex(-1)
+    } else if (e.key === 'Enter') {
+      e.preventDefault()
+      commitSearch(query)
+    }
+  }
+
+  const commitSearch = useCallback((term) => {
+    const t = (term || query).trim()
+    if (!t) return
+    saveRecent(t)
+    router.push(`/search?q=${encodeURIComponent(t)}`)
+    setDesktopOpen(false)
+    setActiveIndex(-1)
+  }, [query, saveRecent, router])
+
   const handleSignOut = async () => {
     await signOut()
     router.push('/')
     setMenuOpen(false)
   }
-
-  const handleSearch = (e) => {
-    if (e.key === 'Enter' && search.trim()) {
-      router.push(`/?search=${encodeURIComponent(search.trim())}`)
-    }
-  }
-
-  const handleSearchBtn = () => {
-    if (search.trim()) {
-      router.push(`/?search=${encodeURIComponent(search.trim())}`)
-    }
-  }
-
-  // Always use solid/ivory — transparent only on home before scroll
-  const transparent = isHome && !scrolled
 
   const announcements = [
     { icon: '✓', text: 'Cash on Delivery' },
@@ -72,56 +117,90 @@ export default function Header() {
             <span className={styles.logoText}>Addora</span>
           </Link>
 
-          {/* ── Desktop search bar — pill with Search button ── */}
-          <div className={styles.desktopSearch}>
-            <span className={styles.desktopSearchIcon}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                <circle cx="11" cy="11" r="8"/>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-            </span>
-            <input
-              type="text"
-              placeholder="What are you looking for?"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              onKeyDown={handleSearch}
-              className={styles.desktopSearchInput}
-            />
-            <button
-              className={styles.desktopSearchBtn}
-              onClick={handleSearchBtn}
-              type="button"
-            >
-              Search
-            </button>
-          </div>
-
-          {/* ── Mobile search bar — pill style ── */}
-          <div className={styles.mobileSearchRow}>
-            <div className={styles.mobileSearchWrap}>
-              <span className={styles.mobileSearchIcon}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+          {/* ── Desktop search bar ── */}
+          <div
+            ref={desktopRef}
+            className={`${styles.desktopSearchWrap} ${desktopOpen ? styles.desktopSearchOpen : ''}`}
+          >
+            <div className={styles.desktopSearch}>
+              <span className={styles.desktopSearchIcon}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
                   <circle cx="11" cy="11" r="8"/>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
               </span>
               <input
                 type="text"
-                placeholder="Search products..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                onKeyDown={handleSearch}
-                className={styles.mobileSearchInput}
+                placeholder="What are you looking for?"
+                value={query}
+                onChange={e => { setQuery(e.target.value); setDesktopOpen(true) }}
+                onFocus={() => setDesktopOpen(true)}
+                onKeyDown={handleDesktopKey}
+                className={styles.desktopSearchInput}
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck="false"
               />
+              {query && (
+                <button
+                  className={styles.clearInputBtn}
+                  onClick={() => { setQuery(''); setDesktopOpen(true) }}
+                  tabIndex={-1}
+                  aria-label="Clear"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              )}
+              <button
+                className={styles.desktopSearchBtn}
+                onClick={() => commitSearch(query)}
+                type="button"
+              >
+                Search
+              </button>
             </div>
+
+            {/* Dropdown */}
+            {desktopOpen && (
+              <div className={styles.desktopDropdownWrap}>
+                <SearchDropdown
+                  query={query}
+                  results={results}
+                  loading={loading}
+                  recent={recent}
+                  onSelect={commitSearch}
+                  onRemoveRecent={removeRecent}
+                  onClearRecent={clearRecent}
+                  activeIndex={activeIndex}
+                  setActiveIndex={setActiveIndex}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* ── Mobile search pill (opens overlay) ── */}
+          <div className={styles.mobileSearchRow}>
+            <button
+              className={styles.mobileSearchPill}
+              onClick={() => setMobileOpen(true)}
+              type="button"
+              aria-label="Open search"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <span className={styles.mobileSearchPillText}>Search products...</span>
+            </button>
           </div>
 
           {/* ── Nav links (desktop only) ── */}
           <nav className={styles.nav}>
             <Link href="/" className={styles.navLink}>Home</Link>
             <Link href="/#products" className={styles.navLink}>Shop</Link>
-            <Link href="/categories" className={`${styles.navLink} ${pathname === '/categories' ? styles.navLinkActive : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <Link href="/categories" className={`${styles.navLink} ${pathname === '/categories' ? styles.navLinkActive : ''}`}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="3" width="7" height="7" rx="1.5"/>
                 <rect x="14" y="3" width="7" height="7" rx="1.5"/>
@@ -135,8 +214,6 @@ export default function Header() {
 
           {/* ── Right actions ── */}
           <div className={styles.actions}>
-
-            {/* Notification bell */}
             <NotificationBell transparent={transparent} />
 
             {/* Cart */}
@@ -205,7 +282,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* ── Orange announcement strip — mobile + home page only ── */}
+        {/* ── Announcement strip ── */}
         {isHome && (
           <div className={styles.announcementStrip}>
             <div className={styles.announcementInner}>
@@ -220,6 +297,22 @@ export default function Header() {
           </div>
         )}
       </header>
+
+      {/* ── Mobile search full-screen overlay ── */}
+      <MobileSearchOverlay
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        query={query}
+        setQuery={setQuery}
+        results={results}
+        loading={loading}
+        recent={recent}
+        saveRecent={saveRecent}
+        onRemoveRecent={removeRecent}
+        onClearRecent={clearRecent}
+        activeIndex={activeIndex}
+        setActiveIndex={setActiveIndex}
+      />
     </>
   )
 }
