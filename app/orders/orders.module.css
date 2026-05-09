@@ -1,11 +1,14 @@
 /* ── Orders List — Premium Addora Design ── */
 .page {
+  font-family: 'DM Sans', sans-serif;
   padding: 90px 0 100px;
   background: #f7f7f5; min-height: 100vh;
-  font-family: 'Space Grotesk', sans-serif;
+  
 }
 .title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  
   font-size: 22px; font-weight: 800;
   color: var(--navy); padding: 20px 16px 14px; letter-spacing: -0.3px;
 }
@@ -14,7 +17,7 @@
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 14px; text-align: center; padding: 40px 20px;
-  font-family: 'Space Grotesk', sans-serif;
+  
 }
 .guestWrap h2, .empty h2 { font-size: 22px; font-weight: 800; color: var(--navy); }
 .empty p { color: var(--text-muted); font-size: 14px; }
@@ -22,7 +25,7 @@
   margin-top: 8px; padding: 13px 32px;
   background: var(--orange); color: white;
   font-size: 15px; font-weight: 700; border-radius: 100px;
-  display: inline-block; font-family: 'Space Grotesk', sans-serif;
+  display: inline-block; 
   box-shadow: 0 4px 14px rgba(231,85,37,0.35);
 }
 
@@ -34,7 +37,7 @@
   text-decoration: none; color: inherit;
   border-bottom: 1px solid #f0f0ee;
   -webkit-tap-highlight-color: transparent;
-  font-family: 'Space Grotesk', sans-serif;
+  
   transition: background 0.15s;
 }
 .orderCard:last-child { border-bottom: none; }
@@ -42,29 +45,33 @@
 
 .orderLeft { flex: 1; min-width: 0; }
 .orderId {
-  font-family: 'Space Grotesk', sans-serif;
+  
   font-size: 14px; font-weight: 800; color: var(--navy);
   margin-bottom: 4px; letter-spacing: -0.2px;
 }
-.orderDate { font-size: 11px; color: var(--text-muted); font-family: 'Space Grotesk', sans-serif; }
+.orderDate { font-size: 11px; color: var(--text-muted);  }
 
 .orderMid { display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; }
 .statusBadge {
   font-size: 11px; font-weight: 700; padding: 5px 12px;
   border-radius: 100px; white-space: nowrap;
-  font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.1px;
+   letter-spacing: 0.1px;
 }
-.payMethod { font-size: 10px; color: var(--text-muted); white-space: nowrap; font-family: 'Space Grotesk', sans-serif; }
+.payMethod { font-size: 10px; color: var(--text-muted); white-space: nowrap;  }
 
 .orderRight { display: flex; align-items: center; gap: 4px; color: #ccc; flex-shrink: 0; }
 .orderTotal {
-  font-family: 'Space Grotesk', sans-serif;
+  
   font-size: 15px; font-weight: 800; color: var(--orange); white-space: nowrap;
 }
 
 @media (min-width: 769px) {
-  .page { padding: 110px 0 100px; }
-  .title { padding: 0; margin-bottom: 32px; font-size: 30px; }
+  .page {
+  font-family: 'DM Sans', sans-serif; padding: 110px 0 100px; }
+  .title {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  padding: 0; margin-bottom: 32px; font-size: 30px; }
   .list { gap: 12px; background: transparent; }
   .orderCard {
     border-bottom: none; border-radius: 20px; padding: 22px 28px; gap: 28px;
