@@ -1,99 +1,77 @@
 /* ── Orders List — Premium Addora Design ── */
 .page {
-  padding: 0 0 100px; background: #f7f7f5;
-  min-height: 100vh; padding-top: 90px;
+  padding: 90px 0 100px;
+  background: #f7f7f5; min-height: 100vh;
+  font-family: 'Space Grotesk', sans-serif;
 }
 .title {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 22px; font-weight: 800;
-  color: var(--navy); padding: 20px 16px 14px;
-  letter-spacing: -0.3px;
+  color: var(--navy); padding: 20px 16px 14px; letter-spacing: -0.3px;
 }
-
 .guestWrap, .empty {
   min-height: calc(100vh - 58px);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 14px; text-align: center; padding: 40px 20px;
+  font-family: 'Space Grotesk', sans-serif;
 }
-.guestWrap h2, .empty h2 {
-  font-size: 22px; font-weight: 800; color: var(--navy);
-}
+.guestWrap h2, .empty h2 { font-size: 22px; font-weight: 800; color: var(--navy); }
 .empty p { color: var(--text-muted); font-size: 14px; }
-
 .signInBtn {
   margin-top: 8px; padding: 13px 32px;
   background: var(--orange); color: white;
-  font-size: 15px; font-weight: 700;
-  border-radius: 100px; display: inline-block;
+  font-size: 15px; font-weight: 700; border-radius: 100px;
+  display: inline-block; font-family: 'Space Grotesk', sans-serif;
   box-shadow: 0 4px 14px rgba(231,85,37,0.35);
 }
 
-.loading, .list {
-  display: flex; flex-direction: column; gap: 0;
-  background: white;
-}
+.loading, .list { display: flex; flex-direction: column; gap: 0; background: white; }
 
-/* Mobile card */
 .orderCard {
-  background: white; padding: 16px 16px;
+  background: white; padding: 16px;
   display: flex; align-items: center; gap: 14px;
   text-decoration: none; color: inherit;
   border-bottom: 1px solid #f0f0ee;
   -webkit-tap-highlight-color: transparent;
+  font-family: 'Space Grotesk', sans-serif;
   transition: background 0.15s;
 }
 .orderCard:last-child { border-bottom: none; }
 .orderCard:active { background: #fdf3ee; }
 
 .orderLeft { flex: 1; min-width: 0; }
-
 .orderId {
-  font-family: 'Space Grotesk', monospace;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 14px; font-weight: 800; color: var(--navy);
   margin-bottom: 4px; letter-spacing: -0.2px;
 }
-.orderDate { font-size: 11px; color: var(--text-muted); }
+.orderDate { font-size: 11px; color: var(--text-muted); font-family: 'Space Grotesk', sans-serif; }
 
-.orderMid {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 5px; flex-shrink: 0;
-}
+.orderMid { display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; }
 .statusBadge {
-  font-size: 11px; font-weight: 700;
-  padding: 5px 12px; border-radius: 100px;
-  white-space: nowrap; letter-spacing: 0.1px;
+  font-size: 11px; font-weight: 700; padding: 5px 12px;
+  border-radius: 100px; white-space: nowrap;
+  font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.1px;
 }
-.payMethod { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+.payMethod { font-size: 10px; color: var(--text-muted); white-space: nowrap; font-family: 'Space Grotesk', sans-serif; }
 
-.orderRight {
-  display: flex; align-items: center;
-  gap: 4px; color: #ccc; flex-shrink: 0;
-}
+.orderRight { display: flex; align-items: center; gap: 4px; color: #ccc; flex-shrink: 0; }
 .orderTotal {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px; font-weight: 800;
-  color: var(--orange); white-space: nowrap;
+  font-size: 15px; font-weight: 800; color: var(--orange); white-space: nowrap;
 }
 
-/* Desktop */
 @media (min-width: 769px) {
-  .page { padding: 48px 0 100px; }
+  .page { padding: 110px 0 100px; }
   .title { padding: 0; margin-bottom: 32px; font-size: 30px; }
   .list { gap: 12px; background: transparent; }
   .orderCard {
-    border-bottom: none; border-radius: 20px;
-    padding: 22px 28px; gap: 28px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-    border: 1.5px solid transparent;
+    border-bottom: none; border-radius: 20px; padding: 22px 28px; gap: 28px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06); border: 1.5px solid transparent;
     transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
   }
-  .orderCard:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 28px rgba(0,0,0,0.1);
-    border-color: var(--orange);
-    background: white;
-  }
+  .orderCard:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.1); border-color: var(--orange); }
   .orderId { font-size: 16px; }
   .orderDate { font-size: 13px; }
   .statusBadge { font-size: 12px; padding: 6px 14px; }
