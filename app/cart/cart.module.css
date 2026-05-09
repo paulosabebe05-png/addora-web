@@ -1,12 +1,15 @@
 /* ── Cart — Premium Addora Design ── */
 .page {
+  font-family: 'DM Sans', sans-serif;
   padding: 90px 0 100px;   /* 90px = fixed header + announcement strip */
   background: #f7f7f5; min-height: 100vh;
-  font-family: 'Space Grotesk', sans-serif;
+  
 }
 
 .title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  
   font-size: 22px; font-weight: 800;
   color: var(--navy); padding: 20px 16px 14px;
   letter-spacing: -0.3px;
@@ -17,7 +20,7 @@
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 14px; text-align: center; padding: 40px 20px;
-  font-family: 'Space Grotesk', sans-serif;
+  
 }
 .guestWrap h2 { font-size: 22px; font-weight: 800; color: var(--navy); }
 .guestWrap p { color: var(--text-muted); font-size: 14px; }
@@ -27,7 +30,7 @@
   background: var(--orange); color: white;
   font-size: 15px; font-weight: 700;
   border-radius: 100px; display: inline-block;
-  font-family: 'Space Grotesk', sans-serif;
+  
   box-shadow: 0 4px 14px rgba(231,85,37,0.35);
   transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -44,7 +47,7 @@
   display: flex; flex-direction: column; gap: 12px;
 }
 .summary h2 {
-  font-family: 'Space Grotesk', sans-serif;
+  
   font-size: 11px; font-weight: 700; color: var(--navy);
   text-transform: uppercase; letter-spacing: 0.8px;
   padding-bottom: 12px; border-bottom: 1px solid #ececea;
@@ -52,13 +55,13 @@
 .summaryRow {
   display: flex; justify-content: space-between;
   font-size: 13px; color: var(--text-muted);
-  font-family: 'Space Grotesk', sans-serif;
+  
 }
 .green { color: #16a34a; font-weight: 600; }
 .summaryTotal {
   display: flex; justify-content: space-between;
   font-size: 17px; font-weight: 800; color: var(--navy);
-  font-family: 'Space Grotesk', sans-serif;
+  
   padding-top: 12px; border-top: 2px solid var(--navy);
 }
 .codNote {
@@ -67,7 +70,7 @@
   padding: 10px 14px; font-size: 12px;
   color: var(--orange); font-weight: 600;
   border: 1px solid #fad5c4;
-  font-family: 'Space Grotesk', sans-serif;
+  
 }
 .checkoutBtn {
   width: 100%; padding: 15px;
@@ -75,7 +78,7 @@
   font-size: 15px; font-weight: 700;
   border-radius: 14px; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  font-family: 'Space Grotesk', sans-serif;
+  
   box-shadow: 0 4px 14px rgba(231,85,37,0.35);
   transition: all 0.2s; -webkit-tap-highlight-color: transparent;
 }
@@ -83,7 +86,7 @@
 .continueBtn {
   text-align: center; font-size: 13px; font-weight: 600;
   color: var(--text-muted); padding: 4px 0 2px; display: block;
-  font-family: 'Space Grotesk', sans-serif;
+  
 }
 
 /* Items */
@@ -107,21 +110,21 @@
 .itemName {
   font-size: 14px; font-weight: 700; color: var(--navy);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.1px;
+   letter-spacing: -0.1px;
 }
 .itemVariant {
   font-size: 11px; color: var(--text-muted); font-weight: 500;
   background: #f3f3f1; border-radius: 6px;
   padding: 2px 8px; display: inline-block; width: fit-content;
-  font-family: 'Space Grotesk', sans-serif;
+  
 }
 .itemPrice {
   font-size: 13px; font-weight: 700; color: var(--orange);
-  font-family: 'Space Grotesk', sans-serif;
+  
 }
 .itemLineTotal {
   font-size: 14px; font-weight: 800; color: var(--navy);
-  font-family: 'Space Grotesk', sans-serif;
+  
 }
 .itemActions {
   display: flex; align-items: center;
@@ -135,27 +138,31 @@
 .qtyControl button {
   width: 36px; height: 34px; background: transparent; border: none;
   font-size: 16px; font-weight: 700; cursor: pointer; color: var(--navy);
-  -webkit-tap-highlight-color: transparent; font-family: 'Space Grotesk', sans-serif;
+  -webkit-tap-highlight-color: transparent; 
 }
 .qtyControl button:active { background: #fde8df; color: var(--orange); }
 .qtyControl span {
   min-width: 36px; text-align: center;
   font-size: 14px; font-weight: 700; color: var(--navy);
-  font-family: 'Space Grotesk', sans-serif;
+  
 }
 .removeBtn {
   display: flex; align-items: center; gap: 5px;
   background: none; border: none; color: #bbb;
   font-size: 12px; font-weight: 600; cursor: pointer; padding: 6px 0;
-  transition: color 0.2s; font-family: 'Space Grotesk', sans-serif;
+  transition: color 0.2s; 
 }
 .removeBtn:active { color: #e53e3e; }
 .itemTotal { display: none; }
 
 /* Desktop */
 @media (min-width: 769px) {
-  .page { padding: 110px 0 100px; }
-  .title { padding: 0; margin-bottom: 32px; font-size: 30px; }
+  .page {
+  font-family: 'DM Sans', sans-serif; padding: 110px 0 100px; }
+  .title {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  padding: 0; margin-bottom: 32px; font-size: 30px; }
   .layout { display: grid; grid-template-columns: 1fr 380px; gap: 28px; align-items: start; }
   .summary {
     order: 0; border-bottom: none; border-radius: 20px;
@@ -171,7 +178,7 @@
   .itemLineTotal { display: none; }
   .itemTotal {
     display: block; font-size: 17px; font-weight: 800;
-    color: var(--navy); font-family: 'Space Grotesk', sans-serif;
+    color: var(--navy); 
     white-space: nowrap; align-self: center;
   }
   .removeBtn:hover { color: #e53e3e; }
