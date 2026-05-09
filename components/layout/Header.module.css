@@ -480,9 +480,10 @@
 
   /* ── Inner bar ── */
   .inner {
-    padding: 0 14px;
+    padding: 0 12px;
     height: 56px;
-    gap: 8px;
+    gap: 6px;
+    justify-content: space-between;
   }
 
   /* Hide desktop-only elements */
@@ -493,12 +494,14 @@
   .userMenu      { display: none; }
   .logoText      { display: none; }
 
-  .actions { gap: 2px; }
+  .actions { gap: 0; flex-shrink: 0; }
 
-  /* Logo */
+  /* Logo — shrink to icon only */
+  .logo { flex-shrink: 0; gap: 0; }
+
   .logoMark {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: 8px;
     overflow: hidden;
   }
