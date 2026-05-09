@@ -242,13 +242,23 @@ export default function Header() {
 
                 {menuOpen && (
                   <div className={styles.dropdown}>
-                    <div className={styles.dropdownHead}>
+                    <Link href="/account" className={styles.dropdownHead} onClick={() => setMenuOpen(false)} style={{ textDecoration: 'none', cursor: 'pointer' }}>
                       <div className={styles.dropdownAvatar}>{user.name[0].toUpperCase()}</div>
-                      <div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
                         <div className={styles.dropdownName}>{user.name}</div>
                         <div className={styles.dropdownPhone}>{user.email || ''}</div>
                       </div>
-                    </div>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2.5" style={{ flexShrink: 0 }}>
+                        <path d="M9 18l6-6-6-6"/>
+                      </svg>
+                    </Link>
+                    <Link href="/account" className={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                      </svg>
+                      Account Management
+                    </Link>
                     <Link href="/orders" className={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
