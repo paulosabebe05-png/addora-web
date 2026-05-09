@@ -1,21 +1,50 @@
 'use client'
 import Link from 'next/link'
 import { useState } from 'react'
+import emailjs from '@emailjs/browser'
 import styles from '../SharedPage.module.css'
+
+const EMAILJS_SERVICE_ID  = 'service_2dfyujd'
+const EMAILJS_TEMPLATE_ID = 'template_v3umwfu'
+const EMAILJS_PUBLIC_KEY  = '2yREi3p2GpqFfOIdS'
 
 export default function ContactPage() {
   const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setSent(true)
+    setSending(true)
+    setError('')
+
+    const form = e.target
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          name:    form[0].value,
+          email:   form[1].value,
+          subject: form[2].value,
+          message: form[3].value,
+        },
+        EMAILJS_PUBLIC_KEY
+      )
+      setSent(true)
+    } catch {
+      setError('Failed to send. Please email us directly at support@addora.com.et')
+    }
+    setSending(false)
   }
 
   return (
     <div className={styles.page}>
       <div className={styles.topBar}>
         <Link href="/account" className={styles.backBtn}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M19 12H5M12 5l-7 7 7 7"/>
+          </svg>
           Account
         </Link>
         <span className={styles.topBarSep}>›</span>
@@ -74,7 +103,10 @@ export default function ContactPage() {
                 <label className={styles.label}>Message</label>
                 <textarea className={styles.textarea} placeholder="Tell us how we can help..." required />
               </div>
-              <button type="submit" className={styles.submitBtn}>Send Message →</button>
+              <button type="submit" className={styles.submitBtn} disabled={sending}>
+                {sending ? 'Sending...' : 'Send Message →'}
+              </button>
+              {error && <p style={{ color: 'red', fontSize: 13, marginTop: 8 }}>{error}</p>}
             </form>
           )}
         </div>
