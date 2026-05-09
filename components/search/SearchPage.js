@@ -24,7 +24,7 @@ export default function SearchPage() {
 
   return (
     <div className={styles.page}>
-      {/* ── Search page header bar ── */}
+      {/* ── Top bar ── */}
       <div className={styles.topBar}>
         <div className={styles.topBarInner}>
           {/* Query summary */}
@@ -49,17 +49,10 @@ export default function SearchPage() {
             <div className={styles.activeChips}>
               {filters.category && (
                 <Chip
-                  label={facets.categories.find(c => c.slug === filters.category)?.name || filters.category}
+                  label={facets.categories.find(c => c.id === filters.category)?.name || filters.category}
                   onRemove={() => filters.setCategory('')}
                 />
               )}
-              {filters.brand.map(b => (
-                <Chip
-                  key={b}
-                  label={facets.brands.find(br => br.slug === b)?.name || b}
-                  onRemove={() => filters.toggleBrand(b)}
-                />
-              ))}
               {(filters.minPrice > 0 || filters.maxPrice < 100000) && (
                 <Chip
                   label={`ETB ${filters.minPrice.toLocaleString()} – ${filters.maxPrice >= 100000 ? '∞' : filters.maxPrice.toLocaleString()}`}
@@ -111,12 +104,10 @@ export default function SearchPage() {
 
       {/* ── Main layout ── */}
       <div className={styles.layout}>
-        {/* Sidebar — desktop */}
         <aside className={styles.sidebarWrap}>
           <SearchSidebar
             facets={facets}
             category={filters.category} setCategory={filters.setCategory}
-            brand={filters.brand} toggleBrand={filters.toggleBrand}
             minPrice={filters.minPrice} maxPrice={filters.maxPrice} setPriceRange={filters.setPriceRange}
             rating={filters.rating} setRating={filters.setRating}
             inStock={filters.inStock} setInStock={filters.setInStock}
@@ -124,7 +115,6 @@ export default function SearchPage() {
           />
         </aside>
 
-        {/* Product grid */}
         <div className={styles.main}>
           {loading ? (
             <SkeletonGrid />
@@ -137,14 +127,8 @@ export default function SearchPage() {
                   <ProductCard key={p.id} product={p} style={{ animationDelay: `${i * 0.03}s` }} />
                 ))}
               </div>
-
-              {/* Pagination */}
               {totalPages > 1 && (
-                <Pagination
-                  page={filters.page}
-                  total={totalPages}
-                  onPage={filters.setPage}
-                />
+                <Pagination page={filters.page} total={totalPages} onPage={filters.setPage} />
               )}
             </>
           )}
@@ -158,7 +142,6 @@ export default function SearchPage() {
           onClose={() => setFiltersOpen(false)}
           facets={facets}
           category={filters.category} setCategory={filters.setCategory}
-          brand={filters.brand} toggleBrand={filters.toggleBrand}
           minPrice={filters.minPrice} maxPrice={filters.maxPrice} setPriceRange={filters.setPriceRange}
           rating={filters.rating} setRating={filters.setRating}
           inStock={filters.inStock} setInStock={filters.setInStock}
@@ -171,9 +154,10 @@ export default function SearchPage() {
 
 /* ── Product card ── */
 function ProductCard({ product: p, style }) {
-  const discount = p.original_price && p.original_price > p.price
-    ? Math.round((1 - p.price / p.original_price) * 100)
-    : null
+  const discountedPrice = p.discount > 0
+    ? Math.round(p.price * (1 - p.discount / 100))
+    : p.price
+  const isInStock = p.stock > 0
 
   return (
     <Link href={`/products/${p.id}`} className={styles.card} style={style}>
@@ -182,21 +166,21 @@ function ProductCard({ product: p, style }) {
           ? <img src={p.image_url} alt={p.name} className={styles.cardImg} />
           : <span className={styles.cardImgPlaceholder}>🛍</span>
         }
-        {discount && <span className={styles.discountBadge}>-{discount}%</span>}
-        {!p.in_stock && <div className={styles.outOfStockOverlay}>Out of Stock</div>}
+        {p.discount > 0 && (
+          <span className={styles.discountBadge}>-{p.discount}%</span>
+        )}
+        {!isInStock && <div className={styles.outOfStockOverlay}>Out of Stock</div>}
       </div>
       <div className={styles.cardBody}>
-        {(p.brand?.name || p.category?.name) && (
-          <span className={styles.cardMeta}>
-            {p.brand?.name || p.category?.name}
-          </span>
+        {p.category?.name && (
+          <span className={styles.cardMeta}>{p.category.name}</span>
         )}
         <span className={styles.cardName}>{p.name}</span>
         <div className={styles.cardFooter}>
           <div className={styles.cardPrices}>
-            <span className={styles.cardPrice}>ETB {Number(p.price).toLocaleString()}</span>
-            {p.original_price && p.original_price > p.price && (
-              <span className={styles.cardOriginal}>ETB {Number(p.original_price).toLocaleString()}</span>
+            <span className={styles.cardPrice}>ETB {discountedPrice.toLocaleString()}</span>
+            {p.discount > 0 && (
+              <span className={styles.cardOriginal}>ETB {Number(p.price).toLocaleString()}</span>
             )}
           </div>
           {p.rating > 0 && (
@@ -213,7 +197,6 @@ function ProductCard({ product: p, style }) {
   )
 }
 
-/* ── Active filter chip ── */
 function Chip({ label, onRemove }) {
   return (
     <span className={styles.chip}>
@@ -227,7 +210,6 @@ function Chip({ label, onRemove }) {
   )
 }
 
-/* ── Pagination ── */
 function Pagination({ page, total, onPage }) {
   const pages = []
   const delta = 2
@@ -246,11 +228,7 @@ function Pagination({ page, total, onPage }) {
       {pages.map((p, i) =>
         p === '...'
           ? <span key={`e${i}`} className={styles.pageEllipsis}>…</span>
-          : <button
-              key={p}
-              className={`${styles.pageBtn} ${page === p ? styles.pageBtnActive : ''}`}
-              onClick={() => onPage(p)}
-            >{p}</button>
+          : <button key={p} className={`${styles.pageBtn} ${page === p ? styles.pageBtnActive : ''}`} onClick={() => onPage(p)}>{p}</button>
       )}
       <button className={styles.pageBtn} disabled={page >= total} onClick={() => onPage(page + 1)}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><polyline points="9 18 15 12 9 6"/></svg>
@@ -259,7 +237,6 @@ function Pagination({ page, total, onPage }) {
   )
 }
 
-/* ── Skeleton grid ── */
 function SkeletonGrid() {
   return (
     <div className={styles.grid}>
@@ -269,7 +246,6 @@ function SkeletonGrid() {
           <div className={styles.skeletonBody}>
             <div className={styles.skeletonLine} style={{ width: '40%', height: 10 }} />
             <div className={styles.skeletonLine} style={{ width: '85%', height: 13 }} />
-            <div className={styles.skeletonLine} style={{ width: '60%', height: 13 }} />
             <div className={styles.skeletonLine} style={{ width: '50%', height: 14, marginTop: 4 }} />
           </div>
         </div>
@@ -278,7 +254,6 @@ function SkeletonGrid() {
   )
 }
 
-/* ── Empty state ── */
 function EmptyState({ q, onClear, hasFilters }) {
   return (
     <div className={styles.empty}>
@@ -287,15 +262,9 @@ function EmptyState({ q, onClear, hasFilters }) {
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
       </div>
-      <p className={styles.emptyTitle}>
-        {q ? `No results for "${q}"` : 'No products found'}
-      </p>
-      <p className={styles.emptySubtitle}>
-        {hasFilters ? 'Try removing some filters.' : 'Try a different search term.'}
-      </p>
-      {hasFilters && (
-        <button className={styles.emptyBtn} onClick={onClear}>Clear Filters</button>
-      )}
+      <p className={styles.emptyTitle}>{q ? `No results for "${q}"` : 'No products found'}</p>
+      <p className={styles.emptySubtitle}>{hasFilters ? 'Try removing some filters.' : 'Try a different search term.'}</p>
+      {hasFilters && <button className={styles.emptyBtn} onClick={onClear}>Clear Filters</button>}
     </div>
   )
 }
