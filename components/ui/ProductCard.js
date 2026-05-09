@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { useAuth } from '../../lib/auth'
 import { useCart } from '../../lib/cart'
+import { useWishlist } from '@/context/WishlistContext'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import styles from './ProductCard.module.css'
@@ -65,9 +66,11 @@ function StarRating({ rating = 0, reviews = 0 }) {
 export default function ProductCard({ product }) {
   const { user } = useAuth()
   const { addItem } = useCart()
+  const { toggleWishlist, isWishlisted } = useWishlist()
   const router = useRouter()
   const [added, setAdded] = useState(false)
-  const [wishlisted, setWishlisted] = useState(false)
+
+  const wishlisted = isWishlisted(product.id)
 
   const discountedPrice = product.discount > 0
     ? product.price * (1 - product.discount / 100)
@@ -75,7 +78,6 @@ export default function ProductCard({ product }) {
 
   const pastelBg = getPastelBg(product.id)
 
-  // Stock urgency: show "only N left" if stock is low
   const lowStock = product.stock > 0 && product.stock <= 5
 
   const handleAddToCart = (e) => {
@@ -97,7 +99,12 @@ export default function ProductCard({ product }) {
   const handleWishlist = (e) => {
     e.preventDefault()
     e.stopPropagation()
-    setWishlisted((w) => !w)
+    toggleWishlist({
+      id: product.id,
+      name: product.name,
+      price: discountedPrice,
+      image: product.image_url,
+    })
   }
 
   const fmtSold = (n) => {
@@ -142,7 +149,7 @@ export default function ProductCard({ product }) {
           <div className={styles.outOfStock}>Sold Out</div>
         )}
 
-        {/* Wishlist */}
+        {/* Wishlist heart button */}
         <button
           className={`${styles.wishBtn} ${wishlisted ? styles.wishlisted : ''}`}
           onClick={handleWishlist}
@@ -160,7 +167,7 @@ export default function ProductCard({ product }) {
       {/* ── Body ── */}
       <div className={styles.body}>
 
-        {/* Social proof row — ABOVE the name, prominent */}
+        {/* Social proof row */}
         {(product.sold > 0 || product.reviews > 0) && (
           <div className={styles.socialRow}>
             {product.sold > 0 && (
