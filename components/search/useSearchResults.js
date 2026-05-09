@@ -4,11 +4,11 @@ import { supabase } from '../../lib/supabase'
 
 const PAGE_SIZE = 24
 
-export function useSearchResults({ q, category, brand, minPrice, maxPrice, rating, inStock, sort, page }) {
-  const [products, setProducts]   = useState([])
-  const [total, setTotal]         = useState(0)
-  const [loading, setLoading]     = useState(true)
-  const [facets, setFacets]       = useState({ categories: [], brands: [], priceRange: [0, 100000] })
+export function useSearchResults({ q, category, minPrice, maxPrice, rating, inStock, sort, page }) {
+  const [products, setProducts] = useState([])
+  const [total, setTotal]       = useState(0)
+  const [loading, setLoading]   = useState(true)
+  const [facets, setFacets]     = useState({ categories: [], priceRange: [0, 100000] })
 
   useEffect(() => {
     let cancelled = false
@@ -19,20 +19,18 @@ export function useSearchResults({ q, category, brand, minPrice, maxPrice, ratin
         // ── Main products query ──
         let qb = supabase
           .from('products')
-          .select(`
-            id, name, price, original_price, image_url,
-            rating, rating_count, in_stock, created_at,
-            category:categories(id, name, slug),
-            brand:brands(id, name, slug)
-          `, { count: 'exact' })
+          .select(
+            'id, name, price, discount, image_url, stock, rating, sold, created_at, category_id, category:categories(id, name)',
+            { count: 'exact' }
+          )
+          .eq('active', true)
 
-        if (q)        qb = qb.ilike('name', `%${q}%`)
-        if (category) qb = qb.eq('categories.slug', category)
-        if (brand.length > 0) qb = qb.in('brands.slug', brand)
-        if (minPrice > 0)     qb = qb.gte('price', minPrice)
+        if (q)             qb = qb.ilike('name', `%${q}%`)
+        if (category)      qb = qb.eq('category_id', category)
+        if (minPrice > 0)  qb = qb.gte('price', minPrice)
         if (maxPrice < 100000) qb = qb.lte('price', maxPrice)
-        if (rating > 0)       qb = qb.gte('rating', rating)
-        if (inStock)          qb = qb.eq('in_stock', true)
+        if (rating > 0)    qb = qb.gte('rating', rating)
+        if (inStock)       qb = qb.gt('stock', 0)
 
         // Sort
         switch (sort) {
@@ -40,23 +38,17 @@ export function useSearchResults({ q, category, brand, minPrice, maxPrice, ratin
           case 'price_desc':  qb = qb.order('price', { ascending: false }); break
           case 'rating':      qb = qb.order('rating', { ascending: false }); break
           case 'newest':      qb = qb.order('created_at', { ascending: false }); break
-          default:            qb = qb.order('rating_count', { ascending: false }); break
+          default:            qb = qb.order('sold', { ascending: false }); break
         }
 
         qb = qb.range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1)
 
-        // ── Facets (categories + brands) — run in parallel ──
-        let facetBase = supabase.from('products').select('category_id, brand_id, price')
-        if (q) facetBase = facetBase.ilike('name', `%${q}%`)
-
         const [
           { data: products, count, error },
           { data: cats },
-          { data: brandRows },
         ] = await Promise.all([
           qb,
-          supabase.from('categories').select('id, name, slug').order('name'),
-          supabase.from('brands').select('id, name, slug').order('name'),
+          supabase.from('categories').select('id, name').order('name'),
         ])
 
         if (cancelled) return
@@ -66,7 +58,6 @@ export function useSearchResults({ q, category, brand, minPrice, maxPrice, ratin
         setTotal(count || 0)
         setFacets({
           categories: cats || [],
-          brands: brandRows || [],
           priceRange: [0, 100000],
         })
       } catch (err) {
@@ -79,7 +70,7 @@ export function useSearchResults({ q, category, brand, minPrice, maxPrice, ratin
 
     run()
     return () => { cancelled = true }
-  }, [q, category, JSON.stringify(brand), minPrice, maxPrice, rating, inStock, sort, page])
+  }, [q, category, minPrice, maxPrice, rating, inStock, sort, page])
 
   return { products, total, loading, facets, pageSize: PAGE_SIZE }
 }
