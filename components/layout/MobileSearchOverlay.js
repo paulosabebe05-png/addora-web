@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import SearchDropdown from './SearchDropdown'
+import SearchDropdown from '../search/SearchDropdown'
 import styles from './MobileSearchOverlay.module.css'
 
 export default function MobileSearchOverlay({
