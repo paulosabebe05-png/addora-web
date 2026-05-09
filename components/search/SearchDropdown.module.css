@@ -1,0 +1,214 @@
+.dropdown {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  overflow: hidden;
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.dropdown::-webkit-scrollbar { width: 4px; }
+.dropdown::-webkit-scrollbar-track { background: transparent; }
+.dropdown::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+
+/* Section */
+.section { padding: 4px 0; }
+.section + .section { border-top: 1px solid #f3f4f6; }
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #9ca3af;
+}
+
+.clearAll {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  color: #6366f1;
+  padding: 0;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.clearAll:hover { text-decoration: underline; }
+
+/* Recent items */
+.recentItem {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.recentBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13.5px;
+  color: #374151;
+  text-align: left;
+}
+.recentBtn svg { color: #9ca3af; flex-shrink: 0; }
+
+.removeRecent {
+  padding: 9px 12px 9px 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #d1d5db;
+  display: flex;
+  align-items: center;
+}
+.removeRecent:hover { color: #6b7280; }
+
+.recentItem.active .recentBtn,
+.recentItem:hover .recentBtn { background: #f9fafb; }
+
+/* Result items */
+.resultItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  text-decoration: none;
+  color: #374151;
+  font-size: 13.5px;
+  transition: background 0.1s;
+}
+.resultItem:hover,
+.resultItem.active { background: #f9fafb; }
+
+.catIcon {
+  display: flex;
+  align-items: center;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.resultName { flex: 1; font-weight: 500; }
+
+.inCategory {
+  font-size: 11px;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+/* Product items */
+.productItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  text-decoration: none;
+  color: #374151;
+  transition: background 0.1s;
+}
+.productItem:hover,
+.productItem.active { background: #f9fafb; }
+
+.productThumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+}
+.productImg { width: 100%; height: 100%; object-fit: cover; }
+.productImgPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d1d5db;
+}
+
+.productInfo { flex: 1; min-width: 0; }
+.productName {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.productBrand {
+  display: block;
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 1px;
+}
+.productPrice {
+  font-size: 13px;
+  font-weight: 700;
+  color: #6366f1;
+  white-space: nowrap;
+}
+
+/* Loading */
+.loadingRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 16px;
+  color: #9ca3af;
+  font-size: 13.5px;
+}
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid #e5e7eb;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Empty */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 28px 16px;
+  color: #9ca3af;
+  text-align: center;
+}
+.empty p { margin: 0; font-size: 13.5px; color: #374151; }
+.empty p strong { color: #111827; }
+.empty span { font-size: 12px; }
+
+/* View all */
+.viewAll {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 16px;
+  background: #f9fafb;
+  border: none;
+  border-top: 1px solid #f3f4f6;
+  cursor: pointer;
+  font-size: 13px;
+  color: #6366f1;
+  font-weight: 500;
+  transition: background 0.1s;
+}
+.viewAll:hover { background: #f3f4f6; }
+.viewAll strong { font-weight: 700; }
