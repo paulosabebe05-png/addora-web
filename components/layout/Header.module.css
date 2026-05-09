@@ -31,11 +31,11 @@
 .inner {
   width: 100%;
   height: 68px;
-  padding: 0 40px;
+  padding: 0 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
 }
 
 /* ── Logo ── */
@@ -80,31 +80,41 @@
 /* ── Desktop search bar ── */
 .desktopSearch {
   flex: 1;
-  max-width: 680px;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 9998;
+}
+
+/* The visible pill (logo + input + button) */
+.desktopSearchPill {
   display: flex;
   align-items: center;
   border-radius: 100px;
   border: 1.5px solid #E75525;
   background: #ffffff;
-  overflow: visible;
+  overflow: hidden;
   transition: box-shadow 0.2s, border-color 0.2s;
-  padding: 0;
-  position: relative;
-  z-index: 9998;
+  width: 100%;
 }
 
-.desktopSearch:focus-within {
+.desktopSearch:focus-within .desktopSearchPill {
   box-shadow: 0 0 0 3px rgba(231,85,37,0.12);
 }
 
-.transparent .desktopSearch,
-.solid .desktopSearch {
+.desktopSearch:focus-within {
+  box-shadow: none;
+}
+
+.transparent .desktopSearchPill,
+.solid .desktopSearchPill {
   background: #ffffff;
   border: 1.5px solid #E75525;
 }
 
-.transparent .desktopSearch:focus-within,
-.solid .desktopSearch:focus-within {
+.transparent .desktopSearch:focus-within .desktopSearchPill,
+.solid .desktopSearch:focus-within .desktopSearchPill {
   box-shadow: 0 0 0 3px rgba(231,85,37,0.12);
   background: #ffffff;
   border-color: #E75525;
