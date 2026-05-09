@@ -52,7 +52,7 @@ export function useSearchResults({ q, category, brand, minPrice, maxPrice, ratin
         const [
           { data: products, count, error },
           { data: cats },
-          { data: brands: brandRows },
+          { data: brandRows },
         ] = await Promise.all([
           qb,
           supabase.from('categories').select('id, name, slug').order('name'),
