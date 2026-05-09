@@ -482,7 +482,7 @@
   .inner {
     padding: 0 14px;
     height: 56px;
-    gap: 10px;
+    gap: 8px;
   }
 
   /* Hide desktop-only elements */
@@ -491,6 +491,7 @@
   .signinBtn     { display: none; }
   .signupBtn     { display: none; }
   .userMenu      { display: none; }
+  .logoText      { display: none; }
 
   .actions { gap: 2px; }
 
@@ -513,17 +514,19 @@
     display: flex;
     align-items: center;
     flex: 1;
+    min-width: 0;
   }
 
   .mobileSearchPill {
     flex: 1;
+    min-width: 0;
     display: flex;
     align-items: center;
     gap: 8px;
     background: #ffffff;
     border: 1.5px solid #E75525;
     border-radius: 100px;
-    padding: 0;
+    padding: 0 14px 0 0;
     overflow: hidden;
     height: 38px;
     cursor: text;
