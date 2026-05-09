@@ -127,7 +127,6 @@
 }
 
 .heroBannerTag {
-  font-family: 'DM Sans', sans-serif;
   font-size: 12px;
   font-weight: 700;
   color: #E75525;
@@ -144,14 +143,12 @@
 }
 
 .heroBannerSub {
-  font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   color: rgba(255,255,255,0.6);
   margin: 0;
 }
 
 .heroBannerCta {
-  font-family: 'DM Sans', sans-serif;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -331,7 +328,6 @@
 }
 
 .sectionLabel {
-  font-family: 'DM Sans', sans-serif;
   font-size: 13px;
   font-weight: 700;
   color: #E75525;
@@ -350,7 +346,6 @@
 }
 
 .seeAll {
-  font-family: 'DM Sans', sans-serif;
   padding: 10px 24px;
   background: #E75525;
   color: white;
@@ -377,7 +372,6 @@
 }
 
 .timerLabel {
-  font-family: 'DM Sans', sans-serif;
   font-size: 11px;
   font-weight: 600;
   color: rgba(255,255,255,0.7);
@@ -406,7 +400,6 @@
 }
 
 .timerColon {
-  font-family: 'Space Grotesk', sans-serif;
   color: rgba(255,255,255,0.6);
   font-size: 14px;
   font-weight: 700;
@@ -484,7 +477,6 @@
 .catGridEmoji { font-size: 26px; }
 
 .catGridLabel {
-  font-family: 'DM Sans', sans-serif;
   font-size: 12px;
   font-weight: 600;
   color: #333;
@@ -520,7 +512,6 @@
 }
 
 .promoLabel {
-  font-family: 'DM Sans', sans-serif;
   font-size: 13px;
   font-weight: 700;
   color: #E75525;
@@ -558,7 +549,6 @@
 }
 
 .promoStatLabel {
-  font-family: 'DM Sans', sans-serif;
   font-size: 11px;
   color: rgba(255,255,255,0.5);
   font-weight: 500;
@@ -652,7 +642,6 @@
 }
 
 .trustTitle {
-  font-family: 'DM Sans', sans-serif;
   font-size: 15px;
   font-weight: 700;
   color: #10182B;
@@ -660,7 +649,6 @@
 }
 
 .trustSub {
-  font-family: 'DM Sans', sans-serif;
   font-size: 12px;
   color: #888;
   margin: 0;
@@ -773,7 +761,6 @@
   }
 
   .mobileTrustItem {
-  font-family: 'DM Sans', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -923,7 +910,6 @@
 }
 
 .promoFeatureText {
-  font-family: 'DM Sans', sans-serif;
   font-size: 13px;
   color: rgba(255,255,255,0.75);
   font-weight: 500;
