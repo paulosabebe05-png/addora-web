@@ -76,16 +76,10 @@
 .transparent .logoText { color: #0D0D0D; }
 .solid .logoText       { color: #0D0D0D; }
 
-/* ── Desktop search wrapper (relative so dropdown can overlap) ── */
-.desktopSearchWrap {
-  flex: 1;
-  max-width: 640px;
-  position: relative;
-}
-
 /* ── Desktop search bar ── */
 .desktopSearch {
-  width: 100%;
+  flex: 1;
+  max-width: 520px;
   display: flex;
   align-items: center;
   border-radius: 100px;
@@ -146,18 +140,6 @@
 .transparent .desktopSearchInput::placeholder,
 .solid .desktopSearchInput::placeholder {
   color: #B0B0B8;
-}
-
-/* ── Desktop dropdown: absolute so it overlaps the search box ── */
-.desktopDropdownWrap {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 300;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.07);
-  overflow: hidden;
 }
 
 /* ── Search button ── */
@@ -511,38 +493,40 @@
     color: #0D0D0D;
   }
 
-  /* Mobile search row — full branded bar like desktop */
+  /* Mobile search pill */
   .mobileSearchRow {
     display: flex;
     align-items: center;
     flex: 1;
-    position: relative;
   }
 
-  /* Full search bar: orange border pill, icon + input + Search btn */
   .mobileSearchWrap {
     flex: 1;
     display: flex;
     align-items: center;
+    gap: 8px;
+    background: #F7F7F8;
+    border: 1.5px solid transparent;
     border-radius: 100px;
-    border: 1.5px solid #E75525;
-    background: #ffffff;
-    overflow: hidden;
-    transition: box-shadow 0.2s;
-    padding: 0;
+    padding: 7px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
   }
 
   .mobileSearchWrap:focus-within {
-    box-shadow: 0 0 0 3px rgba(231,85,37,0.12);
+    background: #ffffff;
+    border-color: #E75525;
+    box-shadow: 0 0 0 3px rgba(231,85,37,0.10);
   }
 
   .mobileSearchIcon {
+    color: #999;
     flex-shrink: 0;
-    color: #E75525;
-    margin-left: 12px;
-    margin-right: 2px;
     display: flex;
     align-items: center;
+  }
+
+  .mobileSearchWrap:focus-within .mobileSearchIcon {
+    color: #E75525;
   }
 
   .mobileSearchInput {
@@ -554,32 +538,10 @@
     font-size: 13px;
     font-family: inherit;
     min-width: 0;
-    padding: 9px 6px;
   }
 
   .mobileSearchInput::placeholder {
     color: #B0B0B8;
-  }
-
-  /* Search button inside mobile bar */
-  .mobileSearchBtn {
-    flex-shrink: 0;
-    background: #E75525;
-    color: #ffffff;
-    border: none;
-    border-radius: 0 100px 100px 0;
-    padding: 0 16px;
-    height: 38px;
-    font-size: 13px;
-    font-weight: 700;
-    font-family: inherit;
-    cursor: pointer;
-    transition: background 0.18s;
-    white-space: nowrap;
-  }
-
-  .mobileSearchBtn:hover {
-    background: #cf4419;
   }
 
   /* Cart button on mobile */
