@@ -14,7 +14,7 @@ export default function AccountPage() {
         { href: '/wishlist',              label: 'Wishlist',         desc: 'Saved items for later',         icon: '❤️' },
         { href: '/account/addresses',     label: 'Addresses',        desc: 'Delivery addresses',            icon: '📍' },
         { href: '/account/payment',       label: 'Payment Methods',  desc: 'Telebirr, CBE Birr & more',     icon: '💳' },
-        { href: '/account/notifications', label: 'Notifications',    desc: 'Manage alerts',                 icon: '🔔' },
+        { href: '/notifications',         label: 'Notifications',    desc: 'Manage alerts',                 icon: '🔔' },
       ],
     },
     {
