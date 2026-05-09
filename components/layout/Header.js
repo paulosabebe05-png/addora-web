@@ -5,8 +5,8 @@ import { useCart } from '../../lib/cart'
 import { useRouter, usePathname } from 'next/navigation'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import NotificationBell from './NotificationBell'
-import { useSearch } from '../search/useSearch'
-import SearchDropdown from '../search/SearchDropdown'
+import { useSearch } from './useSearch'
+import SearchDropdown from './SearchDropdown'
 import MobileSearchOverlay from './MobileSearchOverlay'
 import styles from './Header.module.css'
 
@@ -180,20 +180,36 @@ export default function Header() {
             )}
           </div>
 
-          {/* ── Mobile search pill (opens overlay) ── */}
+          {/* ── Mobile search bar (full branded, like desktop) ── */}
           <div className={styles.mobileSearchRow}>
-            <button
-              className={styles.mobileSearchPill}
-              onClick={() => setMobileOpen(true)}
-              type="button"
-              aria-label="Open search"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                <circle cx="11" cy="11" r="8"/>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-              <span className={styles.mobileSearchPillText}>Search products...</span>
-            </button>
+            <div className={styles.mobileSearchWrap}>
+              <span className={styles.mobileSearchIcon}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+              </span>
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={query}
+                onChange={e => { setQuery(e.target.value); setMobileOpen(true) }}
+                onFocus={() => setMobileOpen(true)}
+                className={styles.mobileSearchInput}
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck="false"
+                readOnly
+                onClick={() => setMobileOpen(true)}
+              />
+              <button
+                className={styles.mobileSearchBtn}
+                onClick={() => commitSearch(query)}
+                type="button"
+              >
+                Search
+              </button>
+            </div>
           </div>
 
           {/* ── Nav links (desktop only) ── */}
