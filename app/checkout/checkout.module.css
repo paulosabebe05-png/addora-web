@@ -1,32 +1,31 @@
 /* ── Checkout — Premium Addora Design ── */
-.page { padding: 0 0 100px; background: #f7f7f5; min-height: 100vh; }
-
+.page {
+  padding: 90px 0 100px;
+  background: #f7f7f5; min-height: 100vh;
+  font-family: 'Space Grotesk', sans-serif;
+}
 .title {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 22px; font-weight: 800;
-  color: var(--navy); padding: 20px 16px 14px;
-  letter-spacing: -0.3px;
+  color: var(--navy); padding: 20px 16px 14px; letter-spacing: -0.3px;
 }
-
 .guestWrap {
   min-height: calc(100vh - 58px);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 16px; text-align: center; padding: 24px;
+  font-family: 'Space Grotesk', sans-serif;
 }
 .guestWrap h2 { font-size: 22px; font-weight: 800; color: var(--navy); }
-
 .signInBtn {
   padding: 13px 32px; background: var(--orange);
   color: white; font-weight: 700; border-radius: 100px;
-  display: inline-block;
+  display: inline-block; font-family: 'Space Grotesk', sans-serif;
   box-shadow: 0 4px 14px rgba(231,85,37,0.35);
 }
 
-/* Layout */
 .layout { display: flex; flex-direction: column; gap: 0; }
 
-/* Summary */
 .summary {
   order: -1; background: white;
   border-bottom: 1px solid #ececea;
@@ -34,15 +33,13 @@
   display: flex; flex-direction: column; gap: 12px;
 }
 .summary h2 {
-  font-size: 13px; font-weight: 700; color: var(--navy);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px; font-weight: 700; color: var(--navy);
   text-transform: uppercase; letter-spacing: 0.8px;
   padding-bottom: 12px; border-bottom: 1px solid #ececea;
 }
 .summaryItems { display: flex; flex-direction: column; gap: 10px; }
-.summaryItem {
-  display: flex; align-items: center;
-  gap: 12px; font-size: 13px;
-}
+.summaryItem { display: flex; align-items: center; gap: 12px; font-size: 13px; font-family: 'Space Grotesk', sans-serif; }
 .summaryItemImg {
   width: 46px; height: 46px; border-radius: 10px;
   background: #f5f5f3; overflow: hidden; flex-shrink: 0;
@@ -52,24 +49,16 @@
 .summaryItemInfo {
   flex: 1; display: flex; flex-direction: column;
   gap: 2px; color: var(--navy); font-weight: 600; min-width: 0;
-}
-.summaryItemInfo span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.summaryItemInfo span:last-child {
-  color: var(--text-muted); font-size: 11px; font-weight: 500;
-}
-.summaryItemPrice {
-  font-weight: 800; color: var(--navy);
-  white-space: nowrap; font-size: 13px;
   font-family: 'Space Grotesk', sans-serif;
 }
-.summaryRows {
-  display: flex; flex-direction: column; gap: 8px;
-  padding-top: 12px; border-top: 1px solid #ececea;
+.summaryItemInfo span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.summaryItemInfo span:last-child { color: var(--text-muted); font-size: 11px; font-weight: 500; }
+.summaryItemPrice {
+  font-weight: 800; color: var(--navy); white-space: nowrap;
+  font-size: 13px; font-family: 'Space Grotesk', sans-serif;
 }
-.row {
-  display: flex; justify-content: space-between;
-  font-size: 13px; color: var(--text-muted);
-}
+.summaryRows { display: flex; flex-direction: column; gap: 8px; padding-top: 12px; border-top: 1px solid #ececea; }
+.row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); font-family: 'Space Grotesk', sans-serif; }
 .totalRow {
   font-size: 17px; font-weight: 800; color: var(--navy);
   font-family: 'Space Grotesk', sans-serif;
@@ -78,36 +67,32 @@
 .codBadge {
   display: flex; align-items: center; gap: 8px;
   background: #fdf3ee; border-radius: 10px;
-  padding: 10px 14px; font-size: 12px;
-  font-weight: 600; color: var(--orange);
-  border: 1px solid #fad5c4;
+  padding: 10px 14px; font-size: 12px; font-weight: 600;
+  color: var(--orange); border: 1px solid #fad5c4;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
-/* Form */
 .formSection { padding: 0; }
-.section {
-  background: white; padding: 16px 16px 20px;
-  border-bottom: 1px solid #ececea;
-}
+.section { background: white; padding: 16px 16px 20px; border-bottom: 1px solid #ececea; }
 .section h2 {
-  font-size: 13px; font-weight: 700; color: var(--navy);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px; font-weight: 700; color: var(--navy);
   text-transform: uppercase; letter-spacing: 0.8px;
-  margin-bottom: 16px; padding-bottom: 12px;
-  border-bottom: 1px solid #ececea;
+  margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #ececea;
 }
 .form { display: flex; flex-direction: column; gap: 16px; }
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field label {
   font-size: 11px; font-weight: 700; color: var(--navy);
   text-transform: uppercase; letter-spacing: 0.5px;
+  font-family: 'Space Grotesk', sans-serif;
 }
 .input, .textarea {
   border: 1.5px solid #e8e8e6; border-radius: 12px;
-  padding: 13px 16px; font-size: 16px;
-  color: var(--text); background: #fafaf8;
+  padding: 13px 16px; font-size: 16px; color: var(--text);
+  background: #fafaf8; font-family: 'Space Grotesk', sans-serif;
   transition: border-color 0.2s, background 0.2s;
   resize: vertical; -webkit-appearance: none;
-  font-family: inherit;
 }
 .input:focus, .textarea:focus {
   border-color: var(--orange); outline: none;
@@ -116,9 +101,9 @@
 .input::placeholder, .textarea::placeholder { color: #c0bfbc; }
 
 .paymentSection h3 {
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 11px; font-weight: 700; color: var(--navy);
-  text-transform: uppercase; letter-spacing: 0.5px;
-  margin-bottom: 12px;
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;
 }
 .codSelected {
   display: flex; align-items: center; gap: 14px;
@@ -127,29 +112,28 @@
 }
 .codSelected > div { flex: 1; }
 .codSelected strong {
-  display: block; font-size: 13px;
-  color: var(--navy); margin-bottom: 3px; font-weight: 700;
+  display: block; font-size: 13px; color: var(--navy);
+  margin-bottom: 3px; font-weight: 700; font-family: 'Space Grotesk', sans-serif;
 }
-.codSelected p { font-size: 11px; color: var(--text-muted); }
+.codSelected p { font-size: 11px; color: var(--text-muted); font-family: 'Space Grotesk', sans-serif; }
 
 .error {
   background: #fff5f5; border: 1.5px solid #fed7d7;
   color: #e53e3e; padding: 12px 16px;
   border-radius: 12px; font-size: 13px; font-weight: 500;
+  font-family: 'Space Grotesk', sans-serif;
 }
 .submitBtn {
-  width: 100%; padding: 16px;
-  background: var(--orange); color: white;
-  font-size: 16px; font-weight: 700;
-  border-radius: 14px; border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
+  width: 100%; padding: 16px; background: var(--orange); color: white;
+  font-size: 16px; font-weight: 700; border-radius: 14px; border: none;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
   box-shadow: 0 4px 14px rgba(231,85,37,0.35);
   transition: all 0.2s; -webkit-tap-highlight-color: transparent;
   letter-spacing: 0.2px; margin-top: 4px;
 }
 .submitBtn:active:not(:disabled) { transform: scale(0.98); box-shadow: none; }
 .submitBtn:disabled { opacity: 0.6; cursor: not-allowed; }
-
 .spinner {
   width: 20px; height: 20px;
   border: 2.5px solid rgba(255,255,255,0.3);
@@ -158,30 +142,19 @@
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Desktop */
 @media (min-width: 769px) {
-  .page { padding: 48px 0 100px; }
+  .page { padding: 110px 0 100px; }
   .title { padding: 0; margin-bottom: 32px; font-size: 30px; }
-  .layout {
-    display: grid; grid-template-columns: 1fr 380px;
-    gap: 28px; align-items: start;
-  }
+  .layout { display: grid; grid-template-columns: 1fr 380px; gap: 28px; align-items: start; }
   .summary {
     order: 0; border-bottom: none; border-radius: 20px;
     box-shadow: 0 2px 20px rgba(0,0,0,0.06);
-    position: sticky; top: 90px; padding: 28px; gap: 16px;
+    position: sticky; top: 100px; padding: 28px; gap: 16px;
   }
-  .summary h2 { font-size: 11px; }
   .summaryItemImg { width: 52px; height: 52px; }
   .totalRow { font-size: 20px; }
   .formSection { padding: 0; }
-  .section {
-    border-bottom: none; border-radius: 20px;
-    padding: 32px; box-shadow: 0 2px 20px rgba(0,0,0,0.06);
-  }
+  .section { border-bottom: none; border-radius: 20px; padding: 32px; box-shadow: 0 2px 20px rgba(0,0,0,0.06); }
   .input, .textarea { font-size: 15px; }
-  .submitBtn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(231,85,37,0.4);
-  }
+  .submitBtn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(231,85,37,0.4); }
 }
