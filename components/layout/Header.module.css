@@ -492,22 +492,23 @@
   .signinBtn     { display: none; }
   .signupBtn     { display: none; }
   .userMenu      { display: none; }
-  .logoText      { display: none; }
+  .logoText      { display: block; }
 
   .actions { gap: 0; flex-shrink: 0; }
 
-  /* Logo — shrink to icon only */
-  .logo { flex-shrink: 0; gap: 0; }
+  /* Logo — compact on mobile */
+  .logo { flex-shrink: 0; gap: 6px; }
 
   .logoMark {
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
     border-radius: 8px;
     overflow: hidden;
   }
 
   .logoText {
-    font-size: 18px;
+    display: block;
+    font-size: 16px;
     font-weight: 700;
     color: #0D0D0D;
   }
