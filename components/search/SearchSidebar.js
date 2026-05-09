@@ -7,12 +7,10 @@ const STARS = [4, 3, 2, 1]
 export default function SearchSidebar({
   facets,
   category, setCategory,
-  brand, toggleBrand,
   minPrice, maxPrice, setPriceRange,
   rating, setRating,
   inStock, setInStock,
   activeCount, clearAll,
-  // mobile
   mobile, onClose,
 }) {
   const [localMin, setLocalMin] = useState(minPrice || '')
@@ -58,21 +56,14 @@ export default function SearchSidebar({
           {facets.categories.map(cat => (
             <button
               key={cat.id}
-              className={`${styles.catOption} ${category === cat.slug ? styles.catActive : ''}`}
-              onClick={() => setCategory(category === cat.slug ? '' : cat.slug)}
+              className={`${styles.catOption} ${category === cat.id ? styles.catActive : ''}`}
+              onClick={() => setCategory(category === cat.id ? '' : cat.id)}
             >
               {cat.name}
             </button>
           ))}
         </div>
       </FilterSection>
-
-      {/* ── Brand ── */}
-      {facets.brands.length > 0 && (
-        <FilterSection title="Brand" defaultOpen={brand.length > 0}>
-          <BrandList brands={facets.brands} selected={brand} toggle={toggleBrand} />
-        </FilterSection>
-      )}
 
       {/* ── Price range ── */}
       <FilterSection title="Price Range" defaultOpen={minPrice > 0 || maxPrice < 100000}>
@@ -101,18 +92,21 @@ export default function SearchSidebar({
             />
           </div>
         </div>
-        {/* Quick presets */}
         <div className={styles.pricePresets}>
           {[
-            { label: 'Under 500',    min: 0,    max: 500 },
-            { label: '500 – 2,000',  min: 500,  max: 2000 },
-            { label: '2,000 – 5,000',min: 2000, max: 5000 },
-            { label: 'Over 5,000',   min: 5000, max: 100000 },
+            { label: 'Under 500',     min: 0,    max: 500 },
+            { label: '500 – 2,000',   min: 500,  max: 2000 },
+            { label: '2,000 – 5,000', min: 2000, max: 5000 },
+            { label: 'Over 5,000',    min: 5000, max: 100000 },
           ].map(p => (
             <button
               key={p.label}
               className={`${styles.pricePreset} ${minPrice === p.min && maxPrice === p.max ? styles.presetActive : ''}`}
-              onClick={() => { setLocalMin(p.min || ''); setLocalMax(p.max >= 100000 ? '' : p.max); setPriceRange(p.min, p.max) }}
+              onClick={() => {
+                setLocalMin(p.min || '')
+                setLocalMax(p.max >= 100000 ? '' : p.max)
+                setPriceRange(p.min, p.max)
+              }}
             >
               {p.label}
             </button>
@@ -157,12 +151,9 @@ export default function SearchSidebar({
         </label>
       </FilterSection>
 
-      {/* Mobile apply */}
       {mobile && (
         <div className={styles.mobileApply}>
-          <button className={styles.mobileApplyBtn} onClick={onClose}>
-            Show Results
-          </button>
+          <button className={styles.mobileApplyBtn} onClick={onClose}>Show Results</button>
         </div>
       )}
     </div>
@@ -182,18 +173,14 @@ export default function SearchSidebar({
   return content
 }
 
-/* ── Collapsible filter section ── */
 function FilterSection({ title, children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
     <div className={styles.section}>
       <button className={styles.sectionToggle} onClick={() => setOpen(o => !o)}>
         <span className={styles.sectionTitle}>{title}</span>
-        <svg
-          width="14" height="14" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" strokeWidth="2.5"
-          style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}
-        >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+          style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
           <polyline points="6 9 12 15 18 9"/>
         </svg>
       </button>
@@ -202,41 +189,6 @@ function FilterSection({ title, children, defaultOpen = true }) {
   )
 }
 
-/* ── Brand list with show more ── */
-function BrandList({ brands, selected, toggle }) {
-  const [showAll, setShowAll] = useState(false)
-  const visible = showAll ? brands : brands.slice(0, 7)
-  return (
-    <div>
-      <div className={styles.checkList}>
-        {visible.map(b => (
-          <label key={b.id} className={styles.checkRow}>
-            <div
-              className={`${styles.checkbox} ${selected.includes(b.slug) ? styles.checkboxOn : ''}`}
-              onClick={() => toggle(b.slug)}
-              role="checkbox"
-              aria-checked={selected.includes(b.slug)}
-            >
-              {selected.includes(b.slug) && (
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-              )}
-            </div>
-            <span className={styles.checkLabel} onClick={() => toggle(b.slug)}>{b.name}</span>
-          </label>
-        ))}
-      </div>
-      {brands.length > 7 && (
-        <button className={styles.showMoreBtn} onClick={() => setShowAll(s => !s)}>
-          {showAll ? 'Show less' : `+${brands.length - 7} more`}
-        </button>
-      )}
-    </div>
-  )
-}
-
-/* ── Star display ── */
 function Stars({ n }) {
   return (
     <span className={styles.stars}>
