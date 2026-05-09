@@ -1,8 +1,16 @@
+.dropdownWrap {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 9999;
+}
+
 .dropdown {
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.16), 0 4px 12px rgba(0,0,0,0.08);
   overflow: hidden;
   max-height: 480px;
   overflow-y: auto;
@@ -34,7 +42,7 @@
   cursor: pointer;
   font-size: 11px;
   font-weight: 500;
-  color: #6366f1;
+  color: #E75525;
   padding: 0;
   text-transform: none;
   letter-spacing: 0;
@@ -156,7 +164,7 @@
 .productPrice {
   font-size: 13px;
   font-weight: 700;
-  color: #6366f1;
+  color: #E75525;
   white-space: nowrap;
 }
 
@@ -172,7 +180,7 @@
 .spinner {
   width: 16px; height: 16px;
   border: 2px solid #e5e7eb;
-  border-top-color: #6366f1;
+  border-top-color: #E75525;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   flex-shrink: 0;
@@ -206,7 +214,7 @@
   border-top: 1px solid #f3f4f6;
   cursor: pointer;
   font-size: 13px;
-  color: #6366f1;
+  color: #E75525;
   font-weight: 500;
   transition: background 0.1s;
 }
