@@ -27,22 +27,20 @@ function persistRecent(list) {
 
 export function useSearch() {
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState({ products: [], categories: [], brands: [] })
+  const [results, setResults] = useState({ products: [], categories: [] })
   const [loading, setLoading] = useState(false)
   const [recent, setRecent] = useState([])
   const debounceRef = useRef(null)
 
-  // Load recent searches on mount
   useEffect(() => {
     setRecent(loadRecent())
   }, [])
 
-  // Debounced search
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
 
     if (!query.trim()) {
-      setResults({ products: [], categories: [], brands: [] })
+      setResults({ products: [], categories: [] })
       setLoading(false)
       return
     }
@@ -53,36 +51,32 @@ export function useSearch() {
         const q = query.trim()
 
         const [
-          { data: products },
-          { data: categories },
-          { data: brands },
+          { data: products, error: pErr },
+          { data: categories, error: cErr },
         ] = await Promise.all([
           supabase
             .from('products')
-            .select('id, name, slug, price, image_url, brand:brands(name)')
+            .select('id, name, price, discount, image_url')
             .ilike('name', `%${q}%`)
-            .eq('is_active', true)
+            .eq('active', true)
             .limit(6),
           supabase
             .from('categories')
-            .select('id, name, slug')
-            .ilike('name', `%${q}%`)
-            .limit(4),
-          supabase
-            .from('brands')
-            .select('id, name, slug')
+            .select('id, name')
             .ilike('name', `%${q}%`)
             .limit(4),
         ])
 
+        if (pErr) console.error('Product search error:', pErr)
+        if (cErr) console.error('Category search error:', cErr)
+
         setResults({
           products: products || [],
           categories: categories || [],
-          brands: brands || [],
         })
       } catch (err) {
         console.error('Search error:', err)
-        setResults({ products: [], categories: [], brands: [] })
+        setResults({ products: [], categories: [] })
       } finally {
         setLoading(false)
       }
