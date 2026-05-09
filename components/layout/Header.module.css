@@ -482,19 +482,20 @@
   .inner {
     padding: 0 12px;
     height: 56px;
-    gap: 6px;
+    gap: 8px;
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
   }
 
   /* Hide desktop-only elements */
-  .nav           { display: none; }
-  .desktopSearch { display: none; }
-  .signinBtn     { display: none; }
-  .signupBtn     { display: none; }
-  .userMenu      { display: none; }
-  .logoText      { display: block; }
+  .nav                { display: none; }
+  .desktopSearch      { display: none; }
+  .desktopSearchWrap  { display: none; }
+  .signinBtn          { display: none; }
+  .signupBtn          { display: none; }
+  .userMenu           { display: none; }
+  .logoText           { display: block; }
 
   .actions { gap: 0; flex-shrink: 0; }
 
