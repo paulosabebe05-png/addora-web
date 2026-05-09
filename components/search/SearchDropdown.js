@@ -13,8 +13,8 @@ export default function SearchDropdown({
   activeIndex,
   setActiveIndex,
 }) {
-  const { products = [], categories = [], brands = [] } = results
-  const hasResults = products.length > 0 || categories.length > 0 || brands.length > 0
+  const { products = [], categories = [] } = results
+  const hasResults = products.length > 0 || categories.length > 0
   const showRecent = !query.trim() && recent?.length > 0
 
   // ── No query: show recent searches ──
@@ -82,7 +82,6 @@ export default function SearchDropdown({
     )
   }
 
-  // ── Results ──
   if (!hasResults) return null
 
   let itemIndex = 0
@@ -101,7 +100,7 @@ export default function SearchDropdown({
             return (
               <Link
                 key={cat.id}
-                href={`/categories/${cat.slug}`}
+                href={`/categories/${cat.id}`}
                 className={`${styles.resultItem} ${activeIndex === idx ? styles.active : ''}`}
                 onMouseEnter={() => setActiveIndex(idx)}
                 onMouseLeave={() => setActiveIndex(-1)}
@@ -121,37 +120,6 @@ export default function SearchDropdown({
         </div>
       )}
 
-      {/* Brands */}
-      {brands.length > 0 && (
-        <div className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <span>Brands</span>
-          </div>
-          {brands.map(brand => {
-            const idx = itemIndex++
-            return (
-              <Link
-                key={brand.id}
-                href={`/search?brand=${brand.id}`}
-                className={`${styles.resultItem} ${activeIndex === idx ? styles.active : ''}`}
-                onMouseEnter={() => setActiveIndex(idx)}
-                onMouseLeave={() => setActiveIndex(-1)}
-                onClick={() => onSelect(brand.name)}
-              >
-                <span className={styles.catIcon}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
-                    <line x1="7" y1="7" x2="7.01" y2="7"/>
-                  </svg>
-                </span>
-                <span className={styles.resultName}>{brand.name}</span>
-                <span className={styles.inCategory}>in Brands</span>
-              </Link>
-            )
-          })}
-        </div>
-      )}
-
       {/* Products */}
       {products.length > 0 && (
         <div className={styles.section}>
@@ -160,10 +128,15 @@ export default function SearchDropdown({
           </div>
           {products.map(product => {
             const idx = itemIndex++
+            // Calculate actual price after discount
+            const discountedPrice = product.discount > 0
+              ? product.price * (1 - product.discount / 100)
+              : product.price
+
             return (
               <Link
                 key={product.id}
-                href={`/products/${product.slug}`}
+                href={`/products/${product.id}`}
                 className={`${styles.productItem} ${activeIndex === idx ? styles.active : ''}`}
                 onMouseEnter={() => setActiveIndex(idx)}
                 onMouseLeave={() => setActiveIndex(-1)}
@@ -183,12 +156,12 @@ export default function SearchDropdown({
                 </div>
                 <div className={styles.productInfo}>
                   <span className={styles.productName}>{product.name}</span>
-                  {product.brand?.name && (
-                    <span className={styles.productBrand}>{product.brand.name}</span>
+                  {product.discount > 0 && (
+                    <span className={styles.productDiscount}>{product.discount}% off</span>
                   )}
                 </div>
                 <span className={styles.productPrice}>
-                  ETB {Number(product.price).toLocaleString()}
+                  ETB {Math.round(discountedPrice).toLocaleString()}
                 </span>
               </Link>
             )
@@ -196,12 +169,9 @@ export default function SearchDropdown({
         </div>
       )}
 
-      {/* View all link */}
+      {/* View all */}
       {query.trim() && (
-        <button
-          className={styles.viewAll}
-          onClick={() => onSelect(query)}
-        >
+        <button className={styles.viewAll} onClick={() => onSelect(query)}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
