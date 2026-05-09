@@ -76,10 +76,16 @@
 .transparent .logoText { color: #0D0D0D; }
 .solid .logoText       { color: #0D0D0D; }
 
+/* ── Desktop search wrapper (must be relative for dropdown) ── */
+.desktopSearchWrap {
+  position: relative;
+  flex: 1;
+  max-width: 680px;
+}
+
 /* ── Desktop search bar ── */
 .desktopSearch {
-  flex: 1;
-  max-width: 520px;
+  width: 100%;
   display: flex;
   align-items: center;
   border-radius: 100px;
@@ -92,6 +98,15 @@
 
 .desktopSearch:focus-within {
   box-shadow: 0 0 0 3px rgba(231,85,37,0.12);
+}
+
+/* ── Desktop dropdown wrapper ── */
+.desktopDropdownWrap {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 9999;
 }
 
 .transparent .desktopSearch,
@@ -493,55 +508,48 @@
     color: #0D0D0D;
   }
 
-  /* Mobile search pill */
+  /* Mobile search bar — full branded inline (like desktop) */
   .mobileSearchRow {
     display: flex;
     align-items: center;
     flex: 1;
   }
 
-  .mobileSearchWrap {
+  .mobileSearchPill {
     flex: 1;
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #F7F7F8;
-    border: 1.5px solid transparent;
-    border-radius: 100px;
-    padding: 7px 14px;
-    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-  }
-
-  .mobileSearchWrap:focus-within {
     background: #ffffff;
-    border-color: #E75525;
-    box-shadow: 0 0 0 3px rgba(231,85,37,0.10);
+    border: 1.5px solid #E75525;
+    border-radius: 100px;
+    padding: 0;
+    overflow: hidden;
+    height: 38px;
+    cursor: text;
+    transition: box-shadow 0.2s;
   }
 
-  .mobileSearchIcon {
-    color: #999;
-    flex-shrink: 0;
+  .mobileSearchPill:focus-within {
+    box-shadow: 0 0 0 3px rgba(231,85,37,0.12);
+  }
+
+  .mobileSearchPillIcon {
+    color: #E75525;
+    margin-left: 12px;
     display: flex;
     align-items: center;
+    flex-shrink: 0;
   }
 
-  .mobileSearchWrap:focus-within .mobileSearchIcon {
-    color: #E75525;
-  }
-
-  .mobileSearchInput {
+  .mobileSearchPillText {
     flex: 1;
-    background: none;
-    border: none;
-    outline: none;
-    color: #0D0D0D;
     font-size: 13px;
-    font-family: inherit;
-    min-width: 0;
-  }
-
-  .mobileSearchInput::placeholder {
     color: #B0B0B8;
+    font-family: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /* Cart button on mobile */
