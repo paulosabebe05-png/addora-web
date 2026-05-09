@@ -20,7 +20,7 @@ export default function WishlistPage() {
       </div>
 
       <div className={styles.content}>
-        <div className={styles.hero}>
+        <div className={styles.hero} style={{ background: 'linear-gradient(135deg, #1B5C4E, #0B1A14)' }}>
           <span className={styles.heroIcon}>❤️</span>
           <div className={styles.heroText}>
             <h1 className={styles.heroTitle}>My Wishlist</h1>
@@ -53,7 +53,7 @@ export default function WishlistPage() {
                     <p style={{ fontWeight: 600, fontSize: 13, margin: 0 }}>{product.name}</p>
                     <p style={{ color: '#1B5C4E', fontWeight: 700, margin: '4px 0 8px' }}>ETB {product.price}</p>
                     <Link
-                      href={`/product/${product.id}`}
+                      href={`/products/${product.id}`}
                       style={{ display: 'block', textAlign: 'center', background: '#1B5C4E', color: 'white', padding: '6px', borderRadius: '6px', fontSize: 12, textDecoration: 'none' }}
                     >
                       View Product
