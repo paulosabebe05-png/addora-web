@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase'
 import HomeClient from './HomeClient'
+import SplashOverlay from '../components/SplashOverlay'
 
 export const revalidate = 60
 
@@ -13,8 +14,6 @@ export default async function HomePage({ searchParams }) {
     .eq('active', true)
     .order('created_at', { ascending: false })
 
-  // If a category filter is passed via URL, filter by `category` column first,
-  // then fall back to name-based match (HomeClient handles client-side filtering too)
   if (category && category !== 'All') {
     query = query.or(`category.ilike.%${category}%,name.ilike.%${category}%`)
   }
@@ -25,5 +24,10 @@ export default async function HomePage({ searchParams }) {
 
   const { data: products } = await query
 
-  return <HomeClient products={products || []} />
+  return (
+    <>
+      <SplashOverlay />
+      <HomeClient products={products || []} />
+    </>
+  )
 }
