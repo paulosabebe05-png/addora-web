@@ -37,8 +37,8 @@
 }
 
 @keyframes shimmer {
-  0%       { transform: translateX(-120%); }
-  60%, 100% { transform: translateX(220%); }
+  0%        { transform: translateX(-120%); }
+  60%, 100% { transform: translateX(220%);  }
 }
 
 @keyframes pulseGlow {
@@ -46,7 +46,9 @@
   50%       { box-shadow: 0 0 45px rgba(255,107,0,0.9), 0 0 20px 5px rgba(255,107,0,0); }
 }
 
-/* ── Root overlay ── */
+/* ══════════════════════════════════════════
+   ROOT OVERLAY
+   ══════════════════════════════════════════ */
 .overlay {
   position: fixed;
   inset: 0;
@@ -56,7 +58,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1),
               transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -67,92 +70,97 @@
   pointer-events: none;
 }
 
-/* ── Background layers ── */
+/* ── Deep radial bg ── */
 .radialBg {
-  position: absolute;
+  position: fixed;
   inset: 0;
   pointer-events: none;
   background: radial-gradient(ellipse at 50% 40%, rgba(255,107,0,0.08) 0%, #04152d 65%);
+  z-index: 0;
 }
 
-/* ── Floating rings ── */
+/* ══════════════════════════════════════════
+   FLOATING RINGS  (vmin keeps them proportional on both orientations)
+   ══════════════════════════════════════════ */
 .ring {
-  position: absolute;
+  position: fixed;
   border-radius: 50%;
   left: 50%;
   top: 50%;
   pointer-events: none;
+  z-index: 1;
 }
 
 .ringRippleSm {
-  width: 70vw;
-  height: 70vw;
+  width: 70vmin;
+  height: 70vmin;
   border: 1px solid rgba(255,107,0,0.12);
   animation: ringPulse 4s cubic-bezier(0.215, 0.61, 0.355, 1) infinite 0s;
 }
 
 .ringRippleLg {
-  width: 110vw;
-  height: 110vw;
+  width: 130vmax;
+  height: 130vmax;
   border: 1px solid rgba(255,107,0,0.05);
   animation: ringPulse 4s cubic-bezier(0.215, 0.61, 0.355, 1) infinite 1.5s;
 }
 
 .ringFloat {
-  width: 88vw;
-  height: 88vw;
+  width: 95vmin;
+  height: 95vmin;
   border: 1px solid rgba(255,107,0,0.07);
   animation: float 7s ease-in-out infinite;
 }
 
-/* ── Ambient orbs ── */
+/* ══════════════════════════════════════════
+   AMBIENT ORBS
+   ══════════════════════════════════════════ */
 .orbTop {
-  position: absolute;
+  position: fixed;
   top: -15%;
   left: -10%;
-  width: 55vw;
-  height: 55vw;
-  max-width: 600px;
-  max-height: 600px;
+  width: min(55vw, 400px);
+  height: min(55vw, 400px);
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255,107,0,0.10) 0%, transparent 70%);
   filter: blur(2px);
   pointer-events: none;
+  z-index: 1;
 }
 
 .orbBottom {
-  position: absolute;
+  position: fixed;
   bottom: -10%;
   right: -5%;
-  width: 40vw;
-  height: 40vw;
-  max-width: 450px;
-  max-height: 450px;
+  width: min(40vw, 300px);
+  height: min(40vw, 300px);
   border-radius: 50%;
   background: radial-gradient(circle, rgba(80,60,220,0.06) 0%, transparent 70%);
   filter: blur(2px);
   pointer-events: none;
+  z-index: 1;
 }
 
-/* ── Particles ── */
+/* ══════════════════════════════════════════
+   PARTICLES
+   ══════════════════════════════════════════ */
 .particle {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255,107,0,0.8) 0%, rgba(255,107,0,0) 70%);
   pointer-events: none;
+  animation-name: particleDrift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  z-index: 1;
 }
 
-.particle--1 { width: 6px; height: 6px; left: 10%; animation: particleDrift 15s linear infinite 0s;  }
-.particle--2 { width: 4px; height: 4px; left: 28%; animation: particleDrift 20s linear infinite 3s;  }
-.particle--3 { width: 8px; height: 8px; left: 52%; animation: particleDrift 12s linear infinite 7s;  }
-.particle--4 { width: 5px; height: 5px; left: 71%; animation: particleDrift 25s linear infinite 1s;  }
-.particle--5 { width: 4px; height: 4px; left: 87%; animation: particleDrift 18s linear infinite 5s;  }
-.particle--6 { width: 6px; height: 6px; left: 40%; animation: particleDrift 16s linear infinite 10s; }
-
-/* ── Progress bar ── */
+/* ══════════════════════════════════════════
+   PROGRESS BAR
+   ══════════════════════════════════════════ */
 .progressTrack {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
@@ -171,10 +179,10 @@
 
 /* ── Countdown ── */
 .countdown {
-  position: absolute;
+  position: fixed;
   bottom: 14px;
   right: 18px;
-  z-index: 20;
+  z-index: 21;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 10px;
   font-weight: 600;
@@ -182,7 +190,9 @@
   color: rgba(255,107,0,0.5);
 }
 
-/* ══ MAIN CONTENT ══ */
+/* ══════════════════════════════════════════
+   MAIN CONTENT — Mobile-first (≤ 639px)
+   ══════════════════════════════════════════ */
 .content {
   position: relative;
   z-index: 5;
@@ -191,22 +201,25 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 72px 28px 80px;
+  padding: 52px 20px 76px;
   width: 100%;
   max-width: 500px;
+  box-sizing: border-box;
+  /* ensures content isn't cut off on short phones */
+  min-height: 100dvh;
 }
 
 /* ── Eyebrow ── */
 .eyebrow {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 28px;
+  gap: 8px;
+  margin-bottom: 20px;
   animation: fadeUp 0.6s ease 0.1s both;
 }
 
 .eyebrowLine {
-  width: 28px;
+  width: 20px;
   height: 1px;
   background: rgba(255,107,0,0.5);
   flex-shrink: 0;
@@ -214,25 +227,27 @@
 
 .eyebrowText {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.3);
+  white-space: nowrap;
 }
 
 /* ── Logo icon ── */
 .logoIcon {
-  width: 64px;
-  height: 64px;
-  border-radius: 18px;
+  width: 54px;
+  height: 54px;
+  border-radius: 15px;
   background: linear-gradient(135deg, #ff6b00, #cc4400);
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 0 40px rgba(255,107,0,0.55);
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   animation: fadeUp 0.6s ease 0.22s both;
+  flex-shrink: 0;
 }
 
 /* ── Wordmark ── */
@@ -251,9 +266,10 @@
   pointer-events: none;
 }
 
+/* clamp: 36px on 320px phone → 52px on 640px+ desktop */
 .wordmark {
   font-family: 'Sora', sans-serif;
-  font-size: 52px;
+  font-size: clamp(36px, 12vw, 52px);
   font-weight: 800;
   letter-spacing: 0.05em;
   line-height: 1;
@@ -269,11 +285,11 @@
 /* ── Tagline ── */
 .tagline {
   font-family: 'Hanken Grotesk', sans-serif;
-  font-size: 15px;
+  font-size: clamp(13px, 3.8vw, 15px);
   font-weight: 400;
   color: rgba(255,255,255,0.65);
   letter-spacing: 0.02em;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   animation: fadeUp 0.6s ease 0.4s both;
 }
 
@@ -281,13 +297,15 @@
 .subTagline {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 32px;
+  gap: 8px;
+  margin-bottom: 24px;
   animation: fadeUp 0.6s ease 0.46s both;
+  max-width: 100%;
+  padding: 0 4px;
 }
 
 .subTaglineLine {
-  width: 20px;
+  width: 16px;
   height: 1px;
   background: rgba(255,107,0,0.4);
   flex-shrink: 0;
@@ -295,20 +313,20 @@
 
 .subTaglineText {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.22);
 }
 
-/* ── Feature chips ── */
+/* ── Feature chips — 4 across on all screen sizes ── */
 .chips {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 36px;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 28px;
+  width: 100%;
   animation: fadeUp 0.6s ease 0.54s both;
 }
 
@@ -316,10 +334,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 12px;
-  min-width: 70px;
-  border-radius: 16px;
+  gap: 5px;
+  padding: 10px 6px;
+  border-radius: 14px;
   background: rgba(4,21,45,0.5);
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
@@ -328,15 +345,15 @@
 }
 
 .chipIcon {
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
 }
 
 .chipLabel {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.32);
   white-space: pre;
@@ -344,25 +361,29 @@
   line-height: 1.4;
 }
 
-/* ── Primary CTA ── */
+/* ── Primary CTA — full width on mobile ── */
 .ctaPrimary {
   position: relative;
   overflow: hidden;
-  height: 56px;
-  padding: 0 48px;
+  width: 100%;
+  max-width: 320px;
+  height: 52px;
+  padding: 0 32px;
   border-radius: 9999px;
   background: linear-gradient(135deg, #ff6b00, #cc4400);
   border: 1px solid rgba(255,133,51,0.5);
   color: #fff;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   cursor: pointer;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   animation: fadeUp 0.6s ease 0.62s both, pulseGlow 3s ease-in-out infinite 0.8s;
   transition: transform 0.15s, filter 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .ctaPrimary::after {
@@ -375,14 +396,23 @@
   border-radius: 9999px;
 }
 
-.ctaPrimary:hover {
-  transform: scale(1.05);
-  filter: brightness(1.15);
+@media (hover: hover) {
+  .ctaPrimary:hover {
+    transform: scale(1.05);
+    filter: brightness(1.15);
+  }
+}
+
+.ctaPrimary:active {
+  transform: scale(0.97);
+  filter: brightness(0.92);
 }
 
 /* ── Ghost skip ── */
 .ctaGhost {
-  height: 42px;
+  width: 100%;
+  max-width: 320px;
+  height: 40px;
   padding: 0 24px;
   border-radius: 9999px;
   background: rgba(4,21,45,0.5);
@@ -396,11 +426,51 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: border-color 0.2s, color 0.2s;
   animation: fadeUp 0.6s ease 0.72s both;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
-.ctaGhost:hover {
+@media (hover: hover) {
+  .ctaGhost:hover {
+    border-color: rgba(255,107,0,0.45);
+    color: rgba(255,107,0,0.8);
+  }
+}
+
+.ctaGhost:active {
   border-color: rgba(255,107,0,0.45);
   color: rgba(255,107,0,0.8);
+}
+
+/* ══════════════════════════════════════════
+   DESKTOP  ≥ 640px
+   ══════════════════════════════════════════ */
+@media (min-width: 640px) {
+
+  .content {
+    padding: 72px 28px 80px;
+    min-height: unset;
+  }
+
+  .eyebrow       { gap: 10px; margin-bottom: 28px; }
+  .eyebrowLine   { width: 28px; }
+  .eyebrowText   { font-size: 10px; letter-spacing: 0.22em; }
+
+  .logoIcon      { width: 64px; height: 64px; border-radius: 18px; margin-bottom: 14px; }
+
+  .tagline       { margin-bottom: 10px; }
+
+  .subTagline    { gap: 10px; margin-bottom: 32px; }
+  .subTaglineLine { width: 20px; }
+  .subTaglineText { font-size: 10px; letter-spacing: 0.18em; }
+
+  .chips         { display: flex; flex-wrap: nowrap; gap: 10px; margin-bottom: 36px; }
+  .chip          { padding: 12px; min-width: 70px; border-radius: 16px; }
+  .chipIcon      { font-size: 20px; }
+  .chipLabel     { font-size: 8px; letter-spacing: 0.1em; }
+
+  .ctaPrimary    { width: auto; height: 56px; padding: 0 48px; font-size: 13px; margin-bottom: 14px; }
+  .ctaGhost      { width: auto; height: 42px; }
 }
