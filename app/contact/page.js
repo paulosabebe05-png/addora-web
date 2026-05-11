@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import emailjs from '@emailjs/browser'
+import { useLang } from '../../lib/lang'
 import styles from '../SharedPage.module.css'
 
 const EMAILJS_SERVICE_ID  = 'service_2dfyujd'
@@ -9,6 +10,7 @@ const EMAILJS_TEMPLATE_ID = 'template_v3umwfu'
 const EMAILJS_PUBLIC_KEY  = '2yREi3p2GpqFfOIdS'
 
 export default function ContactPage() {
+  const { tr } = useLang()
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState('')
@@ -33,7 +35,7 @@ export default function ContactPage() {
       )
       setSent(true)
     } catch {
-      setError('Failed to send. Please email us directly at support@addora.com.et')
+      setError(tr('contactFailedError'))
     }
     setSending(false)
   }
@@ -45,27 +47,27 @@ export default function ContactPage() {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M19 12H5M12 5l-7 7 7 7"/>
           </svg>
-          Account
+          {tr('account')}
         </Link>
         <span className={styles.topBarSep}>›</span>
-        <span className={styles.topBarTitle}>Contact Us</span>
+        <span className={styles.topBarTitle}>{tr('contactTitle')}</span>
       </div>
 
       <div className={styles.content}>
         <div className={styles.hero}>
           <span className={styles.heroIcon}>📞</span>
           <div className={styles.heroText}>
-            <h1 className={styles.heroTitle}>Contact Us</h1>
-            <p className={styles.heroSub}>We usually respond within a few hours</p>
+            <h1 className={styles.heroTitle}>{tr('contactTitle')}</h1>
+            <p className={styles.heroSub}>{tr('contactSub')}</p>
           </div>
         </div>
 
         <div className={styles.card}>
-          <div className={styles.cardHeader}><p className={styles.cardTitle}>Reach Us Directly</p></div>
+          <div className={styles.cardHeader}><p className={styles.cardTitle}>{tr('reachUsDirectly')}</p></div>
           {[
-            { icon: '📞', label: 'Phone', sub: '+251 926 635 307', href: 'tel:+251926635307' },
-            { icon: '✉️', label: 'Email', sub: 'support@addora.com.et', href: 'mailto:support@addora.com.et' },
-            { icon: '🌐', label: 'Website', sub: 'addora.com.et', href: 'https://addora.com.et' },
+            { icon: '📞', label: tr('contactPhone'), sub: '+251 926 635 307', href: 'tel:+251926635307' },
+            { icon: '✉️', label: tr('contactEmail'), sub: 'support@addora.com.et', href: 'mailto:support@addora.com.et' },
+            { icon: '🌐', label: tr('contactWebsite'), sub: 'addora.com.et', href: 'https://addora.com.et' },
           ].map(item => (
             <a key={item.label} href={item.href} className={styles.row} style={{ textDecoration: 'none' }}>
               <div className={styles.rowIcon}>{item.icon}</div>
@@ -78,33 +80,33 @@ export default function ContactPage() {
         </div>
 
         <div className={styles.card}>
-          <div className={styles.cardHeader}><p className={styles.cardTitle}>Send a Message</p></div>
+          <div className={styles.cardHeader}><p className={styles.cardTitle}>{tr('sendAMessage')}</p></div>
           {sent ? (
             <div className={styles.empty}>
               <span className={styles.emptyIcon}>✅</span>
-              <h2 className={styles.emptyTitle}>Message Sent!</h2>
-              <p className={styles.emptySub}>We will get back to you within 24 hours.</p>
+              <h2 className={styles.emptyTitle}>{tr('messageSentTitle')}</h2>
+              <p className={styles.emptySub}>{tr('messageSentSub')}</p>
             </div>
           ) : (
             <form className={styles.form} onSubmit={handleSubmit}>
               <div>
-                <label className={styles.label}>Full Name</label>
-                <input className={styles.input} type="text" placeholder="Your name" required />
+                <label className={styles.label}>{tr('contactFullName')}</label>
+                <input className={styles.input} type="text" placeholder={tr('contactNamePlaceholder')} required />
               </div>
               <div>
-                <label className={styles.label}>Email or Phone</label>
-                <input className={styles.input} type="text" placeholder="your@email.com or +251..." required />
+                <label className={styles.label}>{tr('contactEmailPhone')}</label>
+                <input className={styles.input} type="text" placeholder={tr('contactEmailPlaceholder')} required />
               </div>
               <div>
-                <label className={styles.label}>Subject</label>
-                <input className={styles.input} type="text" placeholder="What is this about?" required />
+                <label className={styles.label}>{tr('contactSubject')}</label>
+                <input className={styles.input} type="text" placeholder={tr('contactSubjectPlaceholder')} required />
               </div>
               <div>
-                <label className={styles.label}>Message</label>
-                <textarea className={styles.textarea} placeholder="Tell us how we can help..." required />
+                <label className={styles.label}>{tr('contactMessage')}</label>
+                <textarea className={styles.textarea} placeholder={tr('contactMessagePlaceholder')} required />
               </div>
               <button type="submit" className={styles.submitBtn} disabled={sending}>
-                {sending ? 'Sending...' : 'Send Message →'}
+                {sending ? tr('contactSending') : tr('contactSendBtn')}
               </button>
               {error && <p style={{ color: 'red', fontSize: 13, marginTop: 8 }}>{error}</p>}
             </form>
