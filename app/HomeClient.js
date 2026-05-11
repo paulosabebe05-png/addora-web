@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import ProductCard from '../components/ui/ProductCard'
 import styles from './HomeClient.module.css'
-import { useLang } from '../../lib/lang'   // ← ADDED
+import { useLang } from '../lib/lang'   // ← ADDED
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
