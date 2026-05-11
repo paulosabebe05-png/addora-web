@@ -1,6 +1,5 @@
 import { supabase } from '../lib/supabase'
 import HomeClient from './HomeClient'
-import SplashOverlay from '../components/SplashOverlay'
 
 export const revalidate = 60
 
