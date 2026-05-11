@@ -5,17 +5,20 @@ import Link from 'next/link'
 import { supabase } from '../../../lib/supabase'
 import ProductCard from '../../../components/ui/ProductCard'
 import styles from './CategoryProducts.module.css'
-
-const SORT_OPTIONS = [
-  { value: 'newest',   label: 'Newest' },
-  { value: 'price_asc',  label: 'Price: Low to High' },
-  { value: 'price_desc', label: 'Price: High to Low' },
-  { value: 'discount',   label: 'Best Discount' },
-]
+import { useLang } from '../../../lib/lang'   // ← ADDED
 
 export default function CategoryProductsPage() {
   const { id } = useParams()
   const router = useRouter()
+  const { tr } = useLang()   // ← ADDED
+
+  // Sort options now use tr() so they translate
+  const SORT_OPTIONS = [
+    { value: 'newest',     label: tr('sortMostRecent') },
+    { value: 'price_asc',  label: tr('sortPriceAsc')  || 'Price: Low to High' },
+    { value: 'price_desc', label: tr('sortPriceDesc') || 'Price: High to Low' },
+    { value: 'discount',   label: tr('sortDiscount')  || 'Best Discount' },
+  ]
 
   const [category, setCategory]   = useState(null)
   const [products, setProducts]   = useState([])
@@ -28,7 +31,6 @@ export default function CategoryProductsPage() {
     async function load() {
       setLoading(true)
 
-      // Fetch category name
       const { data: cat } = await supabase
         .from('categories')
         .select('id, name')
@@ -37,7 +39,6 @@ export default function CategoryProductsPage() {
 
       setCategory(cat)
 
-      // Fetch active products in this category
       const { data: prods } = await supabase
         .from('products')
         .select('*')
@@ -60,7 +61,6 @@ export default function CategoryProductsPage() {
     if (sort === 'price_asc')  return a.price - b.price
     if (sort === 'price_desc') return b.price - a.price
     if (sort === 'discount')   return (b.discount || 0) - (a.discount || 0)
-    // newest — created_at desc
     return new Date(b.created_at) - new Date(a.created_at)
   })
 
@@ -69,14 +69,13 @@ export default function CategoryProductsPage() {
 
       {/* ── Top bar ── */}
       <div className={styles.topBar}>
-        {/* Breadcrumb */}
         <div className={styles.breadcrumb}>
-          <Link href="/" className={styles.breadLink}>Home</Link>
+          <Link href="/" className={styles.breadLink}>{tr('breadcrumbHome')}</Link>
           <span className={styles.breadSep}>›</span>
-          <Link href="/categories" className={styles.breadLink}>Categories</Link>
+          <Link href="/categories" className={styles.breadLink}>{tr('categories')}</Link>
           <span className={styles.breadSep}>›</span>
           <span className={styles.breadCurrent}>
-            {loading ? '…' : category?.name ?? 'Category'}
+            {loading ? '…' : category?.name ?? tr('categories')}
           </span>
         </div>
       </div>
@@ -85,11 +84,11 @@ export default function CategoryProductsPage() {
       <div className={styles.hero}>
         <div className={styles.heroInner}>
           <h1 className={styles.heroTitle}>
-            {loading ? 'Loading…' : category?.name ?? 'Products'}
+            {loading ? tr('loading') : category?.name ?? tr('breadcrumbProducts')}
           </h1>
           {!loading && (
             <span className={styles.heroCount}>
-              {sorted.length} {sorted.length === 1 ? 'product' : 'products'}
+              {sorted.length} {sorted.length === 1 ? tr('items').replace(/s$/, '') : tr('items')}
             </span>
           )}
         </div>
@@ -106,7 +105,7 @@ export default function CategoryProductsPage() {
           </svg>
           <input
             type="text"
-            placeholder="Search in this category..."
+            placeholder={tr('searchProducts')}
             value={search}
             onChange={e => setSearch(e.target.value)}
             className={styles.searchInput}
@@ -140,15 +139,15 @@ export default function CategoryProductsPage() {
           <div className={styles.empty}>
             <span className={styles.emptyIcon}>🛍️</span>
             <p className={styles.emptyTitle}>
-              {search ? 'No products match your search' : 'No products in this category yet'}
+              {search ? tr('noProductsFound') : tr('noProductsInCategory')}
             </p>
             {search && (
               <button className={styles.clearSearch} onClick={() => setSearch('')}>
-                Clear search
+                {tr('clear')}
               </button>
             )}
             <Link href="/categories" className={styles.backBtn}>
-              ← Back to Categories
+              ← {tr('categories')}
             </Link>
           </div>
         ) : (
