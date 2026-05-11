@@ -10,7 +10,7 @@ import { useLang } from '../../../lib/lang'
 export default function CategoryProductsPage() {
   const { id } = useParams()
   const router = useRouter()
-  const { tr, lang } = useLang()   // ← lang added so we can pick name_am
+  const { tr, lang } = useLang()
 
   const [category, setCategory]   = useState(null)
   const [products, setProducts]   = useState([])
@@ -35,16 +35,14 @@ export default function CategoryProductsPage() {
     async function load() {
       setLoading(true)
 
-      // Fetch category — name_am added for Amharic support
       const { data: cat } = await supabase
         .from('categories')
-        .select('id, name, name_am')   // ← name_am added
+        .select('id, name, name_am')   // ← name_am fetched
         .eq('id', id)
         .single()
 
       setCategory(cat)
 
-      // Fetch active products in this category
       const { data: prods } = await supabase
         .from('products')
         .select('*')
@@ -57,17 +55,14 @@ export default function CategoryProductsPage() {
     load()
   }, [id])
 
-  // Filter by search
   const filtered = products.filter(p =>
     !search.trim() || p.name.toLowerCase().includes(search.toLowerCase())
   )
 
-  // Sort
   const sorted = [...filtered].sort((a, b) => {
     if (sort === 'price_asc')  return a.price - b.price
     if (sort === 'price_desc') return b.price - a.price
     if (sort === 'discount')   return (b.discount || 0) - (a.discount || 0)
-    // newest — created_at desc
     return new Date(b.created_at) - new Date(a.created_at)
   })
 
@@ -76,7 +71,6 @@ export default function CategoryProductsPage() {
 
       {/* ── Top bar ── */}
       <div className={styles.topBar}>
-        {/* Breadcrumb */}
         <div className={styles.breadcrumb}>
           <Link href="/" className={styles.breadLink}>{tr('breadcrumbHome')}</Link>
           <span className={styles.breadSep}>›</span>
@@ -104,7 +98,6 @@ export default function CategoryProductsPage() {
 
       {/* ── Filter / Sort bar ── */}
       <div className={styles.filterBar}>
-        {/* Search */}
         <div className={styles.searchWrap}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
@@ -123,7 +116,6 @@ export default function CategoryProductsPage() {
           )}
         </div>
 
-        {/* Sort */}
         <select
           value={sort}
           onChange={e => setSort(e.target.value)}
