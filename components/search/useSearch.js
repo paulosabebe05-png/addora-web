@@ -1,11 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+import { supabase } from '../../lib/supabase'
 
 const RECENT_KEY = 'addora_recent_searches'
 const MAX_RECENT = 8
