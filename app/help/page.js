@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useLang } from '../../lib/lang'
 import styles from '../SharedPage.module.css'
 
 const faqs = [
@@ -14,7 +15,7 @@ const faqs = [
 
 export default function HelpPage() {
   const [open, setOpen] = useState(null)
-
+  const { tr } = useLang()
   return (
     <div className={styles.page}>
       <div className={styles.topBar}>
