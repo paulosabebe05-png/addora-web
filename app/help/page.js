@@ -10,12 +10,30 @@ export default function HelpPage() {
   const { tr } = useLang()
 
   const faqs = [
-    { q: tr('faqQ1'), a: tr('faqA1') },
-    { q: tr('faqQ2'), a: tr('faqA2') },
-    { q: tr('faqQ3'), a: tr('faqA3') },
-    { q: tr('faqQ4'), a: tr('faqA4') },
-    { q: tr('faqQ5'), a: tr('faqA5') },
-    { q: tr('faqQ6'), a: tr('faqA6') },
+    {
+      q: tr('faqQ1'),
+      a: tr('faqA1'),
+    },
+    {
+      q: tr('faqQ2'),
+      a: tr('faqA2'),
+    },
+    {
+      q: tr('faqQ3'),
+      a: tr('faqA3'),
+    },
+    {
+      q: tr('faqQ4'),
+      a: tr('faqA4'),
+    },
+    {
+      q: tr('faqQ5'),
+      a: tr('faqA5'),
+    },
+    {
+      q: tr('faqQ6'),
+      a: tr('faqA6'),
+    },
   ]
 
   return (
@@ -82,7 +100,10 @@ export default function HelpPage() {
                     stroke="currentColor"
                     strokeWidth="2.5"
                     style={{
-                      transform: open === i ? 'rotate(180deg)' : 'none',
+                      transform:
+                        open === i
+                          ? 'rotate(180deg)'
+                          : 'none',
                       transition: 'transform 0.2s',
                       flexShrink: 0,
                     }}
