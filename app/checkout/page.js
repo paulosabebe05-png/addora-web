@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import styles from './checkout.module.css'
 import { supabase } from '../../lib/supabase'
-import { useLang } from ' ../lib/lang'   // ← ADDED
+import { useLang } from '../lib/lang'  // ← ADDED
 
 export default function CheckoutPage() {
   const { items, total, clearCart } = useCart()
