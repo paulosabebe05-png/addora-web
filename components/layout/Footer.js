@@ -2,8 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import styles from './Footer.module.css'
-import { useLang } from '../lib/lang'
+import { useLang } from '../../lib/lang'
 
 export default function Footer() {
   const { tr } = useLang()
