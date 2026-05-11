@@ -5,12 +5,17 @@ import { useCart } from '../../lib/cart'
 import { useWishlist } from '@/context/WishlistContext'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { useLang } from '../../lib/lang'
 import styles from './ProductCard.module.css'
 
 const PASTEL_COLORS = [
-  '#EEF2FF', '#FDF2F8', '#F0FDF4', '#FFFBEB',
-  '#FFF5F5', '#F0F9FF', '#F5F3FF', '#FAFAF0',
+  '#EEF2FF',
+  '#FDF2F8',
+  '#F0FDF4',
+  '#FFFBEB',
+  '#FFF5F5',
+  '#F0F9FF',
+  '#F5F3FF',
+  '#FAFAF0',
 ]
 
 function getPastelBg(id) {
@@ -21,8 +26,10 @@ function getPastelBg(id) {
 // ── Shimmer image — shows while loading ──
 function ImageWithSkeleton({ src, alt, className }) {
   const [loaded, setLoaded] = useState(false)
-  const [error, setError]   = useState(false)
+  const [error, setError] = useState(false)
+
   if (error || !src) return null
+
   return (
     <>
       {!loaded && <div className={styles.imgSkeleton} />}
@@ -57,12 +64,11 @@ function StarRating({ rating = 0, reviews = 0 }) {
 }
 
 export default function ProductCard({ product }) {
-  const { user }                    = useAuth()
-  const { addItem }                 = useCart()
+  const { user } = useAuth()
+  const { addItem } = useCart()
   const { toggleWishlist, isWishlisted } = useWishlist()
-  const router                      = useRouter()
-  const { tr }                      = useLang()
-  const [added, setAdded]           = useState(false)
+  const router = useRouter()
+  const [added, setAdded] = useState(false)
 
   const wishlisted = isWishlisted(product.id)
 
@@ -71,6 +77,7 @@ export default function ProductCard({ product }) {
     : product.price
 
   const pastelBg = getPastelBg(product.id)
+
   const lowStock = product.stock > 0 && product.stock <= 5
 
   const handleAddToCart = (e) => {
@@ -80,9 +87,9 @@ export default function ProductCard({ product }) {
       return
     }
     addItem({
-      id:        product.id,
-      name:      product.name,
-      price:     discountedPrice,
+      id: product.id,
+      name: product.name,
+      price: discountedPrice,
       image_url: product.image_url,
     })
     setAdded(true)
@@ -93,8 +100,8 @@ export default function ProductCard({ product }) {
     e.preventDefault()
     e.stopPropagation()
     toggleWishlist({
-      id:    product.id,
-      name:  product.name,
+      id: product.id,
+      name: product.name,
       price: discountedPrice,
       image: product.image_url,
     })
@@ -139,7 +146,7 @@ export default function ProductCard({ product }) {
 
         {/* Out of stock */}
         {product.stock === 0 && (
-          <div className={styles.outOfStock}>{tr('soldOut')}</div>
+          <div className={styles.outOfStock}>Sold Out</div>
         )}
 
         {/* Wishlist heart button */}
@@ -165,12 +172,12 @@ export default function ProductCard({ product }) {
           <div className={styles.socialRow}>
             {product.sold > 0 && (
               <span className={styles.soldBadge}>
-                🔥 {fmtSold(product.sold)} {tr('sold')}
+                🔥 {fmtSold(product.sold)} sold
               </span>
             )}
             {product.reviews > 0 && (
               <span className={styles.reviewBadge}>
-                ★ {product.rating} ({product.reviews > 999 ? (product.reviews / 1000).toFixed(1) + 'k' : product.reviews})
+                ★ {product.rating} ({product.reviews > 999 ? (product.reviews/1000).toFixed(1)+'k' : product.reviews})
               </span>
             )}
           </div>
@@ -191,7 +198,7 @@ export default function ProductCard({ product }) {
               <line x1="12" y1="8" x2="12" y2="12"/>
               <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
-            {tr('onlyLeft')(product.stock)}
+            Only {product.stock} left!
           </p>
         )}
 
@@ -215,7 +222,7 @@ export default function ProductCard({ product }) {
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
-                <span className={styles.addBtnText}>{tr('added')}</span>
+                <span className={styles.addBtnText}>Added</span>
               </>
             ) : (
               <>
@@ -223,7 +230,7 @@ export default function ProductCard({ product }) {
                   <line x1="12" y1="5" x2="12" y2="19"/>
                   <line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
-                <span className={styles.addBtnText}>{tr('addToCart')}</span>
+                <span className={styles.addBtnText}>Add to Cart</span>
               </>
             )}
           </button>
