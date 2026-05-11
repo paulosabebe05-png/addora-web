@@ -1,23 +1,11 @@
-'use client'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
 import styles from './Footer.module.css'
-import { useLang } from '../../lib/lang'
 
 export default function Footer() {
-  const { tr } = useLang()
-  const [year, setYear] = useState(2024)
-
-  useEffect(() => {
-    setYear(new Date().getFullYear())
-  }, [])
-
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
-
-        {/* ── Brand column ── */}
         <div className={styles.brand}>
           <div className={styles.logo}>
             <Image
@@ -29,59 +17,46 @@ export default function Footer() {
             />
             <span>Addora</span>
           </div>
-          <p>{tr('footerTagline')}</p>
+          <p>Ethiopia's trusted local eCommerce platform. Shop confidently, pay when delivered.</p>
           <div className={styles.codBadge}>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              aria-hidden="true"
-            >
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
-            {tr('footerCODBadge')}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Cash on Delivery Only
           </div>
         </div>
 
-        {/* ── Link columns ── */}
         <div className={styles.links}>
-
           <div className={styles.col}>
-            <h4>{tr('footerShopTitle')}</h4>
-            <Link href="/">{tr('footerAllProducts')}</Link>
-            <Link href="/?cat=kids">{tr('footerKidsClothing')}</Link>
-            <Link href="/cart">{tr('myCart')}</Link>
-            <Link href="/orders">{tr('myOrders')}</Link>
+            <h4>Shop</h4>
+            <Link href="/">All Products</Link>
+            <Link href="/?cat=kids">Kids Clothing</Link>
+            <Link href="/cart">My Cart</Link>
+            <Link href="/orders">My Orders</Link>
           </div>
 
           <div className={styles.col}>
-            <h4>{tr('footerDeliveryTitle')}</h4>
-            <p>{tr('footerDeliveryAddis')}</p>
-            <p>{tr('footerDeliveryOther')}</p>
-            <p>{tr('footerPayOnReceive')}</p>
-            <p>{tr('footerFreeReturns')}</p>
+            <h4>Delivery</h4>
+            <p>Addis Ababa: 1–2 days</p>
+            <p>Other cities: 3–5 days</p>
+            <p>Pay when you receive</p>
+            <p>Free returns on defects</p>
           </div>
 
           <div className={styles.col}>
-            <h4>{tr('footerContactTitle')}</h4>
+            <h4>Contact</h4>
             <a href="tel:+251926635307">+251 926 635 307</a>
             <a href="mailto:addora@addora.com.et">addora@addora.com.et</a>
-            <p>{tr('footerLocation')}</p>
+            <p>Addis Ababa, Ethiopia</p>
           </div>
-
         </div>
       </div>
 
-      {/* ── Bottom bar ── */}
       <div className={styles.bottom}>
-        <p>© {year} {tr('footerCopyrightName')}</p>
+        <p>© {new Date().getFullYear()} Addora Technology PLC. All rights reserved.</p>
         <div className={styles.bottomLinks}>
-          <Link href="/privacy">{tr('privacyFooter')}</Link>
-          <Link href="/terms">{tr('termsFooter')}</Link>
-          <Link href="/refund-policy">{tr('refundFooter')}</Link>
+          {/* FIXED: was href="#" — now links to real pages */}
+          <Link href="/privacy">Privacy Policy</Link>
+          <Link href="/terms">Terms of Service</Link>
+          <Link href="/refund-policy">Refund Policy</Link>
         </div>
       </div>
     </footer>
