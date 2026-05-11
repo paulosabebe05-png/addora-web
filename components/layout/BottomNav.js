@@ -3,17 +3,19 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useCart } from '../../lib/cart'
 import { useAuth } from '../../lib/auth'
+import { useLang } from '../../lib/lang'           // ← NEW
 import styles from './BottomNav.module.css'
 
 export default function BottomNav() {
   const pathname = usePathname()
   const { count } = useCart()
   const { user, signOut } = useAuth()
+  const { tr } = useLang()                         // ← NEW
 
   const links = [
     {
       href: '/',
-      label: 'Home',
+      labelKey: 'navHome',
       icon: (active) => (
         <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? '#E75525' : 'none'}
           stroke={active ? '#E75525' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -24,7 +26,7 @@ export default function BottomNav() {
     },
     {
       href: '/orders',
-      label: 'Orders',
+      labelKey: 'navOrders',
       icon: (active) => (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
           stroke={active ? '#E75525' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -38,7 +40,7 @@ export default function BottomNav() {
     },
     {
       href: '/cart',
-      label: 'Cart',
+      labelKey: 'navCart',
       isCenter: true,
       icon: () => (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
@@ -51,7 +53,7 @@ export default function BottomNav() {
     },
     {
       href: '/categories',
-      label: 'Categories',
+      labelKey: 'navCategories',
       icon: (active) => (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
           stroke={active ? '#E75525' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -64,7 +66,7 @@ export default function BottomNav() {
     },
     {
       href: '/account',
-      label: 'Account',
+      labelKey: 'navAccount',
       icon: (active) => (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
           stroke={active ? '#E75525' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -85,7 +87,7 @@ export default function BottomNav() {
 
         if (link.isCenter) {
           return (
-            <Link key={link.href} href={link.href} className={styles.centerBtn}>
+            <Link key={link.href} href={link.href} className={styles.centerBtn} aria-label={tr(link.labelKey)}>
               {link.icon(false)}
               {count > 0 && (
                 <span className={styles.centerBadge}>{count > 9 ? '9+' : count}</span>
@@ -101,7 +103,7 @@ export default function BottomNav() {
             className={`${styles.item} ${active ? styles.active : ''}`}
           >
             {link.icon(active)}
-            <span className={styles.label}>{link.label}</span>
+            <span className={styles.label}>{tr(link.labelKey)}</span>
           </Link>
         )
       })}
