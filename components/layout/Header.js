@@ -2,17 +2,20 @@
 import Link from 'next/link'
 import { useAuth } from '../../lib/auth'
 import { useCart } from '../../lib/cart'
+import { useLang } from '../../lib/lang'                          // ← NEW
 import { useRouter, usePathname } from 'next/navigation'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import NotificationBell from './NotificationBell'
 import { useSearch } from '../search/useSearch'
 import SearchDropdown from '../search/SearchDropdown'
 import MobileSearchOverlay from './MobileSearchOverlay'
+import LangToggle from '../ui/LangToggle'                         // ← NEW
 import styles from './Header.module.css'
 
 export default function Header() {
   const { user, signOut } = useAuth()
   const { count } = useCart()
+  const { tr } = useLang()                                        // ← NEW
   const router = useRouter()
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -98,9 +101,9 @@ export default function Header() {
   }
 
   const announcements = [
-    { icon: '✓', text: 'Cash on Delivery' },
-    { icon: '⏱', text: '1–3 Day Delivery' },
-    { icon: '→', text: 'Free in Addis' },
+    { icon: '✓', text: tr('cashOnDelivery') },
+    { icon: '⏱', text: tr('fastDelivery') },
+    { icon: '→', text: tr('freeInAddis') },
   ]
   const tickerItems = [...announcements, ...announcements]
 
@@ -118,10 +121,7 @@ export default function Header() {
           </Link>
 
           {/* ── Desktop search bar ── */}
-          <div
-            ref={desktopRef}
-            className={styles.desktopSearchWrap}
-          >
+          <div ref={desktopRef} className={styles.desktopSearchWrap}>
             <div className={styles.desktopSearch}>
               <span className={styles.desktopSearchIcon}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
@@ -131,7 +131,7 @@ export default function Header() {
               </span>
               <input
                 type="text"
-                placeholder="What are you looking for?"
+                placeholder={tr('searchPlaceholder')}
                 value={query}
                 onChange={e => { setQuery(e.target.value); setDesktopOpen(true) }}
                 onFocus={() => setDesktopOpen(true)}
@@ -146,7 +146,7 @@ export default function Header() {
                   className={styles.clearInputBtn}
                   onClick={() => { setQuery(''); setDesktopOpen(true) }}
                   tabIndex={-1}
-                  aria-label="Clear"
+                  aria-label={tr('clear')}
                 >
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -158,7 +158,7 @@ export default function Header() {
                 onClick={() => commitSearch(query)}
                 type="button"
               >
-                Search
+                {tr('search')}
               </button>
             </div>
 
@@ -186,7 +186,7 @@ export default function Header() {
               className={styles.mobileSearchPill}
               onClick={() => setMobileOpen(true)}
               type="button"
-              aria-label="Open search"
+              aria-label={tr('openSearch')}
             >
               <span className={styles.mobileSearchPillIcon}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
@@ -194,14 +194,14 @@ export default function Header() {
                   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
               </span>
-              <span className={styles.mobileSearchPillText}>Search products...</span>
+              <span className={styles.mobileSearchPillText}>{tr('searchProducts')}</span>
             </button>
           </div>
 
-          {/* ── Nav links (desktop only) ── */}
+          {/* ── Desktop nav links ── */}
           <nav className={styles.nav}>
-            <Link href="/" className={styles.navLink}>Home</Link>
-            <Link href="/#products" className={styles.navLink}>Shop</Link>
+            <Link href="/" className={styles.navLink}>{tr('home')}</Link>
+            <Link href="/#products" className={styles.navLink}>{tr('shop')}</Link>
             <Link href="/categories" className={`${styles.navLink} ${pathname === '/categories' ? styles.navLinkActive : ''}`}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="3" width="7" height="7" rx="1.5"/>
@@ -209,17 +209,20 @@ export default function Header() {
                 <rect x="3" y="14" width="7" height="7" rx="1.5"/>
                 <rect x="14" y="14" width="7" height="7" rx="1.5"/>
               </svg>
-              Categories
+              {tr('categories')}
             </Link>
-            <Link href="/orders" className={styles.navLink}>Orders</Link>
+            <Link href="/orders" className={styles.navLink}>{tr('orders')}</Link>
           </nav>
 
           {/* ── Right actions ── */}
           <div className={styles.actions}>
+            {/* Language toggle */}
+            <LangToggle transparent={transparent} />                {/* ← NEW */}
+
             <NotificationBell transparent={transparent} />
 
             {/* Cart */}
-            <Link href="/cart" className={styles.cartBtn}>
+            <Link href="/cart" className={styles.cartBtn} aria-label={tr('cart')}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
                 <line x1="3" y1="6" x2="21" y2="6"/>
@@ -257,21 +260,21 @@ export default function Header() {
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                         <circle cx="12" cy="7" r="4"/>
                       </svg>
-                      Account Management
+                      {tr('accountManagement')}
                     </Link>
                     <Link href="/orders" className={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
                         <polyline points="14 2 14 8 20 8"/>
                       </svg>
-                      My Orders
+                      {tr('myOrders')}
                     </Link>
                     <Link href="/cart" className={styles.dropdownItem} onClick={() => setMenuOpen(false)}>
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
                         <line x1="3" y1="6" x2="21" y2="6"/>
                       </svg>
-                      My Cart {count > 0 && <span className={styles.inlineCount}>{count}</span>}
+                      {tr('myCart')} {count > 0 && <span className={styles.inlineCount}>{count}</span>}
                     </Link>
                     <div className={styles.dropdownDivider} />
                     <button className={styles.dropdownSignOut} onClick={handleSignOut}>
@@ -280,15 +283,15 @@ export default function Header() {
                         <polyline points="16 17 21 12 16 7"/>
                         <line x1="21" y1="12" x2="9" y2="12"/>
                       </svg>
-                      Sign Out
+                      {tr('signOut')}
                     </button>
                   </div>
                 )}
               </div>
             ) : (
               <div className={styles.authBtns}>
-                <Link href="/auth/signin" className={styles.signinBtn}>Sign In</Link>
-                <Link href="/auth/signup" className={styles.signupBtn}>Sign Up</Link>
+                <Link href="/auth/signin" className={styles.signinBtn}>{tr('signIn')}</Link>
+                <Link href="/auth/signup" className={styles.signupBtn}>{tr('signUp')}</Link>
               </div>
             )}
           </div>
