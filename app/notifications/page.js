@@ -2,11 +2,13 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth'
+import { useLang } from '@/lib/lang'
 import { supabase } from '@/lib/supabase'
 import styles from './notifications.module.css'
 
 export default function NotificationsPage() {
   const { user } = useAuth()
+  const { tr } = useLang()
   const router = useRouter()
   const [notifications, setNotifications] = useState([])
   const [loading, setLoading] = useState(true)
@@ -49,7 +51,7 @@ export default function NotificationsPage() {
   const timeAgo = (dateStr) => {
     const diff = Date.now() - new Date(dateStr)
     const mins = Math.floor(diff / 60000)
-    if (mins < 1)  return 'Just now'
+    if (mins < 1)  return tr('justNow')
     if (mins < 60) return `${mins}m ago`
     const hrs = Math.floor(mins / 60)
     if (hrs < 24)  return `${hrs}h ago`
@@ -109,7 +111,7 @@ export default function NotificationsPage() {
         <div className={styles.pageHeader}>
           <div className={styles.titleRow}>
             <h1 className={styles.title}>
-              Notifications
+              {tr('notificationsTitle')}
               {unreadCount > 0 && <span className={styles.unreadPill}>{unreadCount}</span>}
             </h1>
             {unreadCount > 0 && (
@@ -117,7 +119,7 @@ export default function NotificationsPage() {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
-                Mark all read
+                {tr('markAllRead')}
               </button>
             )}
           </div>
@@ -127,14 +129,14 @@ export default function NotificationsPage() {
               className={`${styles.tab} ${filter === 'all' ? styles.tabActive : ''}`}
               onClick={() => setFilter('all')}
             >
-              All
+              {tr('tabAll')}
               {notifications.length > 0 && <span className={styles.tabCount}>{notifications.length}</span>}
             </button>
             <button
               className={`${styles.tab} ${filter === 'unread' ? styles.tabActive : ''}`}
               onClick={() => setFilter('unread')}
             >
-              Unread
+              {tr('tabUnread')}
               {unreadCount > 0 && <span className={`${styles.tabCount} ${styles.tabCountOrange}`}>{unreadCount}</span>}
             </button>
           </div>
@@ -162,8 +164,12 @@ export default function NotificationsPage() {
                   <path d="M13.73 21a2 2 0 01-3.46 0"/>
                 </svg>
               </div>
-              <p className={styles.emptyTitle}>{filter === 'unread' ? 'All caught up!' : 'No notifications yet'}</p>
-              <p className={styles.emptySubtitle}>{filter === 'unread' ? 'You have no unread notifications' : "We'll notify you about your orders here"}</p>
+              <p className={styles.emptyTitle}>
+                {filter === 'unread' ? tr('allCaughtUp') : tr('noNotificationsYet')}
+              </p>
+              <p className={styles.emptySubtitle}>
+                {filter === 'unread' ? tr('noUnreadNotifications') : tr('notifyOrdersHere')}
+              </p>
             </div>
           ) : (
             filtered.map((n, i) => (
@@ -188,7 +194,7 @@ export default function NotificationsPage() {
                   <button
                     className={styles.deleteBtn}
                     onClick={e => { e.stopPropagation(); deleteNotification(n.id) }}
-                    title="Dismiss"
+                    title={tr('dismiss')}
                   >
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
