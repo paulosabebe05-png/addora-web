@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import styles from './categories.module.css'
-import { useLang } from '../../lib/lang'   // ← ADDED
+import { useLang } from '../../lib/lang'
 
 const PASTELS = [
   '#FFF3ED', '#EDF4FF', '#EDFFF5', '#FFF9ED',
@@ -23,7 +23,11 @@ function CategoriesContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const catParam = searchParams.get('cat')
-  const { tr } = useLang()   // ← ADDED
+  const { tr, lang } = useLang()   // ← lang added
+
+  // Helper: pick Amharic name when lang === 'am' and name_am exists
+  const catName = (cat) =>
+    (lang === 'am' && cat?.name_am) ? cat.name_am : cat?.name
 
   const [categories, setCategories]           = useState([])
   const [subcategories, setSubcategories]     = useState([])
@@ -40,7 +44,7 @@ function CategoriesContent() {
       const [{ data: cats }, { data: prods }] = await Promise.all([
         supabase
           .from('categories')
-          .select('id, name, icon, image_url, sort_order')
+          .select('id, name, name_am, icon, image_url, sort_order')  // ← name_am added
           .is('parent_id', null)
           .order('sort_order', { ascending: true }),
         supabase
@@ -70,7 +74,7 @@ function CategoriesContent() {
 
     const { data: subs } = await supabase
       .from('categories')
-      .select('id, name, icon, image_url')
+      .select('id, name, name_am, icon, image_url')  // ← name_am added
       .eq('parent_id', cat.id)
       .order('sort_order', { ascending: true })
 
@@ -107,7 +111,7 @@ function CategoriesContent() {
   if (!activeCat) {
     allProducts.forEach(p => {
       const cat = categories.find(c => c.id === p.category_id)
-      const key = cat ? cat.name : null
+      const key = cat ? cat.id : null   // ← use id as key (not name) so it works in both langs
       if (!key) return
       if (!grouped[key]) grouped[key] = { cat, items: [] }
       if (grouped[key].items.length < 5) grouped[key].items.push(p)
@@ -138,10 +142,11 @@ function CategoriesContent() {
                 onClick={() => selectCategory(cat)}
               >
                 {cat.image_url
-                  ? <img src={cat.image_url} alt={cat.name} className={styles.sideIcon} style={{ borderRadius: 6, objectFit: 'cover', width: 28, height: 28 }} />
+                  ? <img src={cat.image_url} alt={catName(cat)} className={styles.sideIcon} style={{ borderRadius: 6, objectFit: 'cover', width: 28, height: 28 }} />
                   : <span className={styles.sideIcon}>{cat.icon || '🛍️'}</span>
                 }
-                <span className={styles.sideLabel}>{cat.name}</span>
+                {/* ← catName(cat) replaces cat.name — shows Amharic when lang === 'am' */}
+                <span className={styles.sideLabel}>{catName(cat)}</span>
               </button>
             ))
         }
@@ -154,15 +159,16 @@ function CategoriesContent() {
         {!activeCat && !loading && (
           Object.keys(grouped).length === 0
             ? <div className={styles.empty}><span>🛍️</span><p>{tr('noProductsYet')}</p></div>
-            : Object.entries(grouped).map(([catName, { cat, items }]) => (
-                <section key={catName} className={styles.section}>
+            : Object.entries(grouped).map(([catId, { cat, items }]) => (
+                <section key={catId} className={styles.section}>
                   <div className={styles.sectionHead}>
                     <h2 className={styles.sectionTitle}>
                       {cat.image_url
-                        ? <img src={cat.image_url} alt={cat.name} style={{ width: 22, height: 22, borderRadius: 4, objectFit: 'cover', marginRight: 6, verticalAlign: 'middle' }} />
+                        ? <img src={cat.image_url} alt={catName(cat)} style={{ width: 22, height: 22, borderRadius: 4, objectFit: 'cover', marginRight: 6, verticalAlign: 'middle' }} />
                         : cat.icon && <span style={{ marginRight: 6 }}>{cat.icon}</span>
                       }
-                      {catName}
+                      {/* ← catName(cat) replaces catName variable (which was just cat.name) */}
+                      {catName(cat)}
                     </h2>
                     <button className={styles.sectionAll} onClick={() => selectCategory(cat)}>
                       {tr('seeAll')} &gt;
@@ -192,17 +198,18 @@ function CategoriesContent() {
             <div className={styles.catHeader}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 {activeCat.image_url && (
-                  <img src={activeCat.image_url} alt={activeCat.name} style={{ width: 40, height: 40, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
+                  <img src={activeCat.image_url} alt={catName(activeCat)} style={{ width: 40, height: 40, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
                 )}
                 <div>
                   <h2 className={styles.catTitle}>
                     {!activeCat.image_url && activeCat.icon && (
                       <span style={{ marginRight: 6 }}>{activeCat.icon}</span>
                     )}
-                    {activeCat.name}
+                    {/* ← catName(activeCat) replaces activeCat.name */}
+                    {catName(activeCat)}
                   </h2>
                   {activeSubcat && (
-                    <span className={styles.subcatBreadcrumb}>→ {activeSubcat.name}</span>
+                    <span className={styles.subcatBreadcrumb}>→ {catName(activeSubcat)}</span>
                   )}
                 </div>
               </div>
@@ -227,10 +234,11 @@ function CategoriesContent() {
                     onClick={() => selectSubcategory(sub)}
                   >
                     {sub.image_url
-                      ? <img src={sub.image_url} alt={sub.name} style={{ width: 18, height: 18, borderRadius: 3, objectFit: 'cover', marginRight: 4, verticalAlign: 'middle' }} />
+                      ? <img src={sub.image_url} alt={catName(sub)} style={{ width: 18, height: 18, borderRadius: 3, objectFit: 'cover', marginRight: 4, verticalAlign: 'middle' }} />
                       : sub.icon && <span>{sub.icon} </span>
                     }
-                    {sub.name}
+                    {/* ← catName(sub) replaces sub.name */}
+                    {catName(sub)}
                   </button>
                 ))}
               </div>
