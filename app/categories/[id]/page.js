@@ -5,18 +5,22 @@ import Link from 'next/link'
 import { supabase } from '../../../lib/supabase'
 import ProductCard from '../../../components/ui/ProductCard'
 import styles from './CategoryProducts.module.css'
-import { useLang } from '../../../lib/lang'   // ← ADDED
+import { useLang } from '../../../lib/lang'
 
 export default function CategoryProductsPage() {
   const { id } = useParams()
   const router = useRouter()
-  const { tr } = useLang()   // ← ADDED
+  const { tr, lang } = useLang()   // ← lang added so we can pick name_am
 
   const [category, setCategory]   = useState(null)
   const [products, setProducts]   = useState([])
   const [loading, setLoading]     = useState(true)
   const [sort, setSort]           = useState('newest')
   const [search, setSearch]       = useState('')
+
+  // Returns Amharic name when lang === 'am' and name_am exists, else English name
+  const catName = (cat) =>
+    (lang === 'am' && cat?.name_am) ? cat.name_am : cat?.name
 
   // Sort options inside component so tr() works
   const SORT_OPTIONS = [
@@ -31,10 +35,10 @@ export default function CategoryProductsPage() {
     async function load() {
       setLoading(true)
 
-      // Fetch category name
+      // Fetch category — name_am added for Amharic support
       const { data: cat } = await supabase
         .from('categories')
-        .select('id, name')
+        .select('id, name, name_am')   // ← name_am added
         .eq('id', id)
         .single()
 
@@ -79,7 +83,7 @@ export default function CategoryProductsPage() {
           <Link href="/categories" className={styles.breadLink}>{tr('categories')}</Link>
           <span className={styles.breadSep}>›</span>
           <span className={styles.breadCurrent}>
-            {loading ? '…' : category?.name ?? tr('categories')}
+            {loading ? '…' : catName(category) ?? tr('categories')}
           </span>
         </div>
       </div>
@@ -88,7 +92,7 @@ export default function CategoryProductsPage() {
       <div className={styles.hero}>
         <div className={styles.heroInner}>
           <h1 className={styles.heroTitle}>
-            {loading ? tr('loading') : category?.name ?? tr('breadcrumbProducts')}
+            {loading ? tr('loading') : catName(category) ?? tr('breadcrumbProducts')}
           </h1>
           {!loading && (
             <span className={styles.heroCount}>
