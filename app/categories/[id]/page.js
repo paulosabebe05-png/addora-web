@@ -12,7 +12,13 @@ export default function CategoryProductsPage() {
   const router = useRouter()
   const { tr } = useLang()   // ← ADDED
 
-  // Sort options now use tr() so they translate
+  const [category, setCategory]   = useState(null)
+  const [products, setProducts]   = useState([])
+  const [loading, setLoading]     = useState(true)
+  const [sort, setSort]           = useState('newest')
+  const [search, setSearch]       = useState('')
+
+  // Sort options inside component so tr() works
   const SORT_OPTIONS = [
     { value: 'newest',     label: tr('sortMostRecent') },
     { value: 'price_asc',  label: tr('sortPriceAsc')  || 'Price: Low to High' },
@@ -20,17 +26,12 @@ export default function CategoryProductsPage() {
     { value: 'discount',   label: tr('sortDiscount')  || 'Best Discount' },
   ]
 
-  const [category, setCategory]   = useState(null)
-  const [products, setProducts]   = useState([])
-  const [loading, setLoading]     = useState(true)
-  const [sort, setSort]           = useState('newest')
-  const [search, setSearch]       = useState('')
-
   useEffect(() => {
     if (!id) return
     async function load() {
       setLoading(true)
 
+      // Fetch category name
       const { data: cat } = await supabase
         .from('categories')
         .select('id, name')
@@ -39,6 +40,7 @@ export default function CategoryProductsPage() {
 
       setCategory(cat)
 
+      // Fetch active products in this category
       const { data: prods } = await supabase
         .from('products')
         .select('*')
@@ -61,6 +63,7 @@ export default function CategoryProductsPage() {
     if (sort === 'price_asc')  return a.price - b.price
     if (sort === 'price_desc') return b.price - a.price
     if (sort === 'discount')   return (b.discount || 0) - (a.discount || 0)
+    // newest — created_at desc
     return new Date(b.created_at) - new Date(a.created_at)
   })
 
@@ -69,6 +72,7 @@ export default function CategoryProductsPage() {
 
       {/* ── Top bar ── */}
       <div className={styles.topBar}>
+        {/* Breadcrumb */}
         <div className={styles.breadcrumb}>
           <Link href="/" className={styles.breadLink}>{tr('breadcrumbHome')}</Link>
           <span className={styles.breadSep}>›</span>
@@ -88,7 +92,7 @@ export default function CategoryProductsPage() {
           </h1>
           {!loading && (
             <span className={styles.heroCount}>
-              {sorted.length} {sorted.length === 1 ? tr('items').replace(/s$/, '') : tr('items')}
+              {sorted.length} {tr('items')}
             </span>
           )}
         </div>
