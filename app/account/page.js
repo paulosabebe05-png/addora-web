@@ -1,31 +1,33 @@
 'use client'
 import Link from 'next/link'
 import { useAuth } from '../../lib/auth'
+import { useLang } from '../../lib/lang'
 import styles from './AccountPage.module.css'
 
 export default function AccountPage() {
   const { user, signOut } = useAuth()
+  const { tr } = useLang()
 
   const accountLinks = [
     {
-      group: 'My Account',
+      group: tr('myAccount'),
       items: [
-        { href: '/orders',                label: 'My Orders',        desc: 'Track, return or buy again',    icon: '📦' },
-        { href: '/wishlist',              label: 'Wishlist',         desc: 'Saved items for later',         icon: '❤️' },
-        { href: '/account/addresses',     label: 'Addresses',        desc: 'Delivery addresses',            icon: '📍' },
-        { href: '/account/payment',       label: 'Payment Methods',  desc: 'Telebirr, CBE Birr & more',     icon: '💳' },
-        { href: '/notifications',         label: 'Notifications',    desc: 'Manage alerts',                 icon: '🔔' },
+        { href: '/orders',            label: tr('myOrdersLink'),       desc: tr('myOrdersDesc'),       icon: '📦' },
+        { href: '/wishlist',          label: tr('wishlistLink'),        desc: tr('wishlistDesc'),        icon: '❤️' },
+        { href: '/account/addresses', label: tr('addressesLink'),       desc: tr('addressesDesc'),       icon: '📍' },
+        { href: '/account/payment',   label: tr('paymentMethodsLink'),  desc: tr('paymentMethodsDesc'),  icon: '💳' },
+        { href: '/notifications',     label: tr('notificationsLink'),   desc: tr('notificationsDesc'),   icon: '🔔' },
       ],
     },
     {
-      group: 'Help & Legal',
+      group: tr('helpLegal'),
       items: [
-        { href: '/help',           label: 'Help Center',     desc: 'FAQs and support',          icon: '💬' },
-        { href: '/contact',        label: 'Contact Us',      desc: 'Get in touch with us',       icon: '📞' },
-        { href: '/refund-policy',  label: 'Refund & Returns',desc: 'Our return policy',          icon: '🔄' },
-        { href: '/privacy',        label: 'Privacy Policy',  desc: 'How we use your data',       icon: '🔒' },
-        { href: '/terms',          label: 'Terms of Service',desc: 'Terms and conditions',       icon: '📋' },
-        { href: '/about',          label: 'About Addora',    desc: 'Our story and mission',      icon: 'ℹ️' },
+        { href: '/help',          label: tr('helpCenterLink'),  desc: tr('helpCenterDesc'),  icon: '💬' },
+        { href: '/contact',       label: tr('contactUsLink'),   desc: tr('contactUsDesc'),   icon: '📞' },
+        { href: '/refund-policy', label: tr('refundLink'),      desc: tr('refundDesc'),      icon: '🔄' },
+        { href: '/privacy',       label: tr('privacyLink'),     desc: tr('privacyDesc'),     icon: '🔒' },
+        { href: '/terms',         label: tr('termsLink'),       desc: tr('termsDesc'),       icon: '📋' },
+        { href: '/about',         label: tr('aboutLink'),       desc: tr('aboutDesc'),       icon: 'ℹ️' },
       ],
     },
   ]
@@ -39,7 +41,7 @@ export default function AccountPage() {
       {/* ── Mobile-only gradient header ── */}
       <div className={styles.mobileHeader}>
         <div className={styles.headerContent}>
-          <h1 className={styles.pageTitle}>Account</h1>
+          <h1 className={styles.pageTitle}>{tr('accountTitle')}</h1>
           {user ? (
             <div className={styles.userCard}>
               <div className={styles.avatar}>{initial}</div>
@@ -47,7 +49,7 @@ export default function AccountPage() {
                 <span className={styles.userName}>{displayName}</span>
                 <span className={styles.userEmail}>{user.email}</span>
               </div>
-              <Link href="/account/edit" className={styles.editBtn}>Edit</Link>
+              <Link href="/account/edit" className={styles.editBtn}>{tr('edit')}</Link>
             </div>
           ) : (
             <div className={styles.guestCard}>
@@ -58,12 +60,12 @@ export default function AccountPage() {
                 </svg>
               </div>
               <div className={styles.guestText}>
-                <span className={styles.guestTitle}>Welcome to Addora</span>
-                <span className={styles.guestSub}>Sign in to access your account</span>
+                <span className={styles.guestTitle}>{tr('welcomeToAddora')}</span>
+                <span className={styles.guestSub}>{tr('signInToAccess')}</span>
               </div>
               <div className={styles.authButtons}>
-                <Link href="/auth/signin" className={styles.signInBtn}>Sign In</Link>
-                <Link href="/auth/signup" className={styles.signUpBtn}>Register</Link>
+                <Link href="/auth/signin" className={styles.signInBtn}>{tr('signIn')}</Link>
+                <Link href="/auth/signup" className={styles.signUpBtn}>{tr('register')}</Link>
               </div>
             </div>
           )}
@@ -73,11 +75,11 @@ export default function AccountPage() {
       {/* ── Mobile stats bar ── */}
       {user && (
         <div className={`${styles.statsBar} ${styles.mobileOnly}`}>
-          <div className={styles.statItem}><span className={styles.statNum}>0</span><span className={styles.statLabel}>Orders</span></div>
+          <div className={styles.statItem}><span className={styles.statNum}>0</span><span className={styles.statLabel}>{tr('ordersLabel')}</span></div>
           <div className={styles.statDivider} />
-          <div className={styles.statItem}><span className={styles.statNum}>0</span><span className={styles.statLabel}>Wishlist</span></div>
+          <div className={styles.statItem}><span className={styles.statNum}>0</span><span className={styles.statLabel}>{tr('wishlistLabel')}</span></div>
           <div className={styles.statDivider} />
-          <div className={styles.statItem}><span className={styles.statNum}>0</span><span className={styles.statLabel}>Reviews</span></div>
+          <div className={styles.statItem}><span className={styles.statNum}>0</span><span className={styles.statLabel}>{tr('reviewsLabel')}</span></div>
         </div>
       )}
 
@@ -108,15 +110,15 @@ export default function AccountPage() {
               <>
                 <h2 className={styles.sidebarName}>{displayName}</h2>
                 <p className={styles.sidebarEmail}>{user.email}</p>
-                <Link href="/account/edit" className={styles.sidebarEditBtn}>Edit Profile</Link>
+                <Link href="/account/edit" className={styles.sidebarEditBtn}>{tr('editProfile')}</Link>
               </>
             ) : (
               <>
-                <h2 className={styles.sidebarName}>Welcome!</h2>
-                <p className={styles.sidebarEmail}>Sign in to manage your account</p>
+                <h2 className={styles.sidebarName}>{tr('welcomeToAddora')}</h2>
+                <p className={styles.sidebarEmail}>{tr('signInToAccess')}</p>
                 <div className={styles.sidebarAuthBtns}>
-                  <Link href="/auth/signin" className={styles.sidebarSignIn}>Sign In</Link>
-                  <Link href="/auth/signup" className={styles.sidebarSignUp}>Register</Link>
+                  <Link href="/auth/signin" className={styles.sidebarSignIn}>{tr('signIn')}</Link>
+                  <Link href="/auth/signup" className={styles.sidebarSignUp}>{tr('register')}</Link>
                 </div>
               </>
             )}
@@ -127,17 +129,17 @@ export default function AccountPage() {
             <div className={styles.sidebarStats}>
               <div className={styles.sidebarStat}>
                 <span className={styles.sidebarStatNum}>0</span>
-                <span className={styles.sidebarStatLabel}>Orders</span>
+                <span className={styles.sidebarStatLabel}>{tr('ordersLabel')}</span>
               </div>
               <div className={styles.sidebarStatDivider} />
               <div className={styles.sidebarStat}>
                 <span className={styles.sidebarStatNum}>0</span>
-                <span className={styles.sidebarStatLabel}>Wishlist</span>
+                <span className={styles.sidebarStatLabel}>{tr('wishlistLabel')}</span>
               </div>
               <div className={styles.sidebarStatDivider} />
               <div className={styles.sidebarStat}>
                 <span className={styles.sidebarStatNum}>0</span>
-                <span className={styles.sidebarStatLabel}>Reviews</span>
+                <span className={styles.sidebarStatLabel}>{tr('reviewsLabel')}</span>
               </div>
             </div>
           )}
@@ -168,7 +170,7 @@ export default function AccountPage() {
                 <polyline points="16 17 21 12 16 7"/>
                 <line x1="21" y1="12" x2="9" y2="12"/>
               </svg>
-              Sign Out
+              {tr('signOut')}
             </button>
           )}
         </aside>
@@ -179,10 +181,10 @@ export default function AccountPage() {
           {/* Affiliate banner */}
           <div className={styles.affiliateBanner}>
             <div className={styles.affiliateLeft}>
-              <span className={styles.affiliateEarn}>Earn with Addora</span>
-              <span className={styles.affiliateDesc}>Share products &amp; earn on every sale</span>
+              <span className={styles.affiliateEarn}>{tr('earnWithAddora')}</span>
+              <span className={styles.affiliateDesc}>{tr('earnDesc')}</span>
             </div>
-            <Link href="/affiliates" className={styles.affiliateJoin}>Join →</Link>
+            <Link href="/affiliates" className={styles.affiliateJoin}>{tr('joinAffiliate')}</Link>
           </div>
 
           {/* Link groups */}
@@ -212,13 +214,13 @@ export default function AccountPage() {
           {/* Footer */}
           <div className={styles.footer}>
             <span className={styles.footerLogo}>Addora</span>
-            <span className={styles.footerSub}>© 2025 Addora Technology PLC · Addis Ababa, Ethiopia</span>
+            <span className={styles.footerSub}>{tr('footerCopyright')}</span>
             <div className={styles.footerLinks}>
-              <Link href="/privacy">Privacy</Link>
+              <Link href="/privacy">{tr('privacyFooter')}</Link>
               <span>·</span>
-              <Link href="/terms">Terms</Link>
+              <Link href="/terms">{tr('termsFooter')}</Link>
               <span>·</span>
-              <Link href="/contact">Contact</Link>
+              <Link href="/contact">{tr('contactFooter')}</Link>
             </div>
           </div>
         </main>
@@ -228,10 +230,10 @@ export default function AccountPage() {
       <div className={styles.mobileSections}>
         <div className={styles.affiliateBanner}>
           <div className={styles.affiliateLeft}>
-            <span className={styles.affiliateEarn}>Earn with Addora</span>
-            <span className={styles.affiliateDesc}>Share products &amp; earn on every sale</span>
+            <span className={styles.affiliateEarn}>{tr('earnWithAddora')}</span>
+            <span className={styles.affiliateDesc}>{tr('earnDesc')}</span>
           </div>
-          <Link href="/affiliates" className={styles.affiliateJoin}>Join →</Link>
+          <Link href="/affiliates" className={styles.affiliateJoin}>{tr('joinAffiliate')}</Link>
         </div>
 
         <div className={styles.sections}>
@@ -264,19 +266,19 @@ export default function AccountPage() {
               <polyline points="16 17 21 12 16 7"/>
               <line x1="21" y1="12" x2="9" y2="12"/>
             </svg>
-            Sign Out
+            {tr('signOut')}
           </button>
         )}
 
         <div className={styles.footer}>
           <span className={styles.footerLogo}>Addora</span>
-          <span className={styles.footerSub}>© 2025 Addora Technology PLC · Addis Ababa, Ethiopia</span>
+          <span className={styles.footerSub}>{tr('footerCopyright')}</span>
           <div className={styles.footerLinks}>
-            <Link href="/privacy">Privacy</Link>
+            <Link href="/privacy">{tr('privacyFooter')}</Link>
             <span>·</span>
-            <Link href="/terms">Terms</Link>
+            <Link href="/terms">{tr('termsFooter')}</Link>
             <span>·</span>
-            <Link href="/contact">Contact</Link>
+            <Link href="/contact">{tr('contactFooter')}</Link>
           </div>
         </div>
         <div className={styles.bottomPad} />
