@@ -2,7 +2,8 @@ import './globals.css'
 import { Playfair_Display } from 'next/font/google'
 import { AuthProvider } from '../lib/auth'
 import { CartProvider } from '../lib/cart'
-import { WishlistProvider } from '../context/WishlistContext'  // ← ADD THIS
+import { WishlistProvider } from '../context/WishlistContext'
+import { LangProvider } from '../lib/lang'           // ← NEW
 import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 import BottomNav from '../components/layout/BottomNav'
@@ -29,14 +30,16 @@ export default function RootLayout({ children }) {
       <body>
         <AuthProvider>
           <CartProvider>
-            <WishlistProvider>          {/* ← ADD THIS */}
-              <Header />
-              <main style={{ width: '100%', minHeight: 'calc(100vh - 64px)', paddingBottom: 'var(--bottom-nav-height, 0px)' }}>
-                {children}
-              </main>
-              <Footer />
-              <BottomNav />
-            </WishlistProvider>         {/* ← AND THIS */}
+            <WishlistProvider>
+              <LangProvider>              {/* ← NEW — wraps Header, children, Footer, BottomNav */}
+                <Header />
+                <main style={{ width: '100%', minHeight: 'calc(100vh - 64px)', paddingBottom: 'var(--bottom-nav-height, 0px)' }}>
+                  {children}
+                </main>
+                <Footer />
+                <BottomNav />
+              </LangProvider>             {/* ← END */}
+            </WishlistProvider>
           </CartProvider>
         </AuthProvider>
       </body>
