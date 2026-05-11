@@ -1,0 +1,22 @@
+/* components/ui/LangToggle.module.css */
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 100px;
+  border: 1.5px solid rgba(231,85,37,0.35);
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.18s, background 0.18s;
+  flex-shrink: 0;
+}
+.toggle:hover { border-color: #E75525; background: rgba(231,85,37,0.05); }
+.opt { font-size: 12px; font-weight: 600; color: #9ca3af; transition: color 0.18s; line-height: 1; }
+.opt.active { color: #E75525; }
+.divider { font-size: 11px; color: #d1d5db; line-height: 1; }
+@media (max-width: 768px) {
+  .toggle { padding: 4px 8px; }
+  .opt { font-size: 11px; }
+}
