@@ -4,20 +4,14 @@ import { useAuth } from '../../../lib/auth'
 import { supabase } from '../../../lib/supabase'
 import { useSearchParams, useParams } from 'next/navigation'
 import Link from 'next/link'
+import { useLang } from '../../../lib/lang'
 import styles from './orderDetail.module.css'
 
 const STEPS = ['pending', 'confirmed', 'processing', 'shipped', 'delivered']
 
-const STATUS_LABELS = {
-  pending: 'Order Placed',
-  confirmed: 'Confirmed',
-  processing: 'Processing',
-  shipped: 'Shipped',
-  delivered: 'Delivered',
-}
-
 export default function OrderDetailPage() {
   const { user } = useAuth()
+  const { tr } = useLang()
   const params = useParams()
   const searchParams = useSearchParams()
   const isSuccess = searchParams.get('success') === '1'
@@ -25,6 +19,15 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState(null)
   const [orderItems, setOrderItems] = useState([])
   const [loading, setLoading] = useState(true)
+
+  // Map DB status → translation key
+  const STATUS_LABELS = {
+    pending:    tr('stepOrderPlaced'),
+    confirmed:  tr('stepConfirmed'),
+    processing: tr('stepProcessing'),
+    shipped:    tr('stepShipped'),
+    delivered:  tr('stepDelivered'),
+  }
 
   useEffect(() => {
     if (!user || !params.id) return
@@ -41,36 +44,39 @@ export default function OrderDetailPage() {
   if (!user) {
     return (
       <div className={styles.guestWrap}>
-        <Link href="/auth/signin" className={styles.signInBtn}>Sign In</Link>
+        <Link href="/auth/signin" className={styles.signInBtn}>{tr('signInBtn')}</Link>
       </div>
     )
   }
 
-  if (loading) return <div className={styles.page}><div className="container"><p>Loading order...</p></div></div>
-  if (!order) return <div className={styles.page}><div className="container"><p>Order not found.</p></div></div>
+  if (loading) return <div className={styles.page}><div className="container"><p>{tr('loadingOrder')}</p></div></div>
+  if (!order)  return <div className={styles.page}><div className="container"><p>{tr('orderNotFound')}</p></div></div>
 
   const currentStep = STEPS.indexOf(order.status)
 
   return (
     <div className={styles.page}>
       <div className="container">
+
         {/* Success banner */}
         {isSuccess && (
           <div className={styles.successBanner}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/>
+            </svg>
             <div>
-              <strong>Order placed successfully!</strong>
-              <p>We'll call you to confirm your order soon.</p>
+              <strong>{tr('orderPlacedSuccessTitle')}</strong>
+              <p>{tr('orderPlacedSuccessSub')}</p>
             </div>
           </div>
         )}
 
         <div className={styles.header}>
           <div>
-            <Link href="/orders" className={styles.back}>← My Orders</Link>
-            <h1 className={styles.title}>Order #{order.id.slice(0, 8).toUpperCase()}</h1>
+            <Link href="/orders" className={styles.back}>← {tr('myOrders')}</Link>
+            <h1 className={styles.title}>{tr('orderPrefix')}{order.id.slice(0, 8).toUpperCase()}</h1>
             <p className={styles.date}>
-              Placed on {new Date(order.created_at).toLocaleDateString('en-ET', { day: 'numeric', month: 'long', year: 'numeric' })}
+              {new Date(order.created_at).toLocaleDateString('en-ET', { day: 'numeric', month: 'long', year: 'numeric' })}
             </p>
           </div>
         </div>
@@ -78,7 +84,7 @@ export default function OrderDetailPage() {
         {/* Status timeline */}
         <div className={styles.timeline}>
           {STEPS.map((step, i) => {
-            const done = i <= currentStep
+            const done   = i <= currentStep
             const active = i === currentStep
             return (
               <div key={step} className={`${styles.step} ${done ? styles.done : ''} ${active ? styles.active : ''}`}>
@@ -99,7 +105,7 @@ export default function OrderDetailPage() {
           {/* Items */}
           <div className={styles.main}>
             <div className={styles.card}>
-              <h2>Items Ordered</h2>
+              <h2>{tr('itemsOrdered')}</h2>
               {orderItems.map(item => (
                 <div key={item.id} className={styles.item}>
                   <div className={styles.itemImg}>
@@ -113,13 +119,7 @@ export default function OrderDetailPage() {
                       <span style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
                         {item.color && (
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, background: '#f3f4f6', padding: '3px 8px', borderRadius: 20, color: '#374151', fontWeight: 500 }}>
-                            <span style={{
-                              width: 10, height: 10, borderRadius: '50%',
-                              background: item.color_hex || item.color.toLowerCase(),
-                              border: '1px solid rgba(0,0,0,0.15)',
-                              flexShrink: 0,
-                              display: 'inline-block'
-                            }} />
+                            <span style={{ width: 10, height: 10, borderRadius: '50%', background: item.color_hex || item.color.toLowerCase(), border: '1px solid rgba(0,0,0,0.15)', flexShrink: 0, display: 'inline-block' }} />
                             {item.color}
                           </span>
                         )}
@@ -131,7 +131,7 @@ export default function OrderDetailPage() {
                         )}
                       </span>
                     )}
-                    <span>Qty: {item.quantity}</span>
+                    <span>{tr('qty')}: {item.quantity}</span>
                   </div>
                   <span className={styles.itemPrice}>ETB {(item.price * item.quantity).toLocaleString()}</span>
                 </div>
@@ -139,7 +139,7 @@ export default function OrderDetailPage() {
             </div>
 
             <div className={styles.card}>
-              <h2>Delivery Address</h2>
+              <h2>{tr('deliveryAddress')}</h2>
               <p className={styles.address}>{order.delivery_address}</p>
               <p className={styles.phone}>📞 {order.phone}</p>
             </div>
@@ -148,16 +148,20 @@ export default function OrderDetailPage() {
           {/* Summary */}
           <div className={styles.sidebar}>
             <div className={styles.card}>
-              <h2>Order Total</h2>
+              <h2>{tr('orderTotal')}</h2>
               <div className={styles.rows}>
-                <div className={styles.row}><span>Subtotal</span><span>ETB {order.subtotal?.toLocaleString()}</span></div>
-                <div className={styles.row}><span>Delivery</span><span>ETB {order.delivery_fee?.toLocaleString()}</span></div>
-                {order.discount > 0 && <div className={styles.row}><span>Discount</span><span>-ETB {order.discount?.toLocaleString()}</span></div>}
-                <div className={`${styles.row} ${styles.totalRow}`}><span>Total</span><span>ETB {order.total?.toLocaleString()}</span></div>
+                <div className={styles.row}><span>{tr('subtotal')}</span><span>ETB {order.subtotal?.toLocaleString()}</span></div>
+                <div className={styles.row}><span>{tr('deliveryLabel')}</span><span>ETB {order.delivery_fee?.toLocaleString()}</span></div>
+                {order.discount > 0 && (
+                  <div className={styles.row}><span>{tr('discountLabel')}</span><span>-ETB {order.discount?.toLocaleString()}</span></div>
+                )}
+                <div className={`${styles.row} ${styles.totalRow}`}><span>{tr('total')}</span><span>ETB {order.total?.toLocaleString()}</span></div>
               </div>
               <div className={styles.codTag}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                Cash on Delivery
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                {tr('cashOnDelivery')}
               </div>
             </div>
           </div>
