@@ -4,7 +4,7 @@ import { useAuth } from '../../lib/auth'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import styles from './cart.module.css'
-import { useLang } from '../lib/lang'  // ← ADDED
+import { useLang } from '../../lib/lang'  // ✅ correct  // ← ADDED
 
 const lineKey = (item) => item.variant_id ? `${item.id}__${item.variant_id}` : item.id
 
