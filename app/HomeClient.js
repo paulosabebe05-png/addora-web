@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import ProductCard from '../components/ui/ProductCard'
 import styles from './HomeClient.module.css'
+import { useLang } from '../../lib/lang'   // ← ADDED
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -28,15 +29,16 @@ function useCategories() {
   return categories
 }
 
-const CAT_PILLS = [
-  { label: 'All',          icon: '🛍️' },
-  { label: 'Kids',         icon: '🧸' },
-  { label: 'Electronics',  icon: '📱' },
-  { label: 'Home & Living',icon: '🛋️' },
-  { label: 'Beauty',       icon: '💄' },
-  { label: 'Fashion',      icon: '👗' },
-  { label: 'Watches',      icon: '⌚' },
-  { label: 'Sports',       icon: '⚽' },
+// CAT_PILLS now uses translation keys instead of hardcoded English labels
+const CAT_PILL_KEYS = [
+  { key: 'catAll',         icon: '🛍️' },
+  { key: 'catKids',        icon: '🧸' },
+  { key: 'catElectronics', icon: '📱' },
+  { key: 'catHomeLiving',  icon: '🛋️' },
+  { key: 'catBeauty',      icon: '💄' },
+  { key: 'catFashion',     icon: '👗' },
+  { key: 'catWatches',     icon: '⌚' },
+  { key: 'catSports',      icon: '⚽' },
 ]
 
 // ── Countdown timer ──
@@ -97,7 +99,7 @@ function useAllProducts() {
   return { products, loading }
 }
 
-// ── Banners hook — fetches device-specific + 'all' banners ──
+// ── Banners hook ──
 function useBanners(device) {
   const [banners, setBanners] = useState([])
   const [loadingBanners, setLoadingBanners] = useState(true)
@@ -152,6 +154,7 @@ function BannerDots({ count, active, onSelect }) {
 // ── Hero Banner Carousel ──
 function HeroBannerCarousel({ banners, loading, isMobile = false }) {
   const router = useRouter()
+  const { tr } = useLang()   // ← ADDED
   const [activeIdx, setActiveIdx] = useState(0)
   const touchStartX = useRef(null)
 
@@ -169,10 +172,10 @@ function HeroBannerCarousel({ banners, loading, isMobile = false }) {
         style={isMobile ? { borderRadius: 18, overflow: 'hidden' } : {}}
       >
         <div className={styles.heroBannerFallbackContent}>
-          <span className={styles.heroBannerTag}>🔥 Limited Time</span>
-          <h2 className={styles.heroBannerTitle}>Up to 50% Off<br />Top Products</h2>
-          <p className={styles.heroBannerSub}>Shop the best deals in Ethiopia</p>
-          <Link href="/?cat=sale" className={styles.heroBannerCta}>Shop Now →</Link>
+          <span className={styles.heroBannerTag}>{tr('limitedTime')}</span>
+          <h2 className={styles.heroBannerTitle}>{tr('heroBannerTitle').split('\n').map((l, i) => <span key={i}>{l}{i === 0 && <br />}</span>)}</h2>
+          <p className={styles.heroBannerSub}>{tr('heroBannerSub')}</p>
+          <Link href="/?cat=sale" className={styles.heroBannerCta}>{tr('shopNow')}</Link>
         </div>
         <div className={styles.heroBannerFallbackOrb} />
       </div>
@@ -219,6 +222,7 @@ function HeroBannerCarousel({ banners, loading, isMobile = false }) {
 
 // ── Section header ──
 function SectionHeader({ label, title, countdown, seeAllHref }) {
+  const { tr } = useLang()   // ← ADDED
   const pad = (n) => String(n).padStart(2, '0')
   return (
     <div className={styles.sectionHead}>
@@ -230,7 +234,7 @@ function SectionHeader({ label, title, countdown, seeAllHref }) {
         </div>
         {countdown && (
           <div className={styles.timerPill}>
-            <span className={styles.timerLabel}>Ends in</span>
+            <span className={styles.timerLabel}>{tr('endsIn') || 'Ends in'}</span>
             {[pad(countdown.h), pad(countdown.m), pad(countdown.s)].map((seg, i) => (
               <span key={i} className={styles.timerGroup}>
                 <span className={styles.timerBox}>{seg}</span>
@@ -241,7 +245,7 @@ function SectionHeader({ label, title, countdown, seeAllHref }) {
         )}
       </div>
       {seeAllHref && (
-        <Link href={seeAllHref} className={styles.seeAll}>View All →</Link>
+        <Link href={seeAllHref} className={styles.seeAll}>{tr('seeAll')}</Link>
       )}
     </div>
   )
@@ -270,19 +274,20 @@ function ProductRow({ products, loading, itemWidth = 200 }) {
 
 // ── Category icon grid ──
 function CategoryGrid() {
+  const { tr } = useLang()   // ← ADDED
   const icons = [
-    { label: 'Phones',     icon: '📱', slug: 'electronics' },
-    { label: 'Computers',  icon: '💻', slug: 'computers' },
-    { label: 'SmartWatch', icon: '⌚', slug: 'watches' },
-    { label: 'Camera',     icon: '📷', slug: 'camera' },
-    { label: 'Headphones', icon: '🎧', slug: 'headphones' },
-    { label: 'Gaming',     icon: '🎮', slug: 'gaming' },
-    { label: 'Fashion',    icon: '👗', slug: 'fashion' },
-    { label: 'Beauty',     icon: '💄', slug: 'beauty' },
-    { label: 'Home',       icon: '🛋️', slug: 'home' },
-    { label: 'Sports',     icon: '⚽', slug: 'sports' },
-    { label: "Baby's",     icon: '🧸', slug: 'kids' },
-    { label: 'Health',     icon: '💊', slug: 'medicine' },
+    { labelKey: 'catElectronics', icon: '📱', slug: 'electronics' },
+    { labelKey: 'catComputers',   icon: '💻', slug: 'computers' },
+    { labelKey: 'catWatches',     icon: '⌚', slug: 'watches' },
+    { labelKey: 'catCamera',      icon: '📷', slug: 'camera' },
+    { labelKey: 'catHeadphones',  icon: '🎧', slug: 'headphones' },
+    { labelKey: 'catGaming',      icon: '🎮', slug: 'gaming' },
+    { labelKey: 'catFashion',     icon: '👗', slug: 'fashion' },
+    { labelKey: 'catBeauty',      icon: '💄', slug: 'beauty' },
+    { labelKey: 'catHomeLiving',  icon: '🛋️', slug: 'home' },
+    { labelKey: 'catSports',      icon: '⚽', slug: 'sports' },
+    { labelKey: 'catKids',        icon: '🧸', slug: 'kids' },
+    { labelKey: 'catHealth',      icon: '💊', slug: 'medicine' },
   ]
   return (
     <div className={styles.catGrid}>
@@ -291,54 +296,53 @@ function CategoryGrid() {
           <div className={`${styles.catGridIcon} ${i === 3 ? styles.catGridIconActive : ''}`}>
             <span className={styles.catGridEmoji}>{c.icon}</span>
           </div>
-          <span className={styles.catGridLabel}>{c.label}</span>
+          <span className={styles.catGridLabel}>{tr(c.labelKey)}</span>
         </Link>
       ))}
     </div>
   )
 }
 
-// ── Promo Banner — hardcoded, no DB needed ──
+// ── Promo Banner ──
 function PromoBanner() {
+  const { tr } = useLang()   // ← ADDED
   const STATS = [
-    { n: '200+', l: 'Products' },
-    { n: '1–3',  l: 'Day Delivery' },
-    { n: '100%', l: 'Cash on Delivery' },
-    { n: '4.9★', l: 'Rating' },
+    { n: '200+', lKey: 'statProducts' },
+    { n: '1–3',  lKey: 'statDayDelivery' },
+    { n: '100%', lKey: 'trustCODTitle' },
+    { n: '4.9★', lKey: 'rating' },
   ]
   const FEATURES = [
-    { icon: '🚀', text: 'Fast delivery across Addis Ababa' },
-    { icon: '💳', text: 'Pay cash when order arrives' },
-    { icon: '✅', text: 'Verified local vendors only' },
-    { icon: '🔄', text: '30-day return guarantee' },
+    { icon: '🚀', textKey: 'aboutBullet1' },
+    { icon: '💳', textKey: 'aboutBullet2' },
+    { icon: '✅', textKey: 'aboutBullet3' },
+    { icon: '🔄', textKey: 'aboutBullet4' },
   ]
   return (
     <div className={styles.promoBanner}>
       <div className={styles.promoBannerLeft}>
-        <span className={styles.promoLabel}>Why Shop With Us</span>
+        <span className={styles.promoLabel}>{tr('whyAddora')}</span>
         <h3 className={styles.promoTitle}>
-          Ethiopia's Most<br />Trusted Marketplace
+          {tr('aboutHeadline')}
         </h3>
-        {/* Feature list */}
         <div className={styles.promoFeatures}>
           {FEATURES.map((f, i) => (
             <div key={i} className={styles.promoFeatureItem}>
               <span className={styles.promoFeatureIcon}>{f.icon}</span>
-              <span className={styles.promoFeatureText}>{f.text}</span>
+              <span className={styles.promoFeatureText}>{tr(f.textKey)}</span>
             </div>
           ))}
         </div>
-        {/* Stats row */}
         <div className={styles.promoStats}>
           {STATS.map((s, i) => (
             <div key={i} className={styles.promoStat}>
               <span className={styles.promoStatNum}>{s.n}</span>
-              <span className={styles.promoStatLabel}>{s.l}</span>
+              <span className={styles.promoStatLabel}>{tr(s.lKey)}</span>
             </div>
           ))}
         </div>
         <Link href="/categories" className={styles.promoCta}>
-          Start Shopping →
+          {tr('shopNow')}
         </Link>
       </div>
       <div className={styles.promoBannerRight}>
@@ -356,10 +360,11 @@ function PromoBanner() {
 
 // ── Trust badges strip ──
 function TrustStrip() {
+  const { tr } = useLang()   // ← ADDED
   const items = [
-    { icon: '🚚', title: 'Free & Fast Delivery', sub: 'Free delivery in Addis Ababa' },
-    { icon: '📞', title: '24/7 Customer Service', sub: 'Friendly 24/7 customer support' },
-    { icon: '🔒', title: 'Money Back Guarantee', sub: 'We return money within 30 days' },
+    { icon: '🚚', titleKey: 'trustFreeDeliveryTitle', subKey: 'trustFreeDeliverySub' },
+    { icon: '📞', titleKey: 'trustSupportTitle',      subKey: 'trustSupportSub' },
+    { icon: '🔒', titleKey: 'trustMoneyBackTitle',    subKey: 'trustMoneyBackSub' },
   ]
   return (
     <div className={styles.trustStrip}>
@@ -369,8 +374,8 @@ function TrustStrip() {
             <span style={{ fontSize: 28 }}>{t.icon}</span>
           </div>
           <div>
-            <p className={styles.trustTitle}>{t.title}</p>
-            <p className={styles.trustSub}>{t.sub}</p>
+            <p className={styles.trustTitle}>{tr(t.titleKey)}</p>
+            <p className={styles.trustSub}>{tr(t.subKey)}</p>
           </div>
         </div>
       ))}
@@ -380,7 +385,9 @@ function TrustStrip() {
 
 // ── Main export ──
 export default function HomeClient() {
-  const [activeCategory, setActiveCategory] = useState('All')
+  const { tr } = useLang()   // ← ADDED
+  // Use translation key as the active category identifier so it's language-agnostic
+  const [activeCategory, setActiveCategory] = useState('catAll')
   const [search, setSearch] = useState('')
   const countdown = useCountdown(6)
   const dbCategories = useCategories()
@@ -394,13 +401,21 @@ export default function HomeClient() {
   const { products: todayDeals,     loading: loadingDeals }  = useSectionProducts('todays_deals', { orderCol: 'discount',  ascending: false })
   const { products: allProducts,    loading: loadingAll }    = useAllProducts()
 
+  // Map pill key → English label for filtering (product names are stored in English)
+  const KEY_TO_EN = {
+    catAll: 'All', catKids: 'Kids', catElectronics: 'Electronics',
+    catHomeLiving: 'Home & Living', catBeauty: 'Beauty',
+    catFashion: 'Fashion', catWatches: 'Watches', catSports: 'Sports',
+  }
+  const activeLabelEn = KEY_TO_EN[activeCategory] || 'All'
+
   const filtered = allProducts.filter(p => {
-    const matchCat    = activeCategory === 'All' || p.name.toLowerCase().includes(activeCategory.toLowerCase())
+    const matchCat    = activeLabelEn === 'All' || p.name.toLowerCase().includes(activeLabelEn.toLowerCase())
     const matchSearch = !search.trim() || p.name.toLowerCase().includes(search.toLowerCase())
     return matchCat && matchSearch
   })
 
-  const isFiltering = activeCategory !== 'All' || search.trim() !== ''
+  const isFiltering = activeCategory !== 'catAll' || search.trim() !== ''
 
   return (
     <div className={styles.page}>
@@ -427,42 +442,36 @@ export default function HomeClient() {
 
       {/* ══ MOBILE HERO ══ */}
       <div className={styles.mobileHero}>
-        {/*
-          Inline styles on mobileBannerWrap guarantee the breathing room
-          regardless of CSS module caching. This mirrors how Telebirr's
-          banner card floats away from screen edges with visible side margins.
-        */}
         <div
           className={styles.mobileBannerWrap}
-          style={{
-            margin: '0 14px 10px',
-            borderRadius: 18,
-            overflow: 'hidden',
-            boxShadow: '0 6px 20px rgba(0,0,0,0.10)',
-          }}
+          style={{ margin: '0 14px 10px', borderRadius: 18, overflow: 'hidden', boxShadow: '0 6px 20px rgba(0,0,0,0.10)' }}
         >
           <HeroBannerCarousel banners={mobileBanners} loading={loadingMobile} isMobile={true} />
         </div>
+
+        {/* Mobile trust row — translated */}
         <div className={styles.mobileTrustRow}>
           {[
-            { icon: '✓', label: 'Cash on Delivery' },
-            { icon: '🚚', label: '1–3 Days' },
-            { icon: '🔒', label: 'Verified' },
-            { icon: '🆓', label: 'Free in Addis' },
+            { icon: '✓',  key: 'mobileTrustCOD' },
+            { icon: '🚚', key: 'mobileTrustDays' },
+            { icon: '🔒', key: 'mobileTrustVerified' },
+            { icon: '🆓', key: 'mobileTrustFreeAddis' },
           ].map((t, i) => (
             <div key={i} className={styles.mobileTrustItem}>
               <span>{t.icon}</span>
-              <span>{t.label}</span>
+              <span>{tr(t.key)}</span>
             </div>
           ))}
         </div>
+
+        {/* Mobile category pills — translated */}
         <div className={styles.mobileCatRow}>
-          {CAT_PILLS.map(cat => (
-            <button key={cat.label}
-              className={`${styles.catPill} ${activeCategory === cat.label ? styles.catPillActive : ''}`}
-              onClick={() => setActiveCategory(cat.label)}
+          {CAT_PILL_KEYS.map(cat => (
+            <button key={cat.key}
+              className={`${styles.catPill} ${activeCategory === cat.key ? styles.catPillActive : ''}`}
+              onClick={() => setActiveCategory(cat.key)}
             >
-              <span>{cat.icon}</span>{cat.label}
+              <span>{cat.icon}</span>{tr(cat.key)}
             </button>
           ))}
         </div>
@@ -471,14 +480,14 @@ export default function HomeClient() {
       {/* ══ MAIN CONTENT ══ */}
       <main className={styles.main}>
 
-        {/* Desktop filter bar */}
+        {/* Desktop filter bar — translated */}
         <div className={styles.filterBar}>
           <div className={styles.filterCats}>
-            {CAT_PILLS.map(cat => (
-              <button key={cat.label}
-                className={`${styles.catBtn} ${activeCategory === cat.label ? styles.catActive : ''}`}
-                onClick={() => setActiveCategory(cat.label)}>
-                {cat.icon} {cat.label}
+            {CAT_PILL_KEYS.map(cat => (
+              <button key={cat.key}
+                className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catActive : ''}`}
+                onClick={() => setActiveCategory(cat.key)}>
+                {cat.icon} {tr(cat.key)}
               </button>
             ))}
           </div>
@@ -486,7 +495,7 @@ export default function HomeClient() {
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input type="text" placeholder="Search products..."
+            <input type="text" placeholder={tr('searchProducts')}
               value={search} onChange={e => setSearch(e.target.value)}
               className={styles.searchInput}
             />
@@ -495,11 +504,14 @@ export default function HomeClient() {
 
         {isFiltering ? (
           <section className={styles.section} id="all-products">
-            <SectionHeader title={`${filtered.length} products${activeCategory !== 'All' ? ` in ${activeCategory}` : ''}`} seeAllHref="/categories" />
+            <SectionHeader
+              title={`${filtered.length} ${tr('items')}${activeCategory !== 'catAll' ? ` in ${tr(activeCategory)}` : ''}`}
+              seeAllHref="/categories"
+            />
             {loadingAll ? (
               <div className={styles.productGrid}>{[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}</div>
             ) : filtered.length === 0 ? (
-              <div className={styles.empty}><p>No products found</p></div>
+              <div className={styles.empty}><p>{tr('noProductsFound')}</p></div>
             ) : (
               <div className={styles.productGrid}>
                 {filtered.map((p, i) => (
@@ -511,37 +523,36 @@ export default function HomeClient() {
         ) : (
           <>
             <section className={styles.section}>
-              <SectionHeader label="Today's" title="Flash Sales" countdown={countdown} seeAllHref="/?cat=sale" />
+              <SectionHeader label={tr('sectionTodayLabel')} title={tr('sectionFlashTitle')} countdown={countdown} seeAllHref="/?cat=sale" />
               <ProductRow products={flashProducts} loading={loadingFlash} itemWidth={220} />
             </section>
 
             <section className={styles.section}>
-              <SectionHeader label="Categories" title="Browse By Category" seeAllHref="/categories" />
+              <SectionHeader label={tr('sectionCategoriesLabel')} title={tr('sectionBrowseTitle')} seeAllHref="/categories" />
               <CategoryGrid />
             </section>
 
             <section className={styles.section}>
-              <SectionHeader label="This Month" title="Best Selling Products" seeAllHref="/?cat=bestsellers" />
+              <SectionHeader label={tr('sectionThisMonthLabel')} title={tr('sectionBestSellingTitle')} seeAllHref="/?cat=bestsellers" />
               <ProductRow products={bestSellers} loading={loadingBest} itemWidth={220} />
             </section>
 
-            {/* ── Promo Banner ── */}
             <PromoBanner />
 
             <section className={styles.section}>
-              <SectionHeader label="Only Today" title="Today's Deals" seeAllHref="/?cat=deals" />
+              <SectionHeader label={tr('sectionOnlyTodayLabel')} title={tr('sectionTodayDealsTitle')} seeAllHref="/?cat=deals" />
               <ProductRow products={todayDeals} loading={loadingDeals} itemWidth={220} />
             </section>
 
             <section className={styles.section}>
-              <SectionHeader label="Fresh" title="New Arrivals" seeAllHref="/?cat=new" />
+              <SectionHeader label={tr('sectionFreshLabel')} title={tr('sectionNewArrivalsTitle')} seeAllHref="/?cat=new" />
               <ProductRow products={newArrivals} loading={loadingNew} itemWidth={220} />
             </section>
 
             <TrustStrip />
 
             <section className={styles.section} id="all-products">
-              <SectionHeader title="All Products" label={loadingAll ? '' : `${allProducts.length} items`} />
+              <SectionHeader title={tr('sectionAllProductsTitle')} label={loadingAll ? '' : `${allProducts.length} ${tr('items')}`} />
               {loadingAll ? (
                 <div className={styles.productGrid}>{[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}</div>
               ) : (
