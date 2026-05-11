@@ -17,7 +17,7 @@
   line-height: 1;
 }
 
-/* On a solid (scrolled / non-home) header */
+/* Solid header (scrolled or non-home pages) */
 .solid {
   border-color: #d1d5db;
   color: #374151;
@@ -28,15 +28,16 @@
   background: rgba(27, 92, 78, 0.06);
 }
 
-/* On the transparent home header */
+/* Transparent header (home hero) — dark pill so it shows on any hero background */
 .transparent {
-  border-color: rgba(255, 255, 255, 0.45);
-  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 0, 0, 0.25);
+  color: #1a1a1a;
+  background: rgba(255, 255, 255, 0.85);
 }
 .transparent:hover {
-  border-color: rgba(255, 255, 255, 0.9);
-  color: #fff;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 1);
+  border-color: #1B5C4E;
+  color: #1B5C4E;
 }
 
 .label {
@@ -54,7 +55,6 @@
   font-size: 11px;
 }
 
-/* Slightly larger font for the Ethiopic script */
 .amharic {
   font-family: 'Noto Sans Ethiopic', sans-serif;
   font-size: 13px;
