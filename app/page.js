@@ -1,12 +1,17 @@
-import { supabase } from '../lib/supabase'
+import { createClient } from '@supabase/supabase-js'
 import HomeClient from './HomeClient'
 import SplashOverlay from '../components/SplashOverlay'
 
 export const revalidate = 60
 
 export default async function HomePage({ searchParams }) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  )
+
   const category = searchParams?.cat || null
-  const search   = searchParams?.search || null
+  const search = searchParams?.search || null
 
   let query = supabase
     .from('products')
