@@ -21,7 +21,7 @@ function useCategories() {
   useEffect(() => {
     supabase
       .from('categories')
-      .select('id, name, icon')
+      .select('id, name, name_am, icon')   // ← name_am added
       .is('parent_id', null)
       .order('sort_order', { ascending: true })
       .then(({ data }) => setCategories(data || []))
@@ -385,12 +385,16 @@ function TrustStrip() {
 
 // ── Main export ──
 export default function HomeClient() {
-  const { tr } = useLang()   // ← ADDED
+  const { tr, lang } = useLang()   // ← lang added
   // Use translation key as the active category identifier so it's language-agnostic
   const [activeCategory, setActiveCategory] = useState('catAll')
   const [search, setSearch] = useState('')
   const countdown = useCountdown(6)
   const dbCategories = useCategories()
+
+  // Returns Amharic name when lang === 'am' and name_am exists, else English name
+  const catName = (cat) =>
+    (lang === 'am' && cat?.name_am) ? cat.name_am : cat?.name
 
   const { banners: desktopBanners, loadingBanners: loadingDesktop } = useBanners('desktop')
   const { banners: mobileBanners,  loadingBanners: loadingMobile  } = useBanners('mobile')
@@ -428,7 +432,7 @@ export default function HomeClient() {
               <li key={cat.id}>
                 <Link href={`/categories?cat=${cat.id}`} className={styles.sidebarLink}>
                   <span>{cat.icon || '🛍️'}</span>
-                  {cat.name}
+                  {catName(cat)}
                   <svg className={styles.sidebarChevron} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
                 </Link>
               </li>
