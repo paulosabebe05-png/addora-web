@@ -1,14 +1,9 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../lib/auth'
 import styles from './NotificationBell.module.css'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
 
 export default function NotificationBell({ transparent }) {
   const { user } = useAuth()
