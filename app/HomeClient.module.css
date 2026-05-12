@@ -725,8 +725,53 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 106px 0 10px;
+    padding: 100px 0 10px;
     background: #FDFAF6;
+  }
+
+  /* Mobile search bar */
+  .mobileSearchWrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 14px 2px;
+    background: white;
+    border: 1.5px solid #e8e4de;
+    border-radius: 100px;
+    padding: 10px 16px;
+    color: #999;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .mobileSearchWrap:focus-within {
+    border-color: #E75525;
+    box-shadow: 0 0 0 3px rgba(231,85,37,0.10);
+    color: #333;
+  }
+
+  .mobileSearchInput {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    font-family: inherit;
+    color: #222;
+    min-width: 0;
+  }
+
+  .mobileSearchInput::placeholder { color: #bbb; }
+
+  .mobileSearchClear {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
   }
 
   .mobileBannerWrap {
@@ -751,29 +796,6 @@
 
   .mobileBannerWrap .heroBannerTitle {
     font-size: 22px;
-  }
-
-  /* Mobile trust row */
-  .mobileTrustRow {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-  }
-
-  .mobileTrustItem {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    background: white;
-    border-radius: 10px;
-    padding: 8px 4px;
-    font-size: 10px;
-    font-weight: 600;
-    color: #444;
-    text-align: center;
-    border: 1px solid #f0ebe3;
-    line-height: 1.2;
   }
 
   /* Mobile category pills */
