@@ -729,49 +729,62 @@
     background: #FDFAF6;
   }
 
+
   /* Mobile search bar */
   .mobileSearchWrap {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin: 0 14px 2px;
-    background: white;
-    border: 1.5px solid #e8e4de;
+    margin: 0 14px 6px;
+    background: #ffffff;
+    border: 1.5px solid #E75525;
     border-radius: 100px;
-    padding: 10px 16px;
-    color: #999;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    transition: border-color 0.2s, box-shadow 0.2s;
+    height: 44px;
+    overflow: hidden;
+    cursor: text;
+    transition: box-shadow 0.2s;
+    text-align: left;
+    width: calc(100% - 28px);
+    box-shadow: 0 2px 8px rgba(231,85,37,0.08);
   }
 
-  .mobileSearchWrap:focus-within {
-    border-color: #E75525;
-    box-shadow: 0 0 0 3px rgba(231,85,37,0.10);
-    color: #333;
+  .mobileSearchWrap:active {
+    box-shadow: 0 0 0 3px rgba(231,85,37,0.12);
   }
 
-  .mobileSearchInput {
-    flex: 1;
-    background: none;
-    border: none;
-    outline: none;
-    font-size: 14px;
-    font-family: inherit;
-    color: #222;
-    min-width: 0;
-  }
-
-  .mobileSearchInput::placeholder { color: #bbb; }
-
-  .mobileSearchClear {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    color: #aaa;
+  .mobileSearchIcon {
+    color: #E75525;
+    margin-left: 14px;
+    margin-right: 6px;
     display: flex;
     align-items: center;
     flex-shrink: 0;
+  }
+
+  .mobileSearchPlaceholder {
+    flex: 1;
+    font-size: 13.5px;
+    color: #B0B0B8;
+    font-family: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  .mobileSearchBtn {
+    flex-shrink: 0;
+    background: #E75525;
+    color: #ffffff;
+    font-size: 13.5px;
+    font-weight: 700;
+    font-family: inherit;
+    padding: 0 20px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    border-radius: 0 100px 100px 0;
+    white-space: nowrap;
+    letter-spacing: -0.01em;
   }
 
   .mobileBannerWrap {
