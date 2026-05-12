@@ -20,13 +20,13 @@ export const metadata = {
     title: 'Addora — Shop Local, Pay on Delivery',
     description: 'Fast delivery across Ethiopia. No payment required upfront.',
   },
-  icons: {
+ icons: {
   icon: [
-    { url: '/favicon.ico', type: 'image/x-icon' },
-    { url: '/icon.png', type: 'image/png', sizes: '32x32' },
+    { url: '/favicon.ico?v=2', type: 'image/x-icon' },
+    { url: '/icon.png?v=2', type: 'image/png' },
   ],
-  apple: '/apple-icon.png',
-  shortcut: '/favicon.ico',
+  apple: '/apple-icon.png?v=2',
+  shortcut: '/favicon.ico?v=2',
 },
 }
 
