@@ -1,11 +1,13 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import ProductCard from '../components/ui/ProductCard'
 import styles from './HomeClient.module.css'
-import { useLang } from '../lib/lang'   // ← ADDED
+import { useLang } from '../lib/lang'
+import MobileSearchOverlay from '../components/search/MobileSearchOverlay'
+import { useSearch } from '../components/search/useSearch'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -385,12 +387,31 @@ function TrustStrip() {
 
 // ── Main export ──
 export default function HomeClient() {
-  const { tr, lang } = useLang()   // ← lang added
-  // Use translation key as the active category identifier so it's language-agnostic
+  const { tr, lang } = useLang()
+  const router = useRouter()
   const [activeCategory, setActiveCategory] = useState('catAll')
   const [search, setSearch] = useState('')
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
   const countdown = useCountdown(6)
   const dbCategories = useCategories()
+
+  const {
+    query, setQuery,
+    results, loading: searchLoading,
+    recent, saveRecent,
+    clearRecent, removeRecent,
+  } = useSearch()
+
+  const [activeIndex, setActiveIndex] = useState(-1)
+
+  const commitSearch = useCallback((term) => {
+    const t = (term || query).trim()
+    if (!t) return
+    saveRecent(t)
+    router.push(`/search?q=${encodeURIComponent(t)}`)
+    setMobileSearchOpen(false)
+    setActiveIndex(-1)
+  }, [query, saveRecent, router])
 
   // Returns Amharic name when lang === 'am' and name_am exists, else English name
   const catName = (cat) =>
@@ -422,6 +443,7 @@ export default function HomeClient() {
   const isFiltering = activeCategory !== 'catAll' || search.trim() !== ''
 
   return (
+    <>
     <div className={styles.page}>
 
       {/* ══ DESKTOP LAYOUT ══ */}
@@ -447,26 +469,21 @@ export default function HomeClient() {
       {/* ══ MOBILE HERO ══ */}
       <div className={styles.mobileHero}>
 
-        {/* Mobile search bar — below logo */}
-        <div className={styles.mobileSearchWrap}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-          <input
-            type="text"
-            placeholder={tr('searchProducts')}
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className={styles.mobileSearchInput}
-          />
-          {search && (
-            <button className={styles.mobileSearchClear} onClick={() => setSearch('')}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </button>
-          )}
-        </div>
+        {/* Mobile search bar — branded pill, opens full overlay */}
+        <button
+          className={styles.mobileSearchWrap}
+          onClick={() => setMobileSearchOpen(true)}
+          type="button"
+          aria-label={tr('openSearch')}
+        >
+          <span className={styles.mobileSearchIcon}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </span>
+          <span className={styles.mobileSearchPlaceholder}>{tr('searchProducts')}</span>
+          <span className={styles.mobileSearchBtn}>{tr('search')}</span>
+        </button>
 
         <div
           className={styles.mobileBannerWrap}
@@ -578,5 +595,21 @@ export default function HomeClient() {
         )}
       </main>
     </div>
+
+      <MobileSearchOverlay
+        open={mobileSearchOpen}
+        onClose={() => setMobileSearchOpen(false)}
+        query={query}
+        setQuery={setQuery}
+        results={results}
+        loading={searchLoading}
+        recent={recent}
+        saveRecent={saveRecent}
+        onRemoveRecent={removeRecent}
+        onClearRecent={clearRecent}
+        activeIndex={activeIndex}
+        setActiveIndex={setActiveIndex}
+      />
+    </>
   )
 }
