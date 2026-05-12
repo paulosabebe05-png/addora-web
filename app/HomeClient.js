@@ -6,8 +6,8 @@ import { createClient } from '@supabase/supabase-js'
 import ProductCard from '../components/ui/ProductCard'
 import styles from './HomeClient.module.css'
 import { useLang } from '../lib/lang'
-import MobileSearchOverlay from './components/layout/MobileSearchOverlay'
-import { useSearch } from './components/search/useSearch'
+import MobileSearchOverlay from '../components/layout/MobileSearchOverlay'
+import { useSearch } from '../components/search/useSearch'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
