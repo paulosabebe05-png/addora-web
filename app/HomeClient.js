@@ -17,13 +17,12 @@ const supabase = createClient(
 const PRODUCT_FIELDS =
   'id, name, price, image_url, discount, section, rating, sold, created_at, category_id, stock, active'
 
-// ── Categories hook — fetches from DB (parent categories only) ──
 function useCategories() {
   const [categories, setCategories] = useState([])
   useEffect(() => {
     supabase
       .from('categories')
-      .select('id, name, name_am, icon')   // ← name_am added
+      .select('id, name, name_am, icon')
       .is('parent_id', null)
       .order('sort_order', { ascending: true })
       .then(({ data }) => setCategories(data || []))
@@ -31,7 +30,6 @@ function useCategories() {
   return categories
 }
 
-// CAT_PILLS now uses translation keys instead of hardcoded English labels
 const CAT_PILL_KEYS = [
   { key: 'catAll',         icon: '🛍️' },
   { key: 'catKids',        icon: '🧸' },
@@ -43,7 +41,6 @@ const CAT_PILL_KEYS = [
   { key: 'catSports',      icon: '⚽' },
 ]
 
-// ── Countdown timer ──
 function useCountdown(targetHours = 6) {
   const [time, setTime] = useState({ h: targetHours, m: 0, s: 0 })
   useEffect(() => {
@@ -63,7 +60,6 @@ function useCountdown(targetHours = 6) {
   return time
 }
 
-// ── Section products hook ──
 function useSectionProducts(sectionValue, { orderCol = 'created_at', ascending = false, limit = 10 } = {}) {
   const [products, setProducts] = useState([])
   const [loading, setLoading]   = useState(true)
@@ -83,7 +79,6 @@ function useSectionProducts(sectionValue, { orderCol = 'created_at', ascending =
   return { products, loading }
 }
 
-// ── All products hook ──
 function useAllProducts() {
   const [products, setProducts] = useState([])
   const [loading, setLoading]   = useState(true)
@@ -101,7 +96,6 @@ function useAllProducts() {
   return { products, loading }
 }
 
-// ── Banners hook ──
 function useBanners(device) {
   const [banners, setBanners] = useState([])
   const [loadingBanners, setLoadingBanners] = useState(true)
@@ -113,7 +107,7 @@ function useBanners(device) {
           .eq('active', true).in('device', [device, 'all']).order('sort_order', { ascending: true })
         if (error) throw error
         setBanners(data || [])
-      } catch (err) {
+      } catch {
         setBanners([])
       } finally {
         setLoadingBanners(false)
@@ -124,7 +118,6 @@ function useBanners(device) {
   return { banners, loadingBanners }
 }
 
-// ── Skeleton card ──
 function SkeletonCard() {
   return (
     <div className={styles.skeletonCard}>
@@ -138,7 +131,6 @@ function SkeletonCard() {
   )
 }
 
-// ── Banner dots ──
 function BannerDots({ count, active, onSelect }) {
   if (count <= 1) return null
   return (
@@ -153,10 +145,9 @@ function BannerDots({ count, active, onSelect }) {
   )
 }
 
-// ── Hero Banner Carousel ──
 function HeroBannerCarousel({ banners, loading, isMobile = false }) {
   const router = useRouter()
-  const { tr } = useLang()   // ← ADDED
+  const { tr } = useLang()
   const [activeIdx, setActiveIdx] = useState(0)
   const touchStartX = useRef(null)
 
@@ -222,9 +213,8 @@ function HeroBannerCarousel({ banners, loading, isMobile = false }) {
   )
 }
 
-// ── Section header ──
 function SectionHeader({ label, title, countdown, seeAllHref }) {
-  const { tr } = useLang()   // ← ADDED
+  const { tr } = useLang()
   const pad = (n) => String(n).padStart(2, '0')
   return (
     <div className={styles.sectionHead}>
@@ -253,7 +243,6 @@ function SectionHeader({ label, title, countdown, seeAllHref }) {
   )
 }
 
-// ── Horizontal scroll product row ──
 function ProductRow({ products, loading, itemWidth = 200 }) {
   if (loading) {
     return (
@@ -274,9 +263,8 @@ function ProductRow({ products, loading, itemWidth = 200 }) {
   )
 }
 
-// ── Category icon grid ──
 function CategoryGrid() {
-  const { tr } = useLang()   // ← ADDED
+  const { tr } = useLang()
   const icons = [
     { labelKey: 'catElectronics', icon: '📱', slug: 'electronics' },
     { labelKey: 'catComputers',   icon: '💻', slug: 'computers' },
@@ -305,9 +293,8 @@ function CategoryGrid() {
   )
 }
 
-// ── Promo Banner ──
 function PromoBanner() {
-  const { tr } = useLang()   // ← ADDED
+  const { tr } = useLang()
   const STATS = [
     { n: '200+', lKey: 'statProducts' },
     { n: '1–3',  lKey: 'statDayDelivery' },
@@ -324,9 +311,7 @@ function PromoBanner() {
     <div className={styles.promoBanner}>
       <div className={styles.promoBannerLeft}>
         <span className={styles.promoLabel}>{tr('whyAddora')}</span>
-        <h3 className={styles.promoTitle}>
-          {tr('aboutHeadline')}
-        </h3>
+        <h3 className={styles.promoTitle}>{tr('aboutHeadline')}</h3>
         <div className={styles.promoFeatures}>
           {FEATURES.map((f, i) => (
             <div key={i} className={styles.promoFeatureItem}>
@@ -343,9 +328,7 @@ function PromoBanner() {
             </div>
           ))}
         </div>
-        <Link href="/categories" className={styles.promoCta}>
-          {tr('shopNow')}
-        </Link>
+        <Link href="/categories" className={styles.promoCta}>{tr('shopNow')}</Link>
       </div>
       <div className={styles.promoBannerRight}>
         <div className={styles.promoImgOrb} />
@@ -360,9 +343,8 @@ function PromoBanner() {
   )
 }
 
-// ── Trust badges strip ──
 function TrustStrip() {
-  const { tr } = useLang()   // ← ADDED
+  const { tr } = useLang()
   const items = [
     { icon: '🚚', titleKey: 'trustFreeDeliveryTitle', subKey: 'trustFreeDeliverySub' },
     { icon: '📞', titleKey: 'trustSupportTitle',      subKey: 'trustSupportSub' },
@@ -413,7 +395,6 @@ export default function HomeClient() {
     setActiveIndex(-1)
   }, [query, saveRecent, router])
 
-  // Returns Amharic name when lang === 'am' and name_am exists, else English name
   const catName = (cat) =>
     (lang === 'am' && cat?.name_am) ? cat.name_am : cat?.name
 
@@ -426,7 +407,6 @@ export default function HomeClient() {
   const { products: todayDeals,     loading: loadingDeals }  = useSectionProducts('todays_deals', { orderCol: 'discount',  ascending: false })
   const { products: allProducts,    loading: loadingAll }    = useAllProducts()
 
-  // Map pill key → English label for filtering (product names are stored in English)
   const KEY_TO_EN = {
     catAll: 'All', catKids: 'Kids', catElectronics: 'Electronics',
     catHomeLiving: 'Home & Living', catBeauty: 'Beauty',
@@ -444,157 +424,154 @@ export default function HomeClient() {
 
   return (
     <>
-    <div className={styles.page}>
+      <div className={styles.page}>
 
-      {/* ══ DESKTOP LAYOUT ══ */}
-      <div className={styles.desktopLayout}>
-        <aside className={styles.sidebar}>
-          <ul className={styles.sidebarList}>
-            {dbCategories.map(cat => (
-              <li key={cat.id}>
-                <Link href={`/categories?cat=${cat.id}`} className={styles.sidebarLink}>
-                  <span>{cat.icon || '🛍️'}</span>
-                  {catName(cat)}
-                  <svg className={styles.sidebarChevron} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </aside>
-        <div className={styles.heroArea}>
-          <HeroBannerCarousel banners={desktopBanners} loading={loadingDesktop} />
-        </div>
-      </div>
-
-      {/* ══ MOBILE HERO ══ */}
-      <div className={styles.mobileHero}>
-
-        {/* Mobile search bar — branded pill, opens full overlay */}
-        <button
-          className={styles.mobileSearchWrap}
-          onClick={() => setMobileSearchOpen(true)}
-          type="button"
-          aria-label={tr('openSearch')}
-        >
-          <span className={styles.mobileSearchIcon}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-          </span>
-          <span className={styles.mobileSearchPlaceholder}>{tr('searchProducts')}</span>
-          <span className={styles.mobileSearchBtn}>{tr('search')}</span>
-        </button>
-
-        <div
-          className={styles.mobileBannerWrap}
-          style={{ margin: '0 14px 10px', borderRadius: 18, overflow: 'hidden', boxShadow: '0 6px 20px rgba(0,0,0,0.10)' }}
-        >
-          <HeroBannerCarousel banners={mobileBanners} loading={loadingMobile} isMobile={true} />
+        {/* ══ DESKTOP LAYOUT ══ */}
+        <div className={styles.desktopLayout}>
+          <aside className={styles.sidebar}>
+            <ul className={styles.sidebarList}>
+              {dbCategories.map(cat => (
+                <li key={cat.id}>
+                  <Link href={`/categories?cat=${cat.id}`} className={styles.sidebarLink}>
+                    <span>{cat.icon || '🛍️'}</span>
+                    {catName(cat)}
+                    <svg className={styles.sidebarChevron} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </aside>
+          <div className={styles.heroArea}>
+            <HeroBannerCarousel banners={desktopBanners} loading={loadingDesktop} />
+          </div>
         </div>
 
-        {/* Mobile category pills — translated */}
-        <div className={styles.mobileCatRow}>
-          {CAT_PILL_KEYS.map(cat => (
-            <button key={cat.key}
-              className={`${styles.catPill} ${activeCategory === cat.key ? styles.catPillActive : ''}`}
-              onClick={() => setActiveCategory(cat.key)}
-            >
-              <span>{cat.icon}</span>{tr(cat.key)}
-            </button>
-          ))}
-        </div>
-      </div>
+        {/* ══ MOBILE HERO ══ */}
+        <div className={styles.mobileHero}>
 
-      {/* ══ MAIN CONTENT ══ */}
-      <main className={styles.main}>
+          {/* Mobile search bar — branded pill, opens full overlay */}
+          <button
+            className={styles.mobileSearchWrap}
+            onClick={() => setMobileSearchOpen(true)}
+            type="button"
+            aria-label={tr('openSearch')}
+          >
+            <span className={styles.mobileSearchIcon}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </span>
+            <span className={styles.mobileSearchPlaceholder}>{tr('searchProducts')}</span>
+            <span className={styles.mobileSearchBtn}>{tr('search')}</span>
+          </button>
 
-        {/* Desktop filter bar — translated */}
-        <div className={styles.filterBar}>
-          <div className={styles.filterCats}>
+          <div className={styles.mobileBannerWrap}>
+            <HeroBannerCarousel banners={mobileBanners} loading={loadingMobile} isMobile={true} />
+          </div>
+
+          {/* Mobile category pills */}
+          <div className={styles.mobileCatRow}>
             {CAT_PILL_KEYS.map(cat => (
               <button key={cat.key}
-                className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catActive : ''}`}
-                onClick={() => setActiveCategory(cat.key)}>
-                {cat.icon} {tr(cat.key)}
+                className={`${styles.catPill} ${activeCategory === cat.key ? styles.catPillActive : ''}`}
+                onClick={() => setActiveCategory(cat.key)}
+              >
+                <span>{cat.icon}</span>{tr(cat.key)}
               </button>
             ))}
           </div>
-          <div className={styles.searchWrap}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-            <input type="text" placeholder={tr('searchProducts')}
-              value={search} onChange={e => setSearch(e.target.value)}
-              className={styles.searchInput}
-            />
-          </div>
         </div>
 
-        {isFiltering ? (
-          <section className={styles.section} id="all-products">
-            <SectionHeader
-              title={`${filtered.length} ${tr('items')}${activeCategory !== 'catAll' ? ` in ${tr(activeCategory)}` : ''}`}
-              seeAllHref="/categories"
-            />
-            {loadingAll ? (
-              <div className={styles.productGrid}>{[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}</div>
-            ) : filtered.length === 0 ? (
-              <div className={styles.empty}><p>{tr('noProductsFound')}</p></div>
-            ) : (
-              <div className={styles.productGrid}>
-                {filtered.map((p, i) => (
-                  <div key={p.id} style={{ animationDelay: `${i * 0.03}s` }}><ProductCard product={p} /></div>
-                ))}
-              </div>
-            )}
-          </section>
-        ) : (
-          <>
-            <section className={styles.section}>
-              <SectionHeader label={tr('sectionTodayLabel')} title={tr('sectionFlashTitle')} countdown={countdown} seeAllHref="/?cat=sale" />
-              <ProductRow products={flashProducts} loading={loadingFlash} itemWidth={220} />
-            </section>
+        {/* ══ MAIN CONTENT ══ */}
+        <main className={styles.main}>
 
-            <section className={styles.section}>
-              <SectionHeader label={tr('sectionCategoriesLabel')} title={tr('sectionBrowseTitle')} seeAllHref="/categories" />
-              <CategoryGrid />
-            </section>
+          {/* Desktop filter bar */}
+          <div className={styles.filterBar}>
+            <div className={styles.filterCats}>
+              {CAT_PILL_KEYS.map(cat => (
+                <button key={cat.key}
+                  className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catActive : ''}`}
+                  onClick={() => setActiveCategory(cat.key)}>
+                  {cat.icon} {tr(cat.key)}
+                </button>
+              ))}
+            </div>
+            <div className={styles.searchWrap}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input type="text" placeholder={tr('searchProducts')}
+                value={search} onChange={e => setSearch(e.target.value)}
+                className={styles.searchInput}
+              />
+            </div>
+          </div>
 
-            <section className={styles.section}>
-              <SectionHeader label={tr('sectionThisMonthLabel')} title={tr('sectionBestSellingTitle')} seeAllHref="/?cat=bestsellers" />
-              <ProductRow products={bestSellers} loading={loadingBest} itemWidth={220} />
-            </section>
-
-            <PromoBanner />
-
-            <section className={styles.section}>
-              <SectionHeader label={tr('sectionOnlyTodayLabel')} title={tr('sectionTodayDealsTitle')} seeAllHref="/?cat=deals" />
-              <ProductRow products={todayDeals} loading={loadingDeals} itemWidth={220} />
-            </section>
-
-            <section className={styles.section}>
-              <SectionHeader label={tr('sectionFreshLabel')} title={tr('sectionNewArrivalsTitle')} seeAllHref="/?cat=new" />
-              <ProductRow products={newArrivals} loading={loadingNew} itemWidth={220} />
-            </section>
-
-            <TrustStrip />
-
+          {isFiltering ? (
             <section className={styles.section} id="all-products">
-              <SectionHeader title={tr('sectionAllProductsTitle')} label={loadingAll ? '' : `${allProducts.length} ${tr('items')}`} />
+              <SectionHeader
+                title={`${filtered.length} ${tr('items')}${activeCategory !== 'catAll' ? ` in ${tr(activeCategory)}` : ''}`}
+                seeAllHref="/categories"
+              />
               {loadingAll ? (
                 <div className={styles.productGrid}>{[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}</div>
+              ) : filtered.length === 0 ? (
+                <div className={styles.empty}><p>{tr('noProductsFound')}</p></div>
               ) : (
                 <div className={styles.productGrid}>
-                  {allProducts.map((p, i) => (
-                    <div key={p.id} style={{ animationDelay: `${i * 0.02}s` }}><ProductCard product={p} /></div>
+                  {filtered.map((p, i) => (
+                    <div key={p.id} style={{ animationDelay: `${i * 0.03}s` }}><ProductCard product={p} /></div>
                   ))}
                 </div>
               )}
             </section>
-          </>
-        )}
-      </main>
-    </div>
+          ) : (
+            <>
+              <section className={styles.section}>
+                <SectionHeader label={tr('sectionTodayLabel')} title={tr('sectionFlashTitle')} countdown={countdown} seeAllHref="/?cat=sale" />
+                <ProductRow products={flashProducts} loading={loadingFlash} itemWidth={220} />
+              </section>
+
+              <section className={styles.section}>
+                <SectionHeader label={tr('sectionCategoriesLabel')} title={tr('sectionBrowseTitle')} seeAllHref="/categories" />
+                <CategoryGrid />
+              </section>
+
+              <section className={styles.section}>
+                <SectionHeader label={tr('sectionThisMonthLabel')} title={tr('sectionBestSellingTitle')} seeAllHref="/?cat=bestsellers" />
+                <ProductRow products={bestSellers} loading={loadingBest} itemWidth={220} />
+              </section>
+
+              <PromoBanner />
+
+              <section className={styles.section}>
+                <SectionHeader label={tr('sectionOnlyTodayLabel')} title={tr('sectionTodayDealsTitle')} seeAllHref="/?cat=deals" />
+                <ProductRow products={todayDeals} loading={loadingDeals} itemWidth={220} />
+              </section>
+
+              <section className={styles.section}>
+                <SectionHeader label={tr('sectionFreshLabel')} title={tr('sectionNewArrivalsTitle')} seeAllHref="/?cat=new" />
+                <ProductRow products={newArrivals} loading={loadingNew} itemWidth={220} />
+              </section>
+
+              <TrustStrip />
+
+              <section className={styles.section} id="all-products">
+                <SectionHeader title={tr('sectionAllProductsTitle')} label={loadingAll ? '' : `${allProducts.length} ${tr('items')}`} />
+                {loadingAll ? (
+                  <div className={styles.productGrid}>{[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}</div>
+                ) : (
+                  <div className={styles.productGrid}>
+                    {allProducts.map((p, i) => (
+                      <div key={p.id} style={{ animationDelay: `${i * 0.02}s` }}><ProductCard product={p} /></div>
+                    ))}
+                  </div>
+                )}
+              </section>
+            </>
+          )}
+        </main>
+      </div>
 
       <MobileSearchOverlay
         open={mobileSearchOpen}
