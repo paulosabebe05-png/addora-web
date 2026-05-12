@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '../../../lib/auth'
 import { useCart } from '../../../lib/cart'
+import { useLang } from '../../../lib/lang'
 import { supabase } from '../../../lib/supabase'
 import styles from './product.module.css'
 
@@ -40,9 +41,9 @@ const CSS_COLOR_MAP = {
   transparent: 'linear-gradient(135deg,rgba(255,255,255,.4),rgba(200,210,255,.15))',
 }
 
-const SIZE_TYPE_LABEL = {
-  clothing: 'Size', footwear: 'EU Size', age: 'Age / Size',
-  phone: 'Device Model', universal: 'Size',
+const SIZE_TYPE_LABEL_KEY = {
+  clothing: 'size', footwear: 'euSize', age: 'ageSize',
+  phone: 'deviceModel', universal: 'size',
 }
 
 /* ─────────────────────────────────────────────────
@@ -106,6 +107,7 @@ function RatingBar({ star, count, total }) {
    SINGLE REVIEW CARD
 ───────────────────────────────────────────────── */
 function ReviewCard({ review }) {
+  const { tr } = useLang()
   const [expanded, setExpanded] = useState(false)
   const isLong = review.body?.length > 200
   const body   = (!expanded && isLong) ? review.body.slice(0, 200) + '…' : review.body
@@ -135,7 +137,7 @@ function ReviewCard({ review }) {
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="var(--green)" stroke="none">
                   <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
                 </svg>
-                Verified
+                {tr('verifiedPurchase')}
               </span>
             )}
           </div>
@@ -155,7 +157,7 @@ function ReviewCard({ review }) {
           {body}
           {isLong && (
             <button className={styles.reviewToggle} onClick={() => setExpanded(v => !v)}>
-              {expanded ? ' Show less' : ' Read more'}
+              {expanded ? ` ${tr('showLess')}` : ` ${tr('readMore')}`}
             </button>
           )}
         </p>
@@ -172,7 +174,7 @@ function ReviewCard({ review }) {
 
       {/* Helpful */}
       <div className={styles.reviewFooter}>
-        <span className={styles.helpfulLabel}>Helpful?</span>
+        <span className={styles.helpfulLabel}>{tr('helpful')}</span>
         <button className={styles.helpfulBtn}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/>
@@ -189,6 +191,7 @@ function ReviewCard({ review }) {
    REVIEW FORM  –  submit new review
 ───────────────────────────────────────────────── */
 function ReviewForm({ productId, userId, onSubmitted }) {
+  const { tr } = useLang()
   const [rating,  setRating]  = useState(0)
   const [title,   setTitle]   = useState('')
   const [body,    setBody]    = useState('')
@@ -197,8 +200,8 @@ function ReviewForm({ productId, userId, onSubmitted }) {
   const [success, setSuccess] = useState(false)
 
   const handleSubmit = async () => {
-    if (!rating)    { setError('Please select a star rating'); return }
-    if (!body.trim()) { setError('Please write a review'); return }
+    if (!rating)      { setError(tr('pleaseSelectRating')); return }
+    if (!body.trim()) { setError(tr('pleaseWriteReview'));  return }
     setError('')
     setLoading(true)
     try {
@@ -208,13 +211,13 @@ function ReviewForm({ productId, userId, onSubmitted }) {
         rating,
         title: title.trim() || null,
         body: body.trim(),
-        verified_purchase: true, // could check orders table
+        verified_purchase: true,
       })
       if (dbErr) throw dbErr
       setSuccess(true)
       onSubmitted?.()
     } catch (e) {
-      setError(e.message ?? 'Failed to submit review. Please try again.')
+      setError(e.message ?? tr('failedToSubmitReview'))
     } finally {
       setLoading(false)
     }
@@ -227,27 +230,29 @@ function ReviewForm({ productId, userId, onSubmitted }) {
           <circle cx="12" cy="12" r="10"/>
           <polyline points="20 6 9 17 4 12"/>
         </svg>
-        <p className={styles.reviewSuccessText}>Thank you! Your review has been submitted.</p>
+        <p className={styles.reviewSuccessText}>{tr('reviewSubmittedTitle')}</p>
       </div>
     )
   }
 
   return (
     <div className={styles.reviewForm}>
-      <h4 className={styles.reviewFormTitle}>Write a Review</h4>
+      <h4 className={styles.reviewFormTitle}>{tr('writeReview')}</h4>
 
       {/* Star picker */}
       <div className={styles.reviewFormRow}>
-        <label className={styles.reviewFormLabel}>Your Rating</label>
+        <label className={styles.reviewFormLabel}>{tr('yourRating')}</label>
         <StarRating rating={rating} size={24} interactive onRate={setRating} />
       </div>
 
       {/* Title */}
       <div className={styles.reviewFormRow}>
-        <label className={styles.reviewFormLabel}>Title <span className={styles.optional}>(optional)</span></label>
+        <label className={styles.reviewFormLabel}>
+          {tr('reviewTitleOptional')}
+        </label>
         <input
           className={styles.reviewInput}
-          placeholder="Summarise your experience"
+          placeholder={tr('reviewTitlePlaceholder')}
           value={title}
           onChange={e => setTitle(e.target.value)}
           maxLength={120}
@@ -256,10 +261,10 @@ function ReviewForm({ productId, userId, onSubmitted }) {
 
       {/* Body */}
       <div className={styles.reviewFormRow}>
-        <label className={styles.reviewFormLabel}>Review</label>
+        <label className={styles.reviewFormLabel}>{tr('reviewBodyLabel')}</label>
         <textarea
           className={styles.reviewTextarea}
-          placeholder="What did you like or dislike? How was the quality, fit or delivery?"
+          placeholder={tr('reviewBodyPlaceholder')}
           value={body}
           onChange={e => setBody(e.target.value)}
           rows={4}
@@ -283,7 +288,7 @@ function ReviewForm({ productId, userId, onSubmitted }) {
         disabled={loading}
         style={{ marginTop: 4, maxWidth: 220 }}
       >
-        {loading ? 'Submitting…' : 'Submit Review'}
+        {loading ? tr('submitting') : tr('submitReview')}
       </button>
     </div>
   )
@@ -293,6 +298,7 @@ function ReviewForm({ productId, userId, onSubmitted }) {
    REVIEWS SECTION  –  list + summary + form
 ───────────────────────────────────────────────── */
 function ReviewsSection({ productId, user }) {
+  const { tr } = useLang()
   const [reviews,    setReviews]    = useState([])
   const [loading,    setLoading]    = useState(true)
   const [sortBy,     setSortBy]     = useState('recent')   // 'recent' | 'highest' | 'lowest'
@@ -324,14 +330,14 @@ function ReviewsSection({ productId, user }) {
   return (
     <section className={styles.reviewsSection}>
       <div className={styles.reviewsSectionHeader}>
-        <h2 className={styles.sectionTitle}>Customer Reviews</h2>
+        <h2 className={styles.sectionTitle}>{tr('customerReviews')}</h2>
         {user && !showForm && (
           <button className={styles.writeReviewBtn} onClick={() => setShowForm(true)}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
               <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
             </svg>
-            Write a Review
+            {tr('writeReview')}
           </button>
         )}
       </div>
@@ -342,7 +348,9 @@ function ReviewsSection({ productId, user }) {
           <div className={styles.reviewSummaryScore}>
             <span className={styles.reviewAvgNum}>{avg.toFixed(1)}</span>
             <StarRating rating={avg} size={18} />
-            <span className={styles.reviewTotalLabel}>{total} review{total !== 1 ? 's' : ''}</span>
+            <span className={styles.reviewTotalLabel}>
+              {total} {total !== 1 ? tr('reviewCountPlural') : tr('reviewCount')}
+            </span>
           </div>
           <div className={styles.reviewSummaryBars}>
             {dist.map(d => <RatingBar key={d.star} star={d.star} count={d.count} total={total} />)}
@@ -361,7 +369,7 @@ function ReviewsSection({ productId, user }) {
 
       {!user && (
         <p className={styles.loginHint} style={{ marginBottom: 20 }}>
-          <Link href={`/auth/signin`}>Sign in</Link> to leave a review
+          <Link href={`/auth/signin`}>{tr('signInLink')}</Link> {tr('signInToReview')}
         </p>
       )}
 
@@ -375,14 +383,14 @@ function ReviewsSection({ productId, user }) {
                 onClick={() => setFilterStar(s)}
                 className={`${styles.filterPill} ${filterStar === s ? styles.filterPillOn : ''}`}
               >
-                {s === 0 ? 'All' : `${s}★`}
+                {s === 0 ? tr('filterAll') : `${s}★`}
               </button>
             ))}
           </div>
           <select className={styles.reviewSort} value={sortBy} onChange={e => setSortBy(e.target.value)}>
-            <option value="recent">Most Recent</option>
-            <option value="highest">Highest Rated</option>
-            <option value="lowest">Lowest Rated</option>
+            <option value="recent">{tr('sortMostRecent')}</option>
+            <option value="highest">{tr('sortHighestRated')}</option>
+            <option value="lowest">{tr('sortLowestRated')}</option>
           </select>
         </div>
       )}
@@ -397,7 +405,11 @@ function ReviewsSection({ productId, user }) {
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.2">
             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
           </svg>
-          <p>{filterStar > 0 ? `No ${filterStar}-star reviews yet` : 'No reviews yet — be the first!'}</p>
+          <p>
+            {filterStar > 0
+              ? tr('noStarReviews').replace('{n}', filterStar)
+              : tr('noReviewsYet')}
+          </p>
         </div>
       ) : (
         <div className={styles.reviewList}>
@@ -471,6 +483,7 @@ function RelatedProductCard({ product }) {
    RELATED PRODUCTS SECTION  –  AliExpress-style grid
 ───────────────────────────────────────────────── */
 function RelatedProductsSection({ productId, categoryId, storeId }) {
+  const { tr } = useLang()
   const [related,  setRelated]  = useState([])
   const [loading,  setLoading]  = useState(true)
   const [showAll,  setShowAll]  = useState(false)
@@ -484,62 +497,42 @@ function RelatedProductsSection({ productId, categoryId, storeId }) {
       /* ══════════════════════════════════════════════════════════════
          Step 1: Walk UP the category tree to find the best "parent"
          anchor, then collect ALL descendant category IDs from it.
-
-         Example hierarchy:
-           Electronics (L1, parent_id = null)
-             └─ Phone (L2, parent_id = Electronics)
-                  └─ Phone Cases (L3, parent_id = Phone)  ← product here
-
-         • L3 product  → anchor = Phone (L2)  → siblings: Phone Cases, Chargers…
-         • L2 product  → anchor = Electronics  → siblings: Phone, Headphones…
-         • L1 product  → anchor = itself        → children: Phone, Headphones…
       ══════════════════════════════════════════════════════════════ */
       let categoryIds = categoryId ? [categoryId] : []
 
       if (categoryId) {
-        // 1a. Fetch the current category
         const { data: currentCat } = await supabase
           .from('categories')
           .select('id, parent_id')
           .eq('id', categoryId)
           .single()
 
-        let anchorParentId = null   // the ID whose children we'll collect
+        let anchorParentId = null
 
         if (currentCat?.parent_id) {
-          // Has a direct parent → use that parent as anchor
           anchorParentId = currentCat.parent_id
 
-          // Optional: walk one more level up so L3 products also show
-          // L2-level siblings (Phone Cases → anchor = Electronics).
-          // Comment out the block below if you only want L2 siblings.
           const { data: parentCat } = await supabase
             .from('categories')
             .select('id, parent_id')
             .eq('id', currentCat.parent_id)
             .single()
           if (parentCat?.parent_id) {
-            // L3 product: anchor at L1 (grandparent) so we get all
-            // L2 sub-categories (Phone, Headphones, Laptops…)
             anchorParentId = parentCat.parent_id
           }
         } else {
-          // Already at top level: use self as anchor so we collect children
           anchorParentId = categoryId
         }
 
-        // 1b. Collect all direct children of the anchor
         const { data: children } = await supabase
           .from('categories')
           .select('id')
           .eq('parent_id', anchorParentId)
 
         if (children?.length) {
-          // Include the anchor itself + all its children
           const childIds = children.map(c => c.id)
           categoryIds = [anchorParentId, ...childIds].filter(Boolean)
 
-          // 1c. Also grab grandchildren (one more level deep) so nothing is missed
           const { data: grandchildren } = await supabase
             .from('categories')
             .select('id')
@@ -550,7 +543,7 @@ function RelatedProductsSection({ productId, categoryId, storeId }) {
         }
       }
 
-      /* ── Step 2: fetch products from the resolved category tree ── */
+      /* ── Step 2: products in the collected category set ── */
       let data = []
       if (categoryIds.length > 0) {
         const { data: catData } = await supabase
@@ -577,7 +570,6 @@ function RelatedProductsSection({ productId, categoryId, storeId }) {
           .order('sold', { ascending: false })
           .limit(12)
 
-        // Merge, deduplicate
         data = [...data, ...(storeData ?? [])]
           .filter((p, i, arr) => arr.findIndex(x => x.id === p.id) === i)
           .slice(0, 24)
@@ -610,9 +602,9 @@ function RelatedProductsSection({ productId, categoryId, storeId }) {
   return (
     <section className={styles.relatedSection}>
       <div className={styles.relatedHeader}>
-        <h2 className={styles.sectionTitle}>Related Items</h2>
+        <h2 className={styles.sectionTitle}>{tr('relatedItems')}</h2>
         {!loading && related.length > 0 && (
-          <span className={styles.relatedCount}>{related.length} items</span>
+          <span className={styles.relatedCount}>{related.length} {tr('items')}</span>
         )}
       </div>
 
@@ -626,7 +618,9 @@ function RelatedProductsSection({ productId, categoryId, storeId }) {
       {!loading && related.length > 6 && (
         <div className={styles.relatedMore}>
           <button className={styles.relatedMoreBtn} onClick={() => setShowAll(v => !v)}>
-            {showAll ? 'Show less' : `View all ${related.length} items`}
+            {showAll
+              ? tr('showLessItems')
+              : tr('viewAllItems').replace('{n}', related.length)}
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
               style={{ transform: showAll ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform .3s' }}>
               <polyline points="6 9 12 15 18 9"/>
@@ -645,6 +639,7 @@ function RelatedProductsSection({ productId, categoryId, storeId }) {
 export default function ProductDetailClient({ product, variants = [], store = null }) {
   const { user }    = useAuth()
   const { addItem } = useCart()
+  const { tr }      = useLang()
   const router      = useRouter()
 
   const baseImages = [product.image_url, ...(product.extra_images ?? [])].filter(Boolean)
@@ -683,7 +678,8 @@ export default function ProductDetailClient({ product, variants = [], store = nu
   const allSizes    = hasVariants ? [...new Set(variants.map(v => v.size).filter(Boolean))]  : []
 
   const detectedSizeType = variants.find(v => v.size_type)?.size_type ?? null
-  const sizeLabel = SIZE_TYPE_LABEL[detectedSizeType] ?? 'Size'
+  const sizeLabelKey     = SIZE_TYPE_LABEL_KEY[detectedSizeType] ?? 'size'
+  const sizeLabel        = tr(sizeLabelKey)
 
   const [selectedColor, setSelectedColor] = useState(null)
   const [selectedSize,  setSelectedSize]  = useState(null)
@@ -740,24 +736,37 @@ export default function ProductDetailClient({ product, variants = [], store = nu
     setAddError('')
 
     if (hasVariants && !activeVariant) {
-      setAddError(needsColor ? 'Please select a color' : needsSize ? `Please select a ${sizeLabel.toLowerCase()}` : 'Selected combination is out of stock')
+      setAddError(
+        needsColor ? tr('pleaseSelectColor')
+        : needsSize ? tr('pleaseSelectSize').replace('{size}', sizeLabel.toLowerCase())
+        : tr('combinationNotAvailable')
+      )
       return false
     }
-    if (isOutOfStock) { setAddError('This item is out of stock'); return false }
+    if (isOutOfStock) { setAddError(tr('itemOutOfStock')); return false }
 
     try {
       if (activeVariant) {
         const { data, error } = await supabase.rpc('decrement_variant_stock', { p_variant_id: activeVariant.id, p_quantity: qty })
-        if (error || !data?.ok) { setAddError(data?.error === 'insufficient_stock' ? `Only ${data?.available ?? 0} left in stock` : 'Could not reserve stock. Please try again.'); return false }
+        if (error || !data?.ok) {
+          setAddError(data?.error === 'insufficient_stock'
+            ? tr('onlyNLeftInStock').replace('{n}', data?.available ?? 0)
+            : tr('couldNotReserveStock'))
+          return false
+        }
       } else {
         const { data, error } = await supabase.rpc('decrement_product_stock', { p_product_id: product.id, p_quantity: qty })
-        if (error || !data?.ok) { setAddError(data?.error === 'insufficient_stock' ? `Only ${data?.available ?? 0} left in stock` : 'Could not reserve stock. Please try again.'); return false }
+        if (error || !data?.ok) {
+          setAddError(data?.error === 'insufficient_stock'
+            ? tr('onlyNLeftInStock').replace('{n}', data?.available ?? 0)
+            : tr('couldNotReserveStock'))
+          return false
+        }
       }
     } catch {
       if (process.env.NODE_ENV === 'development') console.warn('[stock] RPC not available, skipping decrement')
     }
 
-    // Single addItem call with the correct qty — never loop addItem
     const cartItem = {
       id: product.id, name: product.name, price: finalPrice, image_url: product.image_url, qty,
       ...(activeVariant ? { variant_id: activeVariant.id, size: activeVariant.size, color: activeVariant.color, color_hex: activeVariant.color_hex ?? colorHexMap[activeVariant.color] ?? null } : {}),
@@ -776,7 +785,7 @@ export default function ProductDetailClient({ product, variants = [], store = nu
       {/* ── LIGHTBOX ── */}
       {lightboxOpen && images.length > 0 && (
         <div className={styles.lightboxOverlay} onClick={() => setLightboxOpen(false)}>
-          <button className={styles.lightboxClose} onClick={() => setLightboxOpen(false)} aria-label="Close">✕</button>
+          <button className={styles.lightboxClose} onClick={() => setLightboxOpen(false)} aria-label={tr('close')}>✕</button>
           {images.length > 1 && (
             <button className={`${styles.lightboxArrow} ${styles.lightboxArrowL}`}
               onClick={e => { e.stopPropagation(); setLightboxImg(i => (i - 1 + images.length) % images.length) }}>‹</button>
@@ -801,9 +810,9 @@ export default function ProductDetailClient({ product, variants = [], store = nu
 
         {/* Breadcrumb */}
         <nav className={styles.bc}>
-          <Link href="/">Home</Link>
+          <Link href="/">{tr('breadcrumbHome')}</Link>
           <span className={styles.bcSep}>—</span>
-          <Link href="/#products">Products</Link>
+          <Link href="/#products">{tr('breadcrumbProducts')}</Link>
           <span className={styles.bcSep}>—</span>
           <span className={styles.bcCurrent}>{product.name}</span>
         </nav>
@@ -838,11 +847,11 @@ export default function ProductDetailClient({ product, variants = [], store = nu
                     <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
                     <polyline points="21 15 16 10 5 21"/>
                   </svg>
-                  <span>No image</span>
+                  <span>{tr('noImage')}</span>
                 </div>
               )}
               {product.discount > 0 && <span className={styles.discBadge}>-{product.discount}%</span>}
-              {isOutOfStock && !hasVariants && <div className={styles.oosOverlay}>Out of Stock</div>}
+              {isOutOfStock && !hasVariants && <div className={styles.oosOverlay}>{tr('outOfStockLabel')}</div>}
               {images.length > 1 && <span className={styles.imgCount}>{activeImg + 1}/{images.length}</span>}
               {images.length > 1 && <>
                 <button className={`${styles.arrow} ${styles.arrowL}`}
@@ -850,7 +859,7 @@ export default function ProductDetailClient({ product, variants = [], store = nu
                 <button className={`${styles.arrow} ${styles.arrowR}`}
                   onClick={e => { e.stopPropagation(); setActiveImg(i => (i + 1) % images.length) }}>›</button>
               </>}
-              {images.length > 0 && !zoomed && <span className={styles.zoomHint}>Tap to enlarge</span>}
+              {images.length > 0 && !zoomed && <span className={styles.zoomHint}>{tr('tapToEnlarge')}</span>}
             </div>
           </div>
 
@@ -863,7 +872,7 @@ export default function ProductDetailClient({ product, variants = [], store = nu
               <span className={styles.stars}>★★★★★</span>
               <span className={styles.ratingVal}>4.8</span>
               <span className={styles.dot}>·</span>
-              <span className={styles.sold}>120+ sold</span>
+              <span className={styles.sold}>120+ {tr('sold')}</span>
             </div>
 
             {store && (
@@ -878,11 +887,11 @@ export default function ProductDetailClient({ product, variants = [], store = nu
                   <div className={styles.storeNameRow}>
                     <span className={styles.storeName}>{store.name}</span>
                     {store.verified && (
-                      <span className={styles.verifiedBadge} title="Verified Seller">
+                      <span className={styles.verifiedBadge} title={tr('verifiedSeller')}>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="#2563eb" stroke="none">
                           <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
                         </svg>
-                        Verified
+                        {tr('verifiedSeller')}
                       </span>
                     )}
                   </div>
@@ -911,18 +920,18 @@ export default function ProductDetailClient({ product, variants = [], store = nu
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
                   </svg>
-                  Special offer
+                  {tr('specialOffer')}
                 </span>
               )}
               <div className={styles.priceRow}>
                 <span className={styles.priceFinal}>ETB {Number(finalPrice).toLocaleString()}</span>
                 {product.discount > 0 && <>
                   <span className={styles.priceOrig}>ETB {Number(product.price).toLocaleString()}</span>
-                  <span className={styles.savePill}>Save ETB {(Number(product.price) - Number(finalPrice)).toLocaleString()}</span>
+                  <span className={styles.savePill}>{tr('save')} ETB {(Number(product.price) - Number(finalPrice)).toLocaleString()}</span>
                 </>}
               </div>
               {product.discount > 0 && (
-                <p className={styles.priceHint}>30-day lowest price before discount.&nbsp;<s>ETB {Number(product.price).toLocaleString()}</s></p>
+                <p className={styles.priceHint}>{tr('priceHint')}&nbsp;<s>ETB {Number(product.price).toLocaleString()}</s></p>
               )}
             </div>
 
@@ -932,7 +941,7 @@ export default function ProductDetailClient({ product, variants = [], store = nu
             {hasVariants && allColors.length > 0 && (
               <div className={styles.varSection}>
                 <p className={styles.varLabel}>
-                  Color:&nbsp;<strong>{selectedColor ?? <em className={styles.pick}>Select a color</em>}</strong>
+                  {tr('color')}:&nbsp;<strong>{selectedColor ?? <em className={styles.pick}>{tr('selectAColor')}</em>}</strong>
                 </p>
                 <div className={styles.colorRow}>
                   {allColors.map(color => {
@@ -963,7 +972,13 @@ export default function ProductDetailClient({ product, variants = [], store = nu
             {hasVariants && allSizes.length > 0 && (
               <div className={styles.varSection}>
                 <p className={styles.varLabel}>
-                  {sizeLabel}:&nbsp;<strong>{selectedSize ?? <em className={styles.pick}>Select {sizeLabel === 'Device Model' ? 'a model' : 'a size'}</em>}</strong>
+                  {sizeLabel}:&nbsp;<strong>
+                    {selectedSize ?? (
+                      <em className={styles.pick}>
+                        {sizeLabelKey === 'deviceModel' ? tr('selectAModel') : tr('selectASize')}
+                      </em>
+                    )}
+                  </strong>
                 </p>
                 <div className={styles.sizeRow}>
                   {sizesForColor.map(size => {
@@ -982,29 +997,31 @@ export default function ProductDetailClient({ product, variants = [], store = nu
 
             {/* Stock status */}
             <div className={styles.stockRow}>
-              {hasVariants && !(selectedColor || selectedSize) && <span className={styles.stockNeutral}>Select options to see availability</span>}
+              {hasVariants && !(selectedColor || selectedSize) && (
+                <span className={styles.stockNeutral}>{tr('selectOptionsAvailability')}</span>
+              )}
               {hasVariants && (selectedColor || selectedSize) && (
                 activeVariant
                   ? activeVariant.stock > 0
                     ? <span className={styles.stockYes}>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                        In Stock <em>({activeVariant.stock} available)</em>
+                        {tr('inStockAvailable')} <em>({activeVariant.stock} {tr('available')})</em>
                       </span>
                     : <span className={styles.stockNo}>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-                        Out of Stock
+                        {tr('outOfStockLabel')}
                       </span>
-                  : <span className={styles.stockNo}>Combination not available</span>
+                  : <span className={styles.stockNo}>{tr('combinationNotAvailable')}</span>
               )}
               {!hasVariants && (
                 stockAvailable > 0
                   ? <span className={styles.stockYes}>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                      In Stock <em>({stockAvailable} available)</em>
+                      {tr('inStockAvailable')} <em>({stockAvailable} {tr('available')})</em>
                     </span>
                   : <span className={styles.stockNo}>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-                      Out of Stock
+                      {tr('outOfStockLabel')}
                     </span>
               )}
             </div>
@@ -1014,14 +1031,14 @@ export default function ProductDetailClient({ product, variants = [], store = nu
             {/* Quantity */}
             {canAdd && (
               <div className={styles.qtyRow}>
-                <span className={styles.qtyLabel}>Quantity</span>
+                <span className={styles.qtyLabel}>{tr('qty')}</span>
                 <div className={styles.qtyBox}>
                   <button className={styles.qtyBtn} onClick={() => setQty(q => Math.max(1, q - 1))} disabled={qty <= 1}>−</button>
                   <input type="number" className={styles.qtyInput} value={qty} min={1} max={stockAvailable}
                     onChange={e => setQty(Math.min(stockAvailable, Math.max(1, parseInt(e.target.value) || 1)))} />
                   <button className={styles.qtyBtn} onClick={() => setQty(q => Math.min(stockAvailable, q + 1))} disabled={qty >= stockAvailable}>+</button>
                 </div>
-                <span className={styles.maxLabel}>Max {stockAvailable}</span>
+                <span className={styles.maxLabel}>{tr('max')} {stockAvailable}</span>
               </div>
             )}
 
@@ -1037,35 +1054,35 @@ export default function ProductDetailClient({ product, variants = [], store = nu
             {/* CTA buttons */}
             <div className={styles.ctaRow}>
               <button className={`${styles.btnBuy} ${!canAdd ? styles.btnOff : ''}`} onClick={handleBuyNow} disabled={!canAdd}>
-                Buy Now
+                {tr('buyNow')}
               </button>
               <button className={`${styles.btnCart} ${added ? styles.btnAdded : ''} ${!canAdd ? styles.btnOff : ''}`}
                 onClick={handleAddToCart} disabled={!canAdd}>
                 {added ? (
-                  <><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>Added to Cart!</>
+                  <><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>{tr('addedToCartBtn')}</>
                 ) : (
-                  <><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Add to Cart</>
+                  <><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>{tr('addToCartBtn')}</>
                 )}
               </button>
             </div>
 
             {!user && (
               <p className={styles.loginHint}>
-                <Link href={`/auth/signin?redirect=/products/${product.id}`}>Sign in</Link> to add items to your cart
+                <Link href={`/auth/signin?redirect=/products/${product.id}`}>{tr('signInLink')}</Link> {tr('signInToAddCart')}
               </p>
             )}
 
             {/* Trust badges */}
             <div className={styles.trustGrid}>
               {[
-                { path: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', title: 'Return & Refund', sub: 'Free returns on defects' },
-                { path: 'M1 3h15v13H1zM16 8h5v8h-5M3 16v4M7 16v4',      title: 'Fast Delivery',   sub: '1–3 days in Addis Ababa' },
-                { path: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', title: 'Cash on Delivery', sub: 'Pay only when received' },
-                { path: 'M22 16.92v3a2 2 0 01-2.18 2 19.8 19.8 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.8 19.8 0 01-3.07-8.68A2 2 0 012 .82h3a2 2 0 012 1.72 12.8 12.8 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.91A16 16 0 0015.1 17.9l1.27-1.27a2 2 0 012.11-.45 12.8 12.8 0 002.81.7A2 2 0 0122 18.92z', title: '24hr Support', sub: 'Call or WhatsApp' },
+                { path: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', titleKey: 'trustReturnTitle', subKey: 'trustReturnSub' },
+                { path: 'M1 3h15v13H1zM16 8h5v8h-5M3 16v4M7 16v4',      titleKey: 'trustDeliveryTitle', subKey: 'trustDeliverySub' },
+                { path: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', titleKey: 'trustCODTitle',      subKey: 'trustCODSub' },
+                { path: 'M22 16.92v3a2 2 0 01-2.18 2 19.8 19.8 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.8 19.8 0 01-3.07-8.68A2 2 0 012 .82h3a2 2 0 012 1.72 12.8 12.8 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.91A16 16 0 0015.1 17.9l1.27-1.27a2 2 0 012.11-.45 12.8 12.8 0 002.81.7A2 2 0 0122 18.92z', titleKey: 'trustSupportProdTitle', subKey: 'trustSupportProdSub' },
               ].map((t, i) => (
                 <div key={i} className={styles.trustItem}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E75525" strokeWidth="1.7"><path d={t.path}/></svg>
-                  <div><p className={styles.trustTitle}>{t.title}</p><p className={styles.trustSub}>{t.sub}</p></div>
+                  <div><p className={styles.trustTitle}>{tr(t.titleKey)}</p><p className={styles.trustSub}>{tr(t.subKey)}</p></div>
                 </div>
               ))}
             </div>
@@ -1075,7 +1092,7 @@ export default function ProductDetailClient({ product, variants = [], store = nu
               <>
                 <div className={styles.hr} />
                 <div className={styles.descBox}>
-                  <h3 className={styles.descTitle}>Product Details</h3>
+                  <h3 className={styles.descTitle}>{tr('productDetails')}</h3>
                   <p className={styles.descText}>{product.description}</p>
                 </div>
               </>
