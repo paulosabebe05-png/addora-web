@@ -478,14 +478,13 @@
     color: #444 !important;
   }
 
-  /* ── Inner bar ── */
   .inner {
     padding: 0 12px;
     height: 56px;
     gap: 8px;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
+    display: flex;
     align-items: center;
+    justify-content: space-between;
   }
 
   /* Hide desktop-only elements */
@@ -516,52 +515,6 @@
     color: #0D0D0D;
   }
 
-  /* Mobile search bar — full branded inline (like desktop) */
-  .mobileSearchRow {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .mobileSearchPill {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #ffffff;
-    border: 1.5px solid #E75525;
-    border-radius: 100px;
-    padding: 0 14px 0 0;
-    overflow: hidden;
-    height: 38px;
-    cursor: text;
-    transition: box-shadow 0.2s;
-  }
-
-  .mobileSearchPill:focus-within {
-    box-shadow: 0 0 0 3px rgba(231,85,37,0.12);
-  }
-
-  .mobileSearchPillIcon {
-    color: #E75525;
-    margin-left: 12px;
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-  }
-
-  .mobileSearchPillText {
-    flex: 1;
-    font-size: 13px;
-    color: #B0B0B8;
-    font-family: inherit;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
   /* Cart button on mobile */
   .cartBtn {
     width: 38px;
@@ -588,48 +541,7 @@
     min-width: 200px;
   }
 
-  /* ── Announcement strip ── */
-  .announcementStrip {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    background: #0A3C46;
-    padding: 7px 14px;
-    overflow: hidden;
-    white-space: nowrap;
-  }
 
-  .announcementInner {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    animation: ticker 18s linear infinite;
-  }
-
-  @keyframes ticker {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-
-  .announcementItem {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #ffffff;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .announcementDot {
-    width: 4px;
-    height: 4px;
-    background: rgba(255,255,255,0.4);
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
 }
 
 @media (max-width: 400px) {
