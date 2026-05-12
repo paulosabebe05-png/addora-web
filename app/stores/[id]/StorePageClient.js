@@ -4,12 +4,14 @@ import Link from 'next/link'
 import { useCart } from '../../../lib/cart'
 import { useAuth } from '../../../lib/auth'
 import { useRouter } from 'next/navigation'
+import { useLang } from '../../../lib/lang'
 import styles from './store.module.css'
 
 export default function StorePageClient({ store, products = [] }) {
   const { user }    = useAuth()
   const { addItem } = useCart()
   const router      = useRouter()
+  const { tr }      = useLang()
 
   const [search,  setSearch]  = useState('')
   const [sortBy,  setSortBy]  = useState('newest')
@@ -54,7 +56,7 @@ export default function StorePageClient({ store, products = [] }) {
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="#2563eb" stroke="none">
                     <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
                   </svg>
-                  Verified Seller
+                  {tr('verifiedSellerLabel')}
                 </span>
               )}
             </div>
@@ -70,7 +72,7 @@ export default function StorePageClient({ store, products = [] }) {
                 <span className={styles.ratingVal}>{Number(store.rating).toFixed(1)}</span>
               </div>
             )}
-            <p className={styles.productCount}>{products.length} product{products.length !== 1 ? 's' : ''}</p>
+            <p className={styles.productCount}>{products.length} {products.length !== 1 ? tr('storeProducts') : tr('storeProduct')}</p>
           </div>
         </div>
       </div>
@@ -84,17 +86,17 @@ export default function StorePageClient({ store, products = [] }) {
             </svg>
             <input
               type="text"
-              placeholder="Search products..."
+              placeholder={tr('searchProducts')}
               value={search}
               onChange={e => setSearch(e.target.value)}
               className={styles.searchInput}
             />
           </div>
           <select value={sortBy} onChange={e => setSortBy(e.target.value)} className={styles.sortSelect}>
-            <option value="newest">Newest</option>
-            <option value="price_asc">Price: Low to High</option>
-            <option value="price_desc">Price: High to Low</option>
-            <option value="discount">Best Discount</option>
+            <option value="newest">{tr('sortNewest')}</option>
+            <option value="price_asc">{tr('sortPriceAsc')}</option>
+            <option value="price_desc">{tr('sortPriceDesc')}</option>
+            <option value="discount">{tr('sortDiscount')}</option>
           </select>
         </div>
       </div>
@@ -106,7 +108,7 @@ export default function StorePageClient({ store, products = [] }) {
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="1.2">
               <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
-            <p>No products found</p>
+            <p>{tr('noProductsFound')}</p>
           </div>
         ) : (
           <div className={styles.grid}>
@@ -134,7 +136,7 @@ export default function StorePageClient({ store, products = [] }) {
                       <span className={styles.discBadge}>-{product.discount}%</span>
                     )}
                     {isOos && (
-                      <div className={styles.oosOverlay}>Out of Stock</div>
+                      <div className={styles.oosOverlay}>{tr('outOfStock')}</div>
                     )}
                   </Link>
 
@@ -151,7 +153,7 @@ export default function StorePageClient({ store, products = [] }) {
                         className={`${styles.addBtn} ${isOos ? styles.addBtnDisabled : ''} ${isAdded ? styles.addBtnAdded : ''}`}
                         onClick={() => !isOos && handleAddToCart(product)}
                         disabled={isOos}
-                        aria-label="Add to cart"
+                        aria-label={tr('addToCart')}
                       >
                         {isAdded ? (
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -164,7 +166,7 @@ export default function StorePageClient({ store, products = [] }) {
                             <path d="M16 10a4 4 0 01-8 0"/>
                           </svg>
                         )}
-                        <span className={styles.addBtnText}>{isAdded ? 'Added!' : 'Add'}</span>
+                        <span className={styles.addBtnText}>{isAdded ? tr('addedToCart') : tr('addShort')}</span>
                       </button>
                     </div>
                   </div>
