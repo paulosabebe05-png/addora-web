@@ -446,26 +446,33 @@ export default function HomeClient() {
 
       {/* ══ MOBILE HERO ══ */}
       <div className={styles.mobileHero}>
+
+        {/* Mobile search bar — below logo */}
+        <div className={styles.mobileSearchWrap}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input
+            type="text"
+            placeholder={tr('searchProducts')}
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className={styles.mobileSearchInput}
+          />
+          {search && (
+            <button className={styles.mobileSearchClear} onClick={() => setSearch('')}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          )}
+        </div>
+
         <div
           className={styles.mobileBannerWrap}
           style={{ margin: '0 14px 10px', borderRadius: 18, overflow: 'hidden', boxShadow: '0 6px 20px rgba(0,0,0,0.10)' }}
         >
           <HeroBannerCarousel banners={mobileBanners} loading={loadingMobile} isMobile={true} />
-        </div>
-
-        {/* Mobile trust row — translated */}
-        <div className={styles.mobileTrustRow}>
-          {[
-            { icon: '✓',  key: 'mobileTrustCOD' },
-            { icon: '🚚', key: 'mobileTrustDays' },
-            { icon: '🔒', key: 'mobileTrustVerified' },
-            { icon: '🆓', key: 'mobileTrustFreeAddis' },
-          ].map((t, i) => (
-            <div key={i} className={styles.mobileTrustItem}>
-              <span>{t.icon}</span>
-              <span>{tr(t.key)}</span>
-            </div>
-          ))}
         </div>
 
         {/* Mobile category pills — translated */}
