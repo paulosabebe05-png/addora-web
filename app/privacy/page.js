@@ -1,9 +1,6 @@
+'use client'
 import Link from 'next/link'
-
-export const metadata = {
-  title: 'Privacy Policy — Addora',
-  description: 'How Addora collects, uses, and protects your personal information.',
-}
+import { useLang } from '@/lib/lang'
 
 const sections = [
   {
@@ -138,6 +135,7 @@ const sections = [
 ]
 
 export default function PrivacyPage() {
+  const { tr } = useLang()
   return (
     <div style={{ minHeight: '100vh', background: '#f8f8f6', fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif" }}>
 
@@ -148,23 +146,23 @@ export default function PrivacyPage() {
 
         <div style={{ maxWidth: '800px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}>
-            <Link href="/" style={{ color: 'rgba(255,255,255,0.45)', fontSize: '13px', textDecoration: 'none' }}>Home</Link>
+            <Link href="/" style={{ color: 'rgba(255,255,255,0.45)', fontSize: '13px', textDecoration: 'none' }}>{tr('breadcrumbHome')}</Link>
             <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: '13px' }}>›</span>
-            <span style={{ color: '#E75525', fontSize: '13px', fontWeight: 600 }}>Privacy Policy</span>
+            <span style={{ color: '#E75525', fontSize: '13px', fontWeight: 600 }}>{tr('privacyTitle')}</span>
           </div>
 
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', background: 'rgba(231,85,37,0.15)', border: '1px solid rgba(231,85,37,0.3)', color: '#FF8A65', fontSize: '12px', fontWeight: 600, padding: '6px 14px', borderRadius: '100px', marginBottom: '20px' }}>
-            🔒 Privacy Policy
+            🔒 {tr('privacyTitle')}
           </div>
 
           <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, color: 'white', margin: '0 0 16px', lineHeight: 1.15, letterSpacing: '-0.5px' }}>
-            Your Privacy Matters to Us
+            {tr('privacyHeroTitle')}
           </h1>
           <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '16px', lineHeight: 1.6, margin: '0 0 28px', maxWidth: '560px' }}>
-            We are transparent about how we handle your personal data on the Addora marketplace.
+            {tr('privacyHeroSub')}
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>
-            <span>Last updated: January 2025</span>
+            <span>{tr('privacyLastUpdated')}</span>
             <span>·</span>
             <span>Addora Technology PLC</span>
           </div>
@@ -178,7 +176,7 @@ export default function PrivacyPage() {
         <aside style={{ position: 'sticky', top: '88px' }}>
           <div style={{ background: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 2px 20px rgba(16,24,43,0.08)', border: '1px solid rgba(16,24,43,0.06)' }}>
             <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af', marginBottom: '16px' }}>
-              Contents
+              {tr('contentsLabel')}
             </div>
             {sections.map((s) => (
               <a key={s.id} href={`#${s.id}`} className="toc-link">
@@ -188,7 +186,7 @@ export default function PrivacyPage() {
             ))}
             <div style={{ borderTop: '1px solid #f0f0f0', marginTop: '16px', paddingTop: '16px' }}>
               <Link href="/terms" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#E75525', fontWeight: 600, textDecoration: 'none' }}>
-                📄 Terms of Service →
+                {tr('termsTermsLink')}
               </Link>
             </div>
           </div>
@@ -199,7 +197,7 @@ export default function PrivacyPage() {
           <div style={{ background: 'linear-gradient(135deg, #10182B, #1a2a42)', borderRadius: '16px', padding: '28px 24px', marginBottom: '32px', border: '1px solid rgba(231,85,37,0.2)' }}>
             <div style={{ fontSize: '22px', marginBottom: '10px' }}>👋</div>
             <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '15px', lineHeight: 1.7, margin: 0 }}>
-              Addora Technology PLC operates the Addora marketplace at <strong style={{ color: 'white' }}>addora.com.et</strong>. We are committed to protecting your privacy and being transparent about our data practices. By using Addora, you agree to the terms described in this policy.
+              {tr('privacyIntro')}
             </p>
           </div>
 
