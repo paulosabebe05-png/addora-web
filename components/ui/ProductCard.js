@@ -5,6 +5,7 @@ import { useCart } from '../../lib/cart'
 import { useWishlist } from '@/context/WishlistContext'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { useLang } from '../../lib/lang'
 import styles from './ProductCard.module.css'
 
 const PASTEL_COLORS = [
@@ -51,7 +52,7 @@ function StarRating({ rating = 0, reviews = 0 }) {
   return (
     <div className={styles.stars}>
       {[1, 2, 3, 4, 5].map((s) => (
-        <svg key={s} width="11" height="11" viewBox="0 0 12 12"
+        <svg key={s} width="10" height="10" viewBox="0 0 12 12"
           fill={s <= Math.round(rating) ? '#f59e0b' : '#e5e7eb'}>
           <path d="M6 1l1.5 3 3.3.5-2.4 2.3.6 3.2L6 8.5l-3 1.5.6-3.2L1.2 4.5l3.3-.5z" />
         </svg>
@@ -67,6 +68,7 @@ export default function ProductCard({ product }) {
   const { user } = useAuth()
   const { addItem } = useCart()
   const { toggleWishlist, isWishlisted } = useWishlist()
+  const { tr } = useLang()
   const router = useRouter()
   const [added, setAdded] = useState(false)
 
@@ -77,7 +79,6 @@ export default function ProductCard({ product }) {
     : product.price
 
   const pastelBg = getPastelBg(product.id)
-
   const lowStock = product.stock > 0 && product.stock <= 5
 
   const handleAddToCart = (e) => {
@@ -134,26 +135,26 @@ export default function ProductCard({ product }) {
           </div>
         )}
 
-        {/* Discount badge */}
+        {/* Discount badge — compact, top-left */}
         {product.discount > 0 && (
           <span className={styles.discountBadge}>-{product.discount}%</span>
         )}
 
-        {/* Hot badge */}
-        {product.badge && product.badge !== '' && (
+        {/* Hot badge — only when no discount badge */}
+        {product.badge && product.badge !== '' && !product.discount && (
           <span className={styles.hotBadge}>{product.badge}</span>
         )}
 
-        {/* Out of stock */}
+        {/* Out of stock overlay */}
         {product.stock === 0 && (
-          <div className={styles.outOfStock}>Sold Out</div>
+          <div className={styles.outOfStock}>{tr('soldOut')}</div>
         )}
 
-        {/* Wishlist heart button */}
+        {/* Wishlist button */}
         <button
           className={`${styles.wishBtn} ${wishlisted ? styles.wishlisted : ''}`}
           onClick={handleWishlist}
-          aria-label="Add to wishlist"
+          aria-label={tr('addToWishlist')}
         >
           <svg width="13" height="13" viewBox="0 0 24 24"
             fill={wishlisted ? '#ef4444' : 'none'}
@@ -164,33 +165,27 @@ export default function ProductCard({ product }) {
         </button>
       </div>
 
-      {/* ── Body ── */}
+      {/* ── Body — clear visual hierarchy: name → stars → sold → price ── */}
       <div className={styles.body}>
 
-        {/* Social proof row */}
-        {(product.sold > 0 || product.reviews > 0) && (
-          <div className={styles.socialRow}>
-            {product.sold > 0 && (
-              <span className={styles.soldBadge}>
-                🔥 {fmtSold(product.sold)} sold
-              </span>
-            )}
-            {product.reviews > 0 && (
-              <span className={styles.reviewBadge}>
-                ★ {product.rating} ({product.reviews > 999 ? (product.reviews/1000).toFixed(1)+'k' : product.reviews})
-              </span>
-            )}
-          </div>
-        )}
-
+        {/* 1. Product name — dominant, first thing eyes land on */}
         <h3 className={styles.name}>{product.name}</h3>
 
-        {/* Stars */}
+        {/* 2. Stars — tight under name */}
         {product.rating > 0 && (
           <StarRating rating={product.rating} reviews={product.reviews} />
         )}
 
-        {/* Low stock warning */}
+        {/* 3. Sold count — subtle social proof, not a badge war */}
+        {product.sold > 0 && (
+          <div className={styles.soldRow}>
+            <span className={styles.soldBadge}>
+              🔥 {fmtSold(product.sold)} {tr('sold')}
+            </span>
+          </div>
+        )}
+
+        {/* 4. Low stock — only when relevant */}
         {lowStock && (
           <p className={styles.lowStock}>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -198,16 +193,20 @@ export default function ProductCard({ product }) {
               <line x1="12" y1="8" x2="12" y2="12"/>
               <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
-            Only {product.stock} left!
+            {tr('onlyLeft')} {product.stock} {tr('leftInStock')}
           </p>
         )}
 
-        {/* Footer: price + cart button */}
+        {/* 5. Footer: price (hero element) + add button */}
         <div className={styles.footer}>
           <div className={styles.pricing}>
-            <span className={styles.price}>ETB {Math.round(discountedPrice).toLocaleString()}</span>
+            <span className={styles.price}>
+              ETB {Math.round(discountedPrice).toLocaleString()}
+            </span>
             {product.discount > 0 && (
-              <span className={styles.originalPrice}>ETB {product.price.toLocaleString()}</span>
+              <span className={styles.originalPrice}>
+                ETB {product.price.toLocaleString()}
+              </span>
             )}
           </div>
 
@@ -215,14 +214,14 @@ export default function ProductCard({ product }) {
             className={`${styles.addBtn} ${added ? styles.added : ''} ${product.stock === 0 ? styles.disabled : ''}`}
             onClick={handleAddToCart}
             disabled={product.stock === 0}
-            aria-label="Add to cart"
+            aria-label={tr('addToCart')}
           >
             {added ? (
               <>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
-                <span className={styles.addBtnText}>Added</span>
+                <span className={styles.addBtnText}>{tr('addedToCart')}</span>
               </>
             ) : (
               <>
@@ -230,7 +229,7 @@ export default function ProductCard({ product }) {
                   <line x1="12" y1="5" x2="12" y2="19"/>
                   <line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
-                <span className={styles.addBtnText}>Add to Cart</span>
+                <span className={styles.addBtnText}>{tr('addToCart')}</span>
               </>
             )}
           </button>
