@@ -100,13 +100,6 @@ export default function Header() {
     setMenuOpen(false)
   }
 
-  const announcements = [
-    { icon: '✓', text: tr('cashOnDelivery') },
-    { icon: '⏱', text: tr('fastDelivery') },
-    { icon: '→', text: tr('freeInAddis') },
-  ]
-  const tickerItems = [...announcements, ...announcements]
-
   return (
     <>
       <header className={`${styles.header} ${transparent ? styles.transparent : styles.solid}`}>
@@ -178,24 +171,6 @@ export default function Header() {
                 />
               </div>
             )}
-          </div>
-
-          {/* ── Mobile search pill (opens overlay) ── */}
-          <div className={styles.mobileSearchRow}>
-            <button
-              className={styles.mobileSearchPill}
-              onClick={() => setMobileOpen(true)}
-              type="button"
-              aria-label={tr('openSearch')}
-            >
-              <span className={styles.mobileSearchPillIcon}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                  <circle cx="11" cy="11" r="8"/>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
-              </span>
-              <span className={styles.mobileSearchPillText}>{tr('searchProducts')}</span>
-            </button>
           </div>
 
           {/* ── Desktop nav links ── */}
@@ -297,20 +272,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* ── Announcement strip ── */}
-        {isHome && (
-          <div className={styles.announcementStrip}>
-            <div className={styles.announcementInner}>
-              {tickerItems.map((item, i) => (
-                <span key={i} className={styles.announcementItem}>
-                  <span>{item.icon}</span>
-                  <span>{item.text}</span>
-                  {i < tickerItems.length - 1 && <span className={styles.announcementDot} />}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+
       </header>
 
       {/* ── Mobile search full-screen overlay ── */}
