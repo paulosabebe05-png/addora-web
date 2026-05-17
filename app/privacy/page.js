@@ -2,140 +2,89 @@
 import Link from 'next/link'
 import { useLang } from '@/lib/lang'
 
-const sections = [
-  {
-    id: 'information-we-collect',
-    icon: '📋',
-    title: 'Information We Collect',
-    content: [
-      {
-        subtitle: 'Personal Information',
-        text: 'When you create an account or place an order on Addora, we collect information you provide directly, including your full name, phone number, email address, and delivery address. This information is essential to process your orders and deliver products to you.',
-      },
-      {
-        subtitle: 'Order & Transaction Data',
-        text: 'We retain records of products you have purchased, order history, delivery status, and payment method preferences. This helps us resolve disputes, process returns, and improve our service.',
-      },
-      {
-        subtitle: 'Device & Usage Data',
-        text: 'We automatically collect certain technical information when you visit our platform, including your IP address, browser type, device type, pages visited, and time spent on each page. This helps us optimize performance and detect fraud.',
-      },
-    ],
-  },
-  {
-    id: 'how-we-use',
-    icon: '⚙️',
-    title: 'How We Use Your Information',
-    content: [
-      {
-        subtitle: 'Order Fulfillment',
-        text: 'Your personal information is primarily used to process and deliver your orders, send order confirmations and delivery updates via SMS or email, and coordinate with our delivery partners across Ethiopia.',
-      },
-      {
-        subtitle: 'Customer Support',
-        text: 'We use your contact information to respond to your inquiries, resolve disputes with sellers, process refund requests, and send important service announcements related to your account.',
-      },
-      {
-        subtitle: 'Platform Improvement',
-        text: 'Aggregated and anonymized usage data helps us understand how customers interact with Addora, which product categories are most popular, and where we can improve the shopping experience.',
-      },
-      {
-        subtitle: 'Promotions & Offers',
-        text: 'With your consent, we may send you promotional messages about flash sales, new arrivals, and exclusive deals. You can opt out of marketing communications at any time through your account settings.',
-      },
-    ],
-  },
-  {
-    id: 'information-sharing',
-    icon: '🤝',
-    title: 'Information Sharing',
-    content: [
-      {
-        subtitle: 'With Sellers',
-        text: 'When you place an order, we share your delivery name, address, and phone number with the seller responsible for fulfilling your order. Sellers are contractually prohibited from using this information for any purpose other than fulfilling your order.',
-      },
-      {
-        subtitle: 'With Delivery Partners',
-        text: 'We share your delivery address and contact number with our logistics and delivery partners to ensure your order reaches you. These partners are bound by confidentiality obligations.',
-      },
-      {
-        subtitle: 'Legal Requirements',
-        text: 'We may disclose your information if required by Ethiopian law, court order, or government authority. We will notify you of such requests unless legally prohibited from doing so.',
-      },
-      {
-        subtitle: 'We Never Sell Your Data',
-        text: 'Addora does not sell, rent, or trade your personal information to third parties for their marketing purposes. Your data is yours.',
-      },
-    ],
-  },
-  {
-    id: 'data-security',
-    icon: '🔒',
-    title: 'Data Security',
-    content: [
-      {
-        subtitle: 'How We Protect You',
-        text: 'We implement industry-standard security measures including encrypted data transmission (HTTPS/TLS), secure database storage, and restricted access controls. Only authorized Addora personnel can access personal information, and only when necessary.',
-      },
-      {
-        subtitle: 'Payment Security',
-        text: 'As a cash-on-delivery platform, we do not store credit card or bank account information. Payments via Telebirr and Chapa are processed through their secure, certified payment infrastructure.',
-      },
-      {
-        subtitle: 'Your Responsibility',
-        text: 'You are responsible for keeping your account credentials confidential. Please use a strong password and never share your login details. Contact us immediately if you suspect unauthorized access to your account.',
-      },
-    ],
-  },
-  {
-    id: 'your-rights',
-    icon: '⚖️',
-    title: 'Your Rights',
-    content: [
-      {
-        subtitle: 'Access & Correction',
-        text: 'You have the right to access the personal information we hold about you and request corrections to any inaccurate data. You can update most information directly through your account settings.',
-      },
-      {
-        subtitle: 'Data Deletion',
-        text: 'You may request deletion of your account and associated personal data at any time. Note that we may retain certain information as required by law or for legitimate business purposes such as fraud prevention.',
-      },
-      {
-        subtitle: 'Marketing Opt-Out',
-        text: 'You can unsubscribe from promotional communications at any time by clicking "unsubscribe" in any marketing email, or by contacting our support team.',
-      },
-    ],
-  },
-  {
-    id: 'cookies',
-    icon: '🍪',
-    title: 'Cookies & Tracking',
-    content: [
-      {
-        subtitle: 'What We Use',
-        text: 'Addora uses cookies and similar tracking technologies to keep you logged in, remember your preferences, and understand how you use our platform. We use both session cookies (deleted when you close your browser) and persistent cookies.',
-      },
-      {
-        subtitle: 'Your Choices',
-        text: 'You can control cookies through your browser settings. Disabling cookies may affect some features of Addora, such as staying logged in or maintaining your shopping cart.',
-      },
-    ],
-  },
-  {
-    id: 'contact',
-    icon: '📬',
-    title: 'Contact Us',
-    content: [
-      {
-        subtitle: 'Privacy Inquiries',
-        text: 'For any questions, concerns, or requests related to your privacy and personal data, please contact our dedicated privacy team. We are committed to responding within 48 hours.',
-      },
-    ],
-  },
-]
-
 export default function PrivacyPage() {
   const { tr } = useLang()
+
+  // All section data built from tr() so it reacts to language changes
+  const sections = [
+    {
+      id: 'information-we-collect',
+      icon: '📋',
+      title: tr('privacySec1Title'),
+      content: [
+        { subtitle: tr('privacySec1Sub1'), text: tr('privacySec1Text1') },
+        { subtitle: tr('privacySec1Sub2'), text: tr('privacySec1Text2') },
+        { subtitle: tr('privacySec1Sub3'), text: tr('privacySec1Text3') },
+      ],
+    },
+    {
+      id: 'how-we-use',
+      icon: '⚙️',
+      title: tr('privacySec2Title'),
+      content: [
+        { subtitle: tr('privacySec2Sub1'), text: tr('privacySec2Text1') },
+        { subtitle: tr('privacySec2Sub2'), text: tr('privacySec2Text2') },
+        { subtitle: tr('privacySec2Sub3'), text: tr('privacySec2Text3') },
+        { subtitle: tr('privacySec2Sub4'), text: tr('privacySec2Text4') },
+      ],
+    },
+    {
+      id: 'information-sharing',
+      icon: '🤝',
+      title: tr('privacySec3Title'),
+      content: [
+        { subtitle: tr('privacySec3Sub1'), text: tr('privacySec3Text1') },
+        { subtitle: tr('privacySec3Sub2'), text: tr('privacySec3Text2') },
+        { subtitle: tr('privacySec3Sub3'), text: tr('privacySec3Text3') },
+        { subtitle: tr('privacySec3Sub4'), text: tr('privacySec3Text4') },
+      ],
+    },
+    {
+      id: 'data-security',
+      icon: '🔒',
+      title: tr('privacySec4Title'),
+      content: [
+        { subtitle: tr('privacySec4Sub1'), text: tr('privacySec4Text1') },
+        { subtitle: tr('privacySec4Sub2'), text: tr('privacySec4Text2') },
+        { subtitle: tr('privacySec4Sub3'), text: tr('privacySec4Text3') },
+      ],
+    },
+    {
+      id: 'your-rights',
+      icon: '⚖️',
+      title: tr('privacySec5Title'),
+      content: [
+        { subtitle: tr('privacySec5Sub1'), text: tr('privacySec5Text1') },
+        { subtitle: tr('privacySec5Sub2'), text: tr('privacySec5Text2') },
+        { subtitle: tr('privacySec5Sub3'), text: tr('privacySec5Text3') },
+      ],
+    },
+    {
+      id: 'cookies',
+      icon: '🍪',
+      title: tr('privacySec6Title'),
+      content: [
+        { subtitle: tr('privacySec6Sub1'), text: tr('privacySec6Text1') },
+        { subtitle: tr('privacySec6Sub2'), text: tr('privacySec6Text2') },
+      ],
+    },
+    {
+      id: 'contact',
+      icon: '📬',
+      title: tr('privacySec7Title'),
+      content: [
+        { subtitle: tr('privacySec7Sub1'), text: tr('privacySec7Text1') },
+      ],
+    },
+  ]
+
+  const contactCards = [
+    { icon: '📧', label: tr('privacyContactEmailLabel'),    value: 'addora@addora.com.et',     href: 'mailto:addora@addora.com.et' },
+    { icon: '📞', label: tr('privacyContactPhoneLabel'),    value: '+251 926 635 307',           href: 'tel:+251926635307' },
+    { icon: '📍', label: tr('privacyContactLocationLabel'), value: tr('privacyContactLocationValue'), href: null },
+    { icon: '🌐', label: tr('privacyContactWebsiteLabel'),  value: 'www.addora.com.et',         href: 'https://addora.com.et' },
+  ]
+
   return (
     <div style={{ minHeight: '100vh', background: '#f8f8f6', fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif" }}>
 
@@ -215,14 +164,8 @@ export default function PrivacyPage() {
                   <p style={{ color: '#6b7280', fontSize: '15px', lineHeight: 1.7, marginBottom: '20px' }}>
                     {section.content[0].text}
                   </p>
-                  {/* FIXED: was grid 1fr 1fr on mobile — now stacks to 1 col */}
                   <div className="contact-grid">
-                    {[
-                      { icon: '📧', label: 'Email', value: 'addora@addora.com.et', href: 'mailto:addora@addora.com.et' },
-                      { icon: '📞', label: 'Phone', value: '+251 926 635 307', href: 'tel:+251926635307' },
-                      { icon: '📍', label: 'Location', value: 'Addis Ababa, Ethiopia', href: null },
-                      { icon: '🌐', label: 'Website', value: 'www.addora.com.et', href: 'https://addora.com.et' },
-                    ].map(c => (
+                    {contactCards.map(c => (
                       <a key={c.label} href={c.href || '#'} className="contact-card">
                         <span style={{ fontSize: '18px' }}>{c.icon}</span>
                         <div>
@@ -249,11 +192,11 @@ export default function PrivacyPage() {
           {/* Bottom CTA */}
           <div style={{ background: '#10182B', borderRadius: '16px', padding: '28px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
             <div>
-              <div style={{ color: 'white', fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>Still have questions about your privacy?</div>
-              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px' }}>Our team is ready to help you.</div>
+              <div style={{ color: 'white', fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>{tr('privacyCtaTitle')}</div>
+              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px' }}>{tr('privacyCtaSub')}</div>
             </div>
             <a href="mailto:addora@addora.com.et" style={{ background: '#E75525', color: 'white', padding: '12px 24px', borderRadius: '10px', textDecoration: 'none', fontSize: '14px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-              Contact Us →
+              {tr('privacyCtaBtn')}
             </a>
           </div>
         </div>
