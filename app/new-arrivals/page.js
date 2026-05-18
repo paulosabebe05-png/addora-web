@@ -61,45 +61,50 @@ export default function NewArrivalsPage() {
 
   return (
     <div className={styles.page}>
-      {/* ── Header ── */}
-      <div className={styles.header}>
-        <Link href="/" className={styles.backBtn}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-          Home
-        </Link>
 
-        <div className={styles.titleRow}>
-          <div className={styles.accentBar} />
-          <div>
-            <p className={styles.sectionLabel}>Fresh Picks</p>
-            <h1 className={styles.pageTitle}>✨ New Arrivals</h1>
-          </div>
-        </div>
+      {/* ── Title Bar ── */}
+      <div className={styles.titleBar}>
+        <div className={styles.titleBarInner}>
 
-        {/* Sort bar */}
-        <div className={styles.sortBar}>
-          <span className={styles.sortLabel}>
-            {loading ? '…' : `${products.length} products`}
-          </span>
-          <div className={styles.sortBtns}>
-            {[
-              { key: 'newest',     label: 'Newest' },
-              { key: 'rating',     label: 'Top Rated' },
-              { key: 'price_asc',  label: 'Price ↑' },
-              { key: 'price_desc', label: 'Price ↓' },
-            ].map(o => (
-              <button
-                key={o.key}
-                className={`${styles.sortBtn} ${sortBy === o.key ? styles.sortActive : ''}`}
-                onClick={() => setSortBy(o.key)}
-              >
-                {o.label}
-              </button>
-            ))}
+          {/* Breadcrumb */}
+          <ol className={styles.breadcrumb}>
+            <li><Link href="/" className={styles.breadcrumbLink}>Home</Link></li>
+            <li className={styles.breadcrumbSep}>›</li>
+            <li className={styles.breadcrumbCurrent}>New Arrivals</li>
+          </ol>
+
+          {/* Title row */}
+          <div className={styles.titleRow}>
+            <span className={styles.accentBar} />
+            <div className={styles.titleText}>
+              <p className={styles.sectionLabel}>Fresh Picks</p>
+              <h1 className={styles.pageTitle}>✨ New Arrivals</h1>
+            </div>
           </div>
+
+          {/* Sort bar */}
+          <div className={styles.sortBar}>
+            <span className={styles.productCount}>
+              {loading ? '…' : `${products.length} products`}
+            </span>
+            <div className={styles.sortBtns}>
+              {[
+                { key: 'newest',     label: 'Newest'    },
+                { key: 'rating',     label: 'Top Rated' },
+                { key: 'price_asc',  label: 'Price ↑'   },
+                { key: 'price_desc', label: 'Price ↓'   },
+              ].map(o => (
+                <button
+                  key={o.key}
+                  className={`${styles.sortBtn} ${sortBy === o.key ? styles.sortActive : ''}`}
+                  onClick={() => setSortBy(o.key)}
+                >
+                  {o.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -111,20 +116,26 @@ export default function NewArrivalsPage() {
           </div>
         ) : products.length === 0 ? (
           <div className={styles.empty}>
-            <p>No new arrivals yet — check back soon!</p>
+            <p className={styles.emptyIcon}>✨</p>
+            <p className={styles.emptyTitle}>Nothing here yet</p>
+            <p className={styles.emptySub}>No new arrivals yet — check back soon!</p>
+            <Link href="/" className={styles.emptyCta}>Back to Home</Link>
           </div>
         ) : (
           <div className={styles.grid}>
             {products.map((p, i) => (
-              <div key={p.id}
-                   style={{ animationDelay: `${i * 0.025}s` }}
-                   className={styles.gridItem}>
+              <div
+                key={p.id}
+                style={{ animationDelay: `${i * 0.025}s` }}
+                className={styles.gridItem}
+              >
                 <ProductCard product={p} />
               </div>
             ))}
           </div>
         )}
       </main>
+
     </div>
   )
 }
