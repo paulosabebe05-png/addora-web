@@ -36,7 +36,8 @@ export default function RootLayout({ children }) {
       <body>
         <Providers>
           <Header />
-          <main style={{ width: '100%', minHeight: 'calc(100vh - 68px)', paddingTop: '68px', paddingBottom: 'var(--bottom-nav-height, 0px)' }}>
+         <main style={{ width: '100%', minHeight: 'calc(100vh - 64px)', paddingBottom: 'var(--bottom-nav-height, 0px)' }}>
+
             {children}
           </main>
           <Footer />
