@@ -1,16 +1,9 @@
-/* ═══════════════════════════════════════════════════════════════════════════
-   COPY THIS FILE INTO EACH FOLDER AND RENAME:
-     app/flash-deals/FlashDeals.module.css
-     app/new-arrivals/NewArrivals.module.css
-     app/todays-deals/TodaysDeals.module.css
-     app/best-sellers/BestSellers.module.css
-   ═══════════════════════════════════════════════════════════════════════════ */
-
 /* ── Page wrapper ── */
 .page {
   min-height: 100vh;
   background: #f7f8fa;
   font-family: inherit;
+  padding-top: 68px; /* FIX: offset fixed header height (desktop) */
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -38,6 +31,9 @@
   gap: 6px;
   font-size: 12px;
   color: #aaa;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   margin-bottom: 2px;
 }
 .breadcrumbLink {
@@ -55,6 +51,13 @@
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
+  min-height: 40px;
+}
+
+.titleText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .accentBar {
@@ -133,6 +136,12 @@
 }
 
 .sortLabel {
+  font-size: 13px;
+  color: #999;
+  white-space: nowrap;
+}
+
+.productCount {
   font-size: 13px;
   color: #999;
   white-space: nowrap;
@@ -273,15 +282,18 @@
    ══════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
 
+  /* FIX: mobile header is 56px */
+  .page { padding-top: 56px; }
+
   /* Title bar */
   .titleBarInner {
     padding: 10px 14px 12px;
     gap: 6px;
   }
 
-  .pageTitle { font-size: 18px; }
+  .pageTitle    { font-size: 18px; }
   .sectionLabel { font-size: 10px; }
-  .accentBar { width: 11px; height: 28px; }
+  .accentBar    { width: 11px; height: 28px; }
 
   /* Timer pill — smaller on mobile */
   .timerPill  { padding: 4px 8px; gap: 3px; }
@@ -328,14 +340,13 @@
     margin: 0;
     border: none;
   }
-  /* Add 1px gap effect via outline */
   .gridItem > * {
     border-radius: 0 !important;
   }
 
   /* Empty state */
-  .empty    { padding: 60px 20px; }
-  .emptyIcon { font-size: 44px; }
+  .empty      { padding: 60px 20px; }
+  .emptyIcon  { font-size: 44px; }
   .emptyTitle { font-size: 18px; }
   .emptySub   { font-size: 13px; }
 }
