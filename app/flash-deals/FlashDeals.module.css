@@ -1,0 +1,221 @@
+/* FlashDeals.module.css
+   Matches the HomeClient design system: same brand colors, fonts, spacing.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Page shell ── */
+.page {
+  min-height: 100vh;
+  background: #ffffff;
+  font-family: inherit;
+}
+
+/* ── Sticky header band ── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 12px 24px 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-decoration: none;
+  margin-bottom: 10px;
+  transition: color 0.15s;
+}
+.backBtn:hover { color: #E75525; }
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.accentBar {
+  width: 14px;
+  height: 36px;
+  background: #E75525;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.sectionLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #E75525;
+  margin: 0 0 2px;
+  letter-spacing: 0.01em;
+}
+
+.pageTitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #10182B;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.subline {
+  font-size: 13px;
+  color: #999;
+  margin: 6px 0 0 28px;
+}
+
+/* ── Countdown pill (same as HomeClient) ── */
+.timerPill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #10182B;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-left: auto;
+}
+.timerLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  margin-right: 4px;
+}
+.timerGroup { display: flex; align-items: center; gap: 3px; }
+.timerBox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 4px;
+  background: #E75525;
+  color: white;
+  font-size: 13px;
+  font-weight: 800;
+  border-radius: 5px;
+  font-family: 'Space Grotesk', monospace;
+  transition: background 0.3s;
+}
+.timerColon {
+  font-size: 14px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.7);
+}
+
+/* ── Main grid ── */
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 24px 80px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.gridItem {
+  animation: fadeUp 0.35s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Expired / empty states ── */
+.expiredWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  gap: 12px;
+}
+.expiredIcon { font-size: 56px; }
+.expiredTitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #10182B;
+  margin: 0;
+}
+.expiredSub {
+  font-size: 14px;
+  color: #888;
+  max-width: 340px;
+  margin: 0;
+}
+.expiredCta {
+  margin-top: 8px;
+  padding: 11px 28px;
+  background: #E75525;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+}
+.expiredCta:hover { background: #cf4419; transform: translateY(-1px); }
+
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #aaa;
+  font-size: 14px;
+}
+
+/* ── Skeleton cards ── */
+.skeletonCard {
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+  border: 1px solid #f0f0f0;
+}
+.skeletonImg {
+  width: 100%;
+  aspect-ratio: 1/1;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+.skeletonBody { padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+.skeletonLine {
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ══ MOBILE ══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .header { padding: 10px 12px 12px; }
+  .pageTitle { font-size: 18px; }
+  .timerPill { padding: 4px 7px; gap: 2px; }
+  .timerLabel { font-size: 9px; }
+  .timerBox { width: 22px; height: 22px; min-width: 22px; font-size: 11px; }
+  .main { padding: 12px 0 80px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: #e8eaf0;
+  }
+  .gridItem { background: white; animation: none; }
+}
