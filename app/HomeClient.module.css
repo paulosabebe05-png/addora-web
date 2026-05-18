@@ -963,3 +963,34 @@
   .promoFeatures { gap: 6px; }
   .promoFeatureText { font-size: 12px; }
 }
+/* ── Add these lines at the bottom of HomeClient.module.css ── */
+
+.flashExpired {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fff8f6;
+  border: 1.5px dashed #f5c4b0;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-top: 8px;
+}
+
+.flashExpiredIcon {
+  font-size: 36px;
+  flex-shrink: 0;
+}
+
+.flashExpiredTitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #10182B;
+  margin: 0 0 4px;
+}
+
+.flashExpiredSub {
+  font-size: 13px;
+  color: #888;
+  margin: 0;
+}
