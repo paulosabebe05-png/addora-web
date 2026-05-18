@@ -42,6 +42,10 @@
   --save-bg: #FFF3EE;
   --save-color: #C44210;
   --save-border: #FFC9B4;
+
+  /* ── Layout ── */
+  --header-height: 68px;
+  --bottom-nav-height: 0px;
 }
 
 * {
@@ -66,6 +70,13 @@ body {
   width: 100%;
 }
 
+/* ── Offset body content so fixed header never overlaps it ── */
+body > main,
+#__next main,
+main {
+  padding-top: var(--header-height);
+}
+
 a { text-decoration: none; color: inherit; }
 
 button {
@@ -86,26 +97,26 @@ input, textarea, select {
   padding: 0 20px;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 5px; }
+/* ── Scrollbar ── */
+::-webkit-scrollbar       { width: 5px; }
 ::-webkit-scrollbar-track { background: #F0F1F5; }
 ::-webkit-scrollbar-thumb { background: #D0D3DC; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #E75525; }
 
-/* Animations */
+/* ── Animations ── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes pulse-orange {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(231, 85, 37, 0.35); }
-  50% { box-shadow: 0 0 0 8px rgba(231, 85, 37, 0); }
+  0%, 100% { box-shadow: 0 0 0 0   rgba(231, 85, 37, 0.35); }
+  50%       { box-shadow: 0 0 0 8px rgba(231, 85, 37, 0);    }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }
 
 .skeleton {
@@ -115,7 +126,7 @@ input, textarea, select {
   border-radius: var(--radius-sm);
 }
 
-/* Toast */
+/* ── Toast ── */
 .toast {
   position: fixed;
   bottom: 24px;
@@ -133,10 +144,10 @@ input, textarea, select {
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
   letter-spacing: -0.01em;
 }
-.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.show    { transform: translateX(-50%) translateY(0); }
 .toast.success { background: var(--orange); }
 
-/* Badge */
+/* ── Badge ── */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -150,8 +161,12 @@ input, textarea, select {
   border-radius: 50%;
 }
 
+/* ════════════════════════════════════════
+   MOBILE  (≤ 768px)
+   ════════════════════════════════════════ */
 @media (max-width: 768px) {
   :root {
+    --header-height: 56px;
     --bottom-nav-height: 70px;
   }
 
