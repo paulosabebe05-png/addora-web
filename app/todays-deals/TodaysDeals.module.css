@@ -1,125 +1,149 @@
-/* ─────────────────────────────────────────────────────────────────────────────
-   shared-page.module.css
-   Copy this file into each view-all folder and rename it:
+/* ═══════════════════════════════════════════════════════════════════════════
+   COPY THIS FILE INTO EACH FOLDER AND RENAME:
+     app/flash-deals/FlashDeals.module.css
      app/new-arrivals/NewArrivals.module.css
      app/todays-deals/TodaysDeals.module.css
-     app/flash-deals/FlashDeals.module.css
      app/best-sellers/BestSellers.module.css
-   ───────────────────────────────────────────────────────────────────────────── */
+   ═══════════════════════════════════════════════════════════════════════════ */
 
+/* ── Page wrapper ── */
 .page {
   min-height: 100vh;
   background: #f7f8fa;
   font-family: inherit;
 }
 
-/* ── Title bar — sits below the site navbar ── */
+/* ══════════════════════════════════════════════════════════════════════════
+   TITLE BAR  (breadcrumb + title + sort — below the site navbar)
+   ══════════════════════════════════════════════════════════════════════════ */
 .titleBar {
   background: #ffffff;
-  border-bottom: 1px solid #eeeff2;
+  border-bottom: 1.5px solid #eeeff2;
+  width: 100%;
 }
+
 .titleBarInner {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 14px 24px 16px;
+  padding: 12px 32px 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
-/* Breadcrumb */
+/* ── Breadcrumb ── */
 .breadcrumb {
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: #999;
+  color: #aaa;
+  margin-bottom: 2px;
 }
 .breadcrumbLink {
-  color: #999;
+  color: #aaa;
   text-decoration: none;
   transition: color 0.15s;
 }
 .breadcrumbLink:hover { color: #E75525; }
-.breadcrumbSep { color: #ccc; }
-.breadcrumbCurrent { color: #333; font-weight: 600; }
+.breadcrumbSep        { color: #ddd; font-size: 11px; }
+.breadcrumbCurrent    { color: #444; font-weight: 600; }
 
-/* Title row */
+/* ── Title row ── */
 .titleRow {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
 }
+
 .accentBar {
-  width: 14px;
-  height: 36px;
+  width: 13px;
+  height: 34px;
   background: #E75525;
   border-radius: 3px;
   flex-shrink: 0;
 }
+
 .sectionLabel {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: #E75525;
-  margin: 0 0 2px;
-  letter-spacing: 0.01em;
+  margin: 0 0 3px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
+
 .pageTitle {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 22px;
   font-weight: 700;
   color: #10182B;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
-/* Timer pill (flash deals only) */
+/* ── Timer pill (flash deals only) ── */
 .timerPill {
   display: flex;
   align-items: center;
   gap: 4px;
   background: #10182B;
   border-radius: 8px;
-  padding: 6px 10px;
-  margin-left: 8px;
+  padding: 5px 10px;
+  margin-left: 4px;
 }
 .timerLabel {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255,255,255,0.65);
   margin-right: 4px;
+  white-space: nowrap;
 }
-.timerGroup { display: flex; align-items: center; gap: 3px; }
+.timerGroup  { display: flex; align-items: center; gap: 2px; }
 .timerBox {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 28px;
-  height: 28px;
-  padding: 0 4px;
+  min-width: 26px;
+  height: 26px;
   background: #E75525;
-  color: white;
-  font-size: 13px;
+  color: #fff;
+  font-size: 12px;
   font-weight: 800;
   border-radius: 5px;
   font-family: 'Space Grotesk', monospace;
+  letter-spacing: 0;
 }
 .timerColon {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255,255,255,0.5);
+  line-height: 1;
 }
 
-/* Sort bar */
+/* ── Sort bar ── */
 .sortBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
   flex-wrap: wrap;
+  padding-top: 4px;
 }
-.sortLabel { font-size: 13px; color: #999; }
-.sortBtns  { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.sortLabel {
+  font-size: 13px;
+  color: #999;
+  white-space: nowrap;
+}
+
+.sortBtns {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
 .sortBtn {
   padding: 5px 14px;
   border-radius: 100px;
@@ -131,29 +155,38 @@
   color: #555;
   cursor: pointer;
   transition: all 0.15s;
+  white-space: nowrap;
 }
-.sortBtn:hover  { background: #fff0ea; color: #E75525; border-color: rgba(231,85,37,0.3); }
-.sortActive     { background: #10182B !important; color: #fff !important; border-color: #10182B !important; }
+.sortBtn:hover { background: #fff0ea; color: #E75525; border-color: rgba(231,85,37,0.25); }
+.sortActive    { background: #10182B !important; color: #fff !important; border-color: #10182B !important; }
 
-/* ── Product grid ── */
+/* ══════════════════════════════════════════════════════════════════════════
+   PRODUCT GRID
+   ══════════════════════════════════════════════════════════════════════════ */
 .main {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 24px 24px 80px;
+  padding: 24px 32px 80px;
 }
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
   gap: 16px;
 }
-.gridItem { animation: fadeUp 0.3s ease both; }
+
+.gridItem {
+  animation: fadeUp 0.3s ease both;
+}
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Empty / expired states ── */
+/* ══════════════════════════════════════════════════════════════════════════
+   EMPTY / EXPIRED STATES
+   ══════════════════════════════════════════════════════════════════════════ */
 .empty {
   display: flex;
   flex-direction: column;
@@ -163,53 +196,154 @@
   text-align: center;
   gap: 10px;
 }
-.emptyIcon  { font-size: 52px; }
-.emptyTitle { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: #10182B; margin: 0; }
-.emptySub   { font-size: 14px; color: #999; margin: 0; max-width: 320px; }
+.emptyIcon  { font-size: 54px; line-height: 1; }
+.emptyTitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #10182B;
+  margin: 4px 0 0;
+}
+.emptySub {
+  font-size: 14px;
+  color: #999;
+  margin: 0;
+  max-width: 320px;
+  line-height: 1.5;
+}
 .emptyCta {
-  margin-top: 8px;
-  padding: 10px 26px;
+  margin-top: 12px;
+  padding: 11px 28px;
   background: #E75525;
-  color: white;
+  color: #fff;
   font-size: 14px;
   font-weight: 700;
   border-radius: 8px;
   text-decoration: none;
-  transition: background 0.2s;
+  transition: background 0.18s, transform 0.15s;
 }
-.emptyCta:hover { background: #cf4419; }
+.emptyCta:hover { background: #cf4419; transform: translateY(-1px); }
 
-/* ── Skeleton ── */
-.skeletonCard { border-radius: 10px; overflow: hidden; background: white; border: 1px solid #eee; }
-.skeletonImg  {
-  width: 100%; aspect-ratio: 1/1;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+/* ══════════════════════════════════════════════════════════════════════════
+   SKELETON LOADER
+   ══════════════════════════════════════════════════════════════════════════ */
+.skeletonCard {
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #eee;
+}
+.skeletonImg {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }
-.skeletonBody { padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+.skeletonBody {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
 .skeletonLine {
-  height: 10px; border-radius: 5px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }
+
 @keyframes shimmer {
-  0%   { background-position: 200% 0; }
+  0%   { background-position:  200% 0; }
   100% { background-position: -200% 0; }
 }
 
-/* ══ MOBILE ══════════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════════════
+   TABLET  (768px – 1024px)
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .titleBarInner { padding: 12px 20px 14px; }
+  .main          { padding: 20px 20px 80px; }
+  .grid          { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MOBILE  (≤ 768px)
+   ══════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .titleBarInner { padding: 10px 12px 12px; }
-  .pageTitle     { font-size: 18px; }
-  .main          { padding: 12px 0 80px; }
+
+  /* Title bar */
+  .titleBarInner {
+    padding: 10px 14px 12px;
+    gap: 6px;
+  }
+
+  .pageTitle { font-size: 18px; }
+  .sectionLabel { font-size: 10px; }
+  .accentBar { width: 11px; height: 28px; }
+
+  /* Timer pill — smaller on mobile */
+  .timerPill  { padding: 4px 8px; gap: 3px; }
+  .timerLabel { font-size: 9px; }
+  .timerBox   { min-width: 22px; height: 22px; font-size: 11px; border-radius: 4px; }
+  .timerColon { font-size: 12px; }
+
+  /* Sort bar — scrollable row on mobile */
+  .sortBar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .sortBtns {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 6px;
+    width: 100%;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .sortBtns::-webkit-scrollbar { display: none; }
+  .sortBtn {
+    padding: 5px 12px;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  /* Grid — 2 columns, tight gap with divider lines */
+  .main {
+    padding: 0 0 80px;
+  }
   .grid {
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1px;
+    gap: 0;
     background: #e0e2e8;
   }
-  .gridItem { background: white; animation: none; }
-  .sortBtns { gap: 4px; }
-  .sortBtn  { padding: 4px 10px; font-size: 11px; }
+  .gridItem {
+    background: #fff;
+    animation: none;
+    margin: 0;
+    border: none;
+  }
+  /* Add 1px gap effect via outline */
+  .gridItem > * {
+    border-radius: 0 !important;
+  }
+
+  /* Empty state */
+  .empty    { padding: 60px 20px; }
+  .emptyIcon { font-size: 44px; }
+  .emptyTitle { font-size: 18px; }
+  .emptySub   { font-size: 13px; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SMALL MOBILE  (≤ 375px)
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 375px) {
+  .pageTitle { font-size: 16px; }
+  .sortBtn   { padding: 4px 10px; font-size: 10px; }
 }
