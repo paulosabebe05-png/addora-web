@@ -20,6 +20,8 @@
   background: #ffffff;
   border-bottom: 1.5px solid #eeeff2;
   width: 100%;
+  /* FIX: ensure it's a block-level container, never flex/grid at this level */
+  display: block;
 }
 
 .titleBarInner {
@@ -29,6 +31,9 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  /* FIX: make sure children stack vertically and don't escape */
+  box-sizing: border-box;
+  width: 100%;
 }
 
 /* ── Breadcrumb ── */
@@ -38,7 +43,9 @@
   gap: 6px;
   font-size: 12px;
   color: #aaa;
-  margin-bottom: 2px;
+  margin: 0 0 2px;  /* FIX: was margin-bottom: 2px, make sure no auto margins */
+  list-style: none; /* FIX: in case it's rendered as a <ol>/<ul> */
+  padding: 0;
 }
 .breadcrumbLink {
   color: #aaa;
@@ -63,15 +70,25 @@
   background: #E75525;
   border-radius: 3px;
   flex-shrink: 0;
+  /* FIX: explicit display so it never collapses */
+  display: block;
+}
+
+.titleText {
+  /* FIX: wrapper so label + title stack vertically inside the flex row */
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .sectionLabel {
   font-size: 11px;
   font-weight: 700;
   color: #E75525;
-  margin: 0 0 3px;
+  margin: 0;
   letter-spacing: 0.03em;
   text-transform: uppercase;
+  line-height: 1.2;
 }
 
 .pageTitle {
@@ -126,10 +143,23 @@
 .sortBar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  /* FIX: was justify-content: space-between which pushed items to edges.
+     Use flex-start + gap so it stays left-aligned inside the column flow */
+  justify-content: flex-start;
+  gap: 12px;
   flex-wrap: wrap;
   padding-top: 4px;
+  /* FIX: ensure it never breaks out of titleBarInner */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* FIX: count label (e.g. "4 products") */
+.productCount {
+  font-size: 13px;
+  color: #999;
+  white-space: nowrap;
+  margin-right: auto; /* pushes sort buttons to the right */
 }
 
 .sortLabel {
@@ -142,6 +172,8 @@
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
+  align-items: center;
+  /* FIX: allow natural flow, no overflow hidden */
 }
 
 .sortBtn {
@@ -156,9 +188,13 @@
   cursor: pointer;
   transition: all 0.15s;
   white-space: nowrap;
+  /* FIX: prevent button default UA styles from breaking layout */
+  line-height: 1.4;
+  appearance: none;
+  -webkit-appearance: none;
 }
-.sortBtn:hover { background: #fff0ea; color: #E75525; border-color: rgba(231,85,37,0.25); }
-.sortActive    { background: #10182B !important; color: #fff !important; border-color: #10182B !important; }
+.sortBtn:hover  { background: #fff0ea; color: #E75525; border-color: rgba(231,85,37,0.25); }
+.sortActive     { background: #10182B !important; color: #fff !important; border-color: #10182B !important; }
 
 /* ══════════════════════════════════════════════════════════════════════════
    PRODUCT GRID
@@ -221,6 +257,7 @@
   border-radius: 8px;
   text-decoration: none;
   transition: background 0.18s, transform 0.15s;
+  display: inline-block;
 }
 .emptyCta:hover { background: #cf4419; transform: translateY(-1px); }
 
@@ -279,9 +316,9 @@
     gap: 6px;
   }
 
-  .pageTitle { font-size: 18px; }
+  .pageTitle    { font-size: 18px; }
   .sectionLabel { font-size: 10px; }
-  .accentBar { width: 11px; height: 28px; }
+  .accentBar    { width: 11px; height: 28px; }
 
   /* Timer pill — smaller on mobile */
   .timerPill  { padding: 4px 8px; gap: 3px; }
@@ -296,7 +333,6 @@
     gap: 8px;
   }
   .sortBtns {
-    display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
     gap: 6px;
@@ -312,7 +348,7 @@
     flex-shrink: 0;
   }
 
-  /* Grid — 2 columns, tight gap with divider lines */
+  /* Grid — 2 columns with hairline dividers */
   .main {
     padding: 0 0 80px;
   }
@@ -328,14 +364,13 @@
     margin: 0;
     border: none;
   }
-  /* Add 1px gap effect via outline */
   .gridItem > * {
     border-radius: 0 !important;
   }
 
   /* Empty state */
-  .empty    { padding: 60px 20px; }
-  .emptyIcon { font-size: 44px; }
+  .empty      { padding: 60px 20px; }
+  .emptyIcon  { font-size: 44px; }
   .emptyTitle { font-size: 18px; }
   .emptySub   { font-size: 13px; }
 }
