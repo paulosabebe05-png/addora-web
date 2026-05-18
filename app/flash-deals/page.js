@@ -1,10 +1,6 @@
 'use client'
 // app/flash-deals/page.js
-// ─────────────────────────────────────────────────────────────────────────────
-// Full "View All Flash Deals" page.
-// • Uses the shared localStorage countdown (same timer as HomeClient).
-// • When the timer hits zero all products disappear and an empty state shows.
-// ─────────────────────────────────────────────────────────────────────────────
+
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
@@ -20,7 +16,6 @@ const supabase = createClient(
 const PRODUCT_FIELDS =
   'id, name, price, image_url, discount, section, rating, sold, created_at, category_id, stock, active'
 
-// ── tiny helpers ─────────────────────────────────────────────────────────────
 function pad(n) { return String(n).padStart(2, '0') }
 
 function SkeletonCard() {
@@ -36,7 +31,6 @@ function SkeletonCard() {
   )
 }
 
-// ── Countdown pill ────────────────────────────────────────────────────────────
 function CountdownPill({ h, m, s }) {
   return (
     <div className={styles.timerPill}>
@@ -51,7 +45,6 @@ function CountdownPill({ h, m, s }) {
   )
 }
 
-// ── Main page component ───────────────────────────────────────────────────────
 export default function FlashDealsPage() {
   const { h, m, s, expired } = useFlashCountdown()
   const [products, setProducts] = useState([])
@@ -81,7 +74,6 @@ export default function FlashDealsPage() {
     })
   }, [expired, sortBy])
 
-  // When the timer expires mid-session, wipe products reactively
   useEffect(() => {
     if (expired) setProducts([])
   }, [expired])
@@ -93,9 +85,11 @@ export default function FlashDealsPage() {
       <div className={styles.titleBar}>
         <div className={styles.titleBarInner}>
 
-          {/* Breadcrumb */}
+          {/* Breadcrumb — using <ol> with reset styles via CSS */}
           <ol className={styles.breadcrumb}>
-            <li><Link href="/" className={styles.breadcrumbLink}>Home</Link></li>
+            <li>
+              <Link href="/" className={styles.breadcrumbLink}>Home</Link>
+            </li>
             <li className={styles.breadcrumbSep}>›</li>
             <li className={styles.breadcrumbCurrent}>Flash Deals</li>
           </ol>
