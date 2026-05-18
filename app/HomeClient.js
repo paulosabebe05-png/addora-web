@@ -514,18 +514,26 @@ export default function HomeClient() {
             </section>
           ) : (
             <>
-              {/* ── Flash Deals — hidden when expired ── */}
-              {!expired && (
-                <section className={styles.section}>
-                  <SectionHeader
-                    label={tr('sectionTodayLabel')}
-                    title={tr('sectionFlashTitle')}
-                    countdown={countdown}
-                    seeAllHref="/flash-deals"
-                  />
+              {/* ── Flash Deals ── */}
+              <section className={styles.section}>
+                <SectionHeader
+                  label={tr('sectionTodayLabel')}
+                  title={tr('sectionFlashTitle')}
+                  countdown={countdown}
+                  seeAllHref="/flash-deals"
+                />
+                {expired ? (
+                  <div className={styles.flashExpired}>
+                    <span className={styles.flashExpiredIcon}>⏰</span>
+                    <div>
+                      <p className={styles.flashExpiredTitle}>Flash Sale Ended</p>
+                      <p className={styles.flashExpiredSub}>You just missed it — but new deals drop soon. Check back later!</p>
+                    </div>
+                  </div>
+                ) : (
                   <ProductRow products={flashProducts} loading={loadingFlash} itemWidth={220} />
-                </section>
-              )}
+                )}
+              </section>
 
               <section className={styles.section}>
                 <SectionHeader label={tr('sectionCategoriesLabel')} title={tr('sectionBrowseTitle')} seeAllHref="/categories" />
