@@ -533,7 +533,7 @@ export default function HomeClient() {
               </section>
 
               <section className={styles.section}>
-                <SectionHeader label={tr('sectionThisMonthLabel')} title={tr('sectionBestSellingTitle')} seeAllHref="/?cat=bestsellers" />
+                <SectionHeader label={tr('sectionThisMonthLabel')} title={tr('sectionBestSellingTitle')} seeAllHref="/best-sellers" />
                 <ProductRow products={bestSellers} loading={loadingBest} itemWidth={220} />
               </section>
 
