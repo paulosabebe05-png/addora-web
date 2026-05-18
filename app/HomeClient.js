@@ -61,23 +61,6 @@ function useSectionProducts(sectionValue, { orderCol = 'created_at', ascending =
   return { products, loading }
 }
 
-function useAllProducts() {
-  const [products, setProducts] = useState([])
-  const [loading, setLoading]   = useState(true)
-  useEffect(() => {
-    async function fetchData() {
-      const { data, error } = await supabase
-        .from('products').select(PRODUCT_FIELDS)
-        .eq('active', true).order('created_at', { ascending: false })
-      if (error) console.error('All-products error:', error)
-      setProducts(data || [])
-      setLoading(false)
-    }
-    fetchData()
-  }, [])
-  return { products, loading }
-}
-
 function useBanners(device) {
   const [banners, setBanners] = useState([])
   const [loadingBanners, setLoadingBanners] = useState(true)
@@ -350,7 +333,8 @@ function TrustStrip() {
 }
 
 // ── Main export ──
-export default function HomeClient() {
+// ✅ FIX: Accept products prop from server (already sorted by created_at DESC)
+export default function HomeClient({ products: initialProducts = [] }) {
   const { tr, lang } = useLang()
   const router = useRouter()
   const [activeCategory, setActiveCategory] = useState('catAll')
@@ -359,7 +343,6 @@ export default function HomeClient() {
 
   // ── Flash sale countdown from Supabase ──────────────────────────────────────
   const { h, m, s, expired, loading: timerLoading } = useFlashCountdown()
-  // countdown object passed to SectionHeader (null hides the timer pill)
   const countdown = timerLoading ? null : expired ? null : { h, m, s }
 
   const dbCategories = useCategories()
@@ -392,7 +375,10 @@ export default function HomeClient() {
   const { products: bestSellers,    loading: loadingBest }   = useSectionProducts('best_sellers', { orderCol: 'sold',       ascending: false })
   const { products: newArrivals,    loading: loadingNew }    = useSectionProducts('new_arrivals', { orderCol: 'created_at', ascending: false })
   const { products: todayDeals,     loading: loadingDeals }  = useSectionProducts('todays_deals', { orderCol: 'discount',  ascending: false })
-  const { products: allProducts,    loading: loadingAll }    = useAllProducts()
+
+  // ✅ FIX: Use server-provided products (sorted newest first) instead of re-fetching
+  const allProducts = initialProducts
+  const loadingAll = false
 
   const KEY_TO_EN = {
     catAll: 'All', catKids: 'Kids', catElectronics: 'Electronics',
@@ -500,9 +486,7 @@ export default function HomeClient() {
                 title={`${filtered.length} ${tr('items')}${activeCategory !== 'catAll' ? ` in ${tr(activeCategory)}` : ''}`}
                 seeAllHref="/categories"
               />
-              {loadingAll ? (
-                <div className={styles.productGrid}>{[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}</div>
-              ) : filtered.length === 0 ? (
+              {filtered.length === 0 ? (
                 <div className={styles.empty}><p>{tr('noProductsFound')}</p></div>
               ) : (
                 <div className={styles.productGrid}>
@@ -570,16 +554,12 @@ export default function HomeClient() {
               <TrustStrip />
 
               <section className={styles.section} id="all-products">
-                <SectionHeader title={tr('sectionAllProductsTitle')} label={loadingAll ? '' : `${allProducts.length} ${tr('items')}`} />
-                {loadingAll ? (
-                  <div className={styles.productGrid}>{[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}</div>
-                ) : (
-                  <div className={styles.productGrid}>
-                    {allProducts.map((p, i) => (
-                      <div key={p.id} style={{ animationDelay: `${i * 0.02}s` }}><ProductCard product={p} /></div>
-                    ))}
-                  </div>
-                )}
+                <SectionHeader title={tr('sectionAllProductsTitle')} label={`${allProducts.length} ${tr('items')}`} />
+                <div className={styles.productGrid}>
+                  {allProducts.map((p, i) => (
+                    <div key={p.id} style={{ animationDelay: `${i * 0.02}s` }}><ProductCard product={p} /></div>
+                  ))}
+                </div>
               </section>
             </>
           )}
