@@ -8,6 +8,7 @@ import styles from './HomeClient.module.css'
 import { useLang } from '../lib/lang'
 import MobileSearchOverlay from '../components/layout/MobileSearchOverlay'
 import { useSearch } from '../components/search/useSearch'
+import { useFlashCountdown } from '../hooks/useFlashCountdown'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -40,25 +41,6 @@ const CAT_PILL_KEYS = [
   { key: 'catWatches',     icon: '⌚' },
   { key: 'catSports',      icon: '⚽' },
 ]
-
-function useCountdown(targetHours = 6) {
-  const [time, setTime] = useState({ h: targetHours, m: 0, s: 0 })
-  useEffect(() => {
-    const end = Date.now() + targetHours * 3600 * 1000
-    const tick = () => {
-      const diff = Math.max(0, end - Date.now())
-      setTime({
-        h: Math.floor(diff / 3600000),
-        m: Math.floor((diff % 3600000) / 60000),
-        s: Math.floor((diff % 60000) / 1000),
-      })
-    }
-    tick()
-    const id = setInterval(tick, 1000)
-    return () => clearInterval(id)
-  }, [])
-  return time
-}
 
 function useSectionProducts(sectionValue, { orderCol = 'created_at', ascending = false, limit = 10 } = {}) {
   const [products, setProducts] = useState([])
@@ -374,7 +356,12 @@ export default function HomeClient() {
   const [activeCategory, setActiveCategory] = useState('catAll')
   const [search, setSearch] = useState('')
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
-  const countdown = useCountdown(6)
+
+  // ── Flash sale countdown from Supabase ──────────────────────────────────────
+  const { h, m, s, expired, loading: timerLoading } = useFlashCountdown()
+  // countdown object passed to SectionHeader (null hides the timer pill)
+  const countdown = timerLoading ? null : expired ? null : { h, m, s }
+
   const dbCategories = useCategories()
 
   const {
@@ -449,7 +436,7 @@ export default function HomeClient() {
         {/* ══ MOBILE HERO ══ */}
         <div className={styles.mobileHero}>
 
-          {/* Mobile search bar — branded pill, opens full overlay */}
+          {/* Mobile search bar */}
           <button
             className={styles.mobileSearchWrap}
             onClick={() => setMobileSearchOpen(true)}
@@ -527,10 +514,18 @@ export default function HomeClient() {
             </section>
           ) : (
             <>
-              <section className={styles.section}>
-                <SectionHeader label={tr('sectionTodayLabel')} title={tr('sectionFlashTitle')} countdown={countdown} seeAllHref="/?cat=sale" />
-                <ProductRow products={flashProducts} loading={loadingFlash} itemWidth={220} />
-              </section>
+              {/* ── Flash Deals — hidden when expired ── */}
+              {!expired && (
+                <section className={styles.section}>
+                  <SectionHeader
+                    label={tr('sectionTodayLabel')}
+                    title={tr('sectionFlashTitle')}
+                    countdown={countdown}
+                    seeAllHref="/flash-deals"
+                  />
+                  <ProductRow products={flashProducts} loading={loadingFlash} itemWidth={220} />
+                </section>
+              )}
 
               <section className={styles.section}>
                 <SectionHeader label={tr('sectionCategoriesLabel')} title={tr('sectionBrowseTitle')} seeAllHref="/categories" />
@@ -544,13 +539,23 @@ export default function HomeClient() {
 
               <PromoBanner />
 
+              {/* ── Today's Deals ── */}
               <section className={styles.section}>
-                <SectionHeader label={tr('sectionOnlyTodayLabel')} title={tr('sectionTodayDealsTitle')} seeAllHref="/?cat=deals" />
+                <SectionHeader
+                  label={tr('sectionOnlyTodayLabel')}
+                  title={tr('sectionTodayDealsTitle')}
+                  seeAllHref="/todays-deals"
+                />
                 <ProductRow products={todayDeals} loading={loadingDeals} itemWidth={220} />
               </section>
 
+              {/* ── New Arrivals ── */}
               <section className={styles.section}>
-                <SectionHeader label={tr('sectionFreshLabel')} title={tr('sectionNewArrivalsTitle')} seeAllHref="/?cat=new" />
+                <SectionHeader
+                  label={tr('sectionFreshLabel')}
+                  title={tr('sectionNewArrivalsTitle')}
+                  seeAllHref="/new-arrivals"
+                />
                 <ProductRow products={newArrivals} loading={loadingNew} itemWidth={220} />
               </section>
 
