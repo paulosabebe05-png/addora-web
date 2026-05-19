@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://addora.com.et/sitemap.xml
