@@ -1,4 +1,4 @@
-// app/layout.js — Server Component (no 'use client')
+// app/layout.js
 import './globals.css'
 import { Playfair_Display } from 'next/font/google'
 import Providers from './Providers'
@@ -11,6 +11,7 @@ const playfair = Playfair_Display({
   weight: ['700'],
   display: 'swap',
   variable: '--font-playfair',
+  preload: true, // ✅ ensures font is preloaded
 })
 
 export const metadata = {
@@ -28,17 +29,29 @@ export const metadata = {
     apple: '/apple-icon.png?v=2',
     shortcut: '/favicon.ico?v=2',
   },
-
-  // ← Google Search Console verification
-  // Replace the value below with the code from your meta tag: content="PASTE_HERE"
   verification: {
-  google: 'c3a50c68bb229ced',
-},
+    google: 'c3a50c68bb229ced',
+  },
 }
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={playfair.variable}>
+      <head>
+        {/* ✅ FIX 1: DNS prefetch for Supabase — reduces connection time */}
+        <link rel="dns-prefetch" href="https://your-project.supabase.co" />
+        <link rel="preconnect" href="https://your-project.supabase.co" crossOrigin="anonymous" />
+
+        {/* ✅ FIX 2: Preload your hero banner image (LCP fix — biggest impact)
+            Replace the href below with your actual first banner image URL.
+            You can find it in your Supabase 'banners' table, sort_order = 1 */}
+        <link
+          rel="preload"
+          as="image"
+          href="https://your-project.supabase.co/storage/v1/object/public/banners/hero-desktop.jpg"
+          fetchPriority="high"
+        />
+      </head>
       <body>
         <Providers>
           <Header />
