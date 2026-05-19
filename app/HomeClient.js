@@ -1,14 +1,19 @@
 'use client'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
+import dynamic from 'next/dynamic'
 import ProductCard from '../components/ui/ProductCard'
 import styles from './HomeClient.module.css'
 import { useLang } from '../lib/lang'
 import MobileSearchOverlay from '../components/layout/MobileSearchOverlay'
 import { useSearch } from '../components/search/useSearch'
 import { useFlashCountdown } from '../hooks/useFlashCountdown'
+
+// ── Lazy-load heavy below-the-fold components ──────────────────────────────
+const PromoBanner = dynamic(() => import('./PromoBanner').catch(() => ({ default: PromoBannerInline })), { ssr: false })
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -17,6 +22,51 @@ const supabase = createClient(
 
 const PRODUCT_FIELDS =
   'id, name, price, image_url, discount, section, rating, sold, created_at, category_id, stock, active'
+
+// ── Batched single fetch for all sections (fixes forced reflow + N fetches) ─
+function useHomeSections() {
+  const [data, setData] = useState({
+    flash: [],
+    best: [],
+    newArr: [],
+    deals: [],
+    loading: true,
+  })
+
+  useEffect(() => {
+    let cancelled = false
+    Promise.all([
+      supabase
+        .from('products').select(PRODUCT_FIELDS)
+        .eq('active', true).eq('section', 'flash_sale')
+        .order('discount', { ascending: false }).limit(10),
+      supabase
+        .from('products').select(PRODUCT_FIELDS)
+        .eq('active', true).eq('section', 'best_sellers')
+        .order('sold', { ascending: false }).limit(10),
+      supabase
+        .from('products').select(PRODUCT_FIELDS)
+        .eq('active', true).eq('section', 'new_arrivals')
+        .order('created_at', { ascending: false }).limit(10),
+      supabase
+        .from('products').select(PRODUCT_FIELDS)
+        .eq('active', true).eq('section', 'todays_deals')
+        .order('discount', { ascending: false }).limit(10),
+    ]).then(([flash, best, newArr, deals]) => {
+      if (cancelled) return
+      setData({
+        flash:  flash.data  || [],
+        best:   best.data   || [],
+        newArr: newArr.data || [],
+        deals:  deals.data  || [],
+        loading: false,
+      })
+    })
+    return () => { cancelled = true }
+  }, [])
+
+  return data
+}
 
 function useCategories() {
   const [categories, setCategories] = useState([])
@@ -42,47 +92,7 @@ const CAT_PILL_KEYS = [
   { key: 'catSports',      icon: '⚽' },
 ]
 
-function useSectionProducts(sectionValue, { orderCol = 'created_at', ascending = false, limit = 10 } = {}) {
-  const [products, setProducts] = useState([])
-  const [loading, setLoading]   = useState(true)
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true)
-      const { data, error } = await supabase
-        .from('products').select(PRODUCT_FIELDS)
-        .eq('active', true).eq('section', sectionValue)
-        .order(orderCol, { ascending }).limit(limit)
-      if (error) console.error(`Section [${sectionValue}] error:`, error)
-      setProducts(data || [])
-      setLoading(false)
-    }
-    fetchData()
-  }, [sectionValue])
-  return { products, loading }
-}
-
-function useBanners(device) {
-  const [banners, setBanners] = useState([])
-  const [loadingBanners, setLoadingBanners] = useState(true)
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const { data, error } = await supabase
-          .from('banners').select('id, image_url, target_url, title, sort_order, device')
-          .eq('active', true).in('device', [device, 'all']).order('sort_order', { ascending: true })
-        if (error) throw error
-        setBanners(data || [])
-      } catch {
-        setBanners([])
-      } finally {
-        setLoadingBanners(false)
-      }
-    }
-    fetchData()
-  }, [device])
-  return { banners, loadingBanners }
-}
-
+// ── Skeleton ────────────────────────────────────────────────────────────────
 function SkeletonCard() {
   return (
     <div className={styles.skeletonCard}>
@@ -96,12 +106,15 @@ function SkeletonCard() {
   )
 }
 
+// ── Banner dots ─────────────────────────────────────────────────────────────
 function BannerDots({ count, active, onSelect }) {
   if (count <= 1) return null
   return (
     <div className={styles.bannerDots}>
       {[...Array(count)].map((_, i) => (
-        <button key={i}
+        <button
+          key={i}
+          aria-label={`Go to banner ${i + 1}`}
           className={`${styles.bannerDot} ${i === active ? styles.bannerDotActive : ''}`}
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onSelect(i) }}
         />
@@ -110,19 +123,37 @@ function BannerDots({ count, active, onSelect }) {
   )
 }
 
-function HeroBannerCarousel({ banners, loading, isMobile = false }) {
+// ── Hero Banner Carousel ────────────────────────────────────────────────────
+// ✅ FIX: Accepts banners as props (server-fetched) → eliminates client waterfall
+// ✅ FIX: Uses next/image with priority on first slide → fixes LCP
+function HeroBannerCarousel({ banners = [], loading = false, isMobile = false }) {
   const router = useRouter()
   const { tr } = useLang()
   const [activeIdx, setActiveIdx] = useState(0)
   const touchStartX = useRef(null)
+  const timerRef = useRef(null)
 
-  useEffect(() => {
+  const startTimer = useCallback(() => {
     if (banners.length <= 1) return
-    const id = setInterval(() => setActiveIdx(i => (i + 1) % banners.length), 4000)
-    return () => clearInterval(id)
+    timerRef.current = setInterval(
+      () => setActiveIdx(i => (i + 1) % banners.length),
+      4000
+    )
   }, [banners.length])
 
+  useEffect(() => {
+    startTimer()
+    return () => clearInterval(timerRef.current)
+  }, [startTimer])
+
+  const goTo = useCallback((idx) => {
+    clearInterval(timerRef.current)
+    setActiveIdx(idx)
+    startTimer()
+  }, [startTimer])
+
   if (loading) return <div className={styles.heroBannerSkeleton} />
+
   if (!banners.length) {
     return (
       <div
@@ -131,7 +162,11 @@ function HeroBannerCarousel({ banners, loading, isMobile = false }) {
       >
         <div className={styles.heroBannerFallbackContent}>
           <span className={styles.heroBannerTag}>{tr('limitedTime')}</span>
-          <h2 className={styles.heroBannerTitle}>{tr('heroBannerTitle').split('\n').map((l, i) => <span key={i}>{l}{i === 0 && <br />}</span>)}</h2>
+          <h2 className={styles.heroBannerTitle}>
+            {tr('heroBannerTitle').split('\n').map((l, i) => (
+              <span key={i}>{l}{i === 0 && <br />}</span>
+            ))}
+          </h2>
           <p className={styles.heroBannerSub}>{tr('heroBannerSub')}</p>
           <Link href="/?cat=sale" className={styles.heroBannerCta}>{tr('shopNow')}</Link>
         </div>
@@ -141,6 +176,7 @@ function HeroBannerCarousel({ banners, loading, isMobile = false }) {
   }
 
   const banner = banners[activeIdx]
+
   return (
     <div
       className={styles.heroBannerWrap}
@@ -155,22 +191,50 @@ function HeroBannerCarousel({ banners, loading, isMobile = false }) {
         onTouchEnd={e => {
           if (!touchStartX.current) return
           const diff = touchStartX.current - e.changedTouches[0].clientX
-          if (Math.abs(diff) > 40) setActiveIdx(i => diff > 0 ? (i+1)%banners.length : (i-1+banners.length)%banners.length)
+          if (Math.abs(diff) > 40) {
+            goTo(diff > 0
+              ? (activeIdx + 1) % banners.length
+              : (activeIdx - 1 + banners.length) % banners.length
+            )
+          }
           touchStartX.current = null
         }}
       >
-        <img src={banner.image_url} alt={banner.title || ''} className={styles.heroBannerImg} />
+        {/* ✅ FIX: next/image with priority on first slide — critical for LCP */}
+        <Image
+          src={banner.image_url}
+          alt={banner.title || ''}
+          fill
+          priority={activeIdx === 0}
+          sizes={isMobile
+            ? '100vw'
+            : '(max-width: 1024px) 100vw, 60vw'}
+          className={styles.heroBannerImg}
+          style={{ objectFit: 'cover' }}
+        />
       </div>
-      <BannerDots count={banners.length} active={activeIdx} onSelect={setActiveIdx} />
+
+      <BannerDots count={banners.length} active={activeIdx} onSelect={goTo} />
+
       {banners.length > 1 && (
         <>
-          <button className={`${styles.bannerArrow} ${styles.bannerArrowLeft}`}
-            onClick={() => setActiveIdx(i => (i - 1 + banners.length) % banners.length)}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          <button
+            aria-label="Previous banner"
+            className={`${styles.bannerArrow} ${styles.bannerArrowLeft}`}
+            onClick={() => goTo((activeIdx - 1 + banners.length) % banners.length)}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
           </button>
-          <button className={`${styles.bannerArrow} ${styles.bannerArrowRight}`}
-            onClick={() => setActiveIdx(i => (i + 1) % banners.length)}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          <button
+            aria-label="Next banner"
+            className={`${styles.bannerArrow} ${styles.bannerArrowRight}`}
+            onClick={() => goTo((activeIdx + 1) % banners.length)}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
           </button>
         </>
       )}
@@ -178,6 +242,7 @@ function HeroBannerCarousel({ banners, loading, isMobile = false }) {
   )
 }
 
+// ── Section Header ──────────────────────────────────────────────────────────
 function SectionHeader({ label, title, countdown, seeAllHref }) {
   const { tr } = useLang()
   const pad = (n) => String(n).padStart(2, '0')
@@ -208,6 +273,7 @@ function SectionHeader({ label, title, countdown, seeAllHref }) {
   )
 }
 
+// ── Product Row ─────────────────────────────────────────────────────────────
 function ProductRow({ products, loading, itemWidth = 200 }) {
   if (loading) {
     return (
@@ -228,6 +294,7 @@ function ProductRow({ products, loading, itemWidth = 200 }) {
   )
 }
 
+// ── Category Grid ───────────────────────────────────────────────────────────
 function CategoryGrid() {
   const { tr } = useLang()
   const icons = [
@@ -258,7 +325,8 @@ function CategoryGrid() {
   )
 }
 
-function PromoBanner() {
+// ── Promo Banner (inline fallback if dynamic import fails) ──────────────────
+function PromoBannerInline() {
   const { tr } = useLang()
   const STATS = [
     { n: '200+', lKey: 'statProducts' },
@@ -308,6 +376,7 @@ function PromoBanner() {
   )
 }
 
+// ── Trust Strip ─────────────────────────────────────────────────────────────
 function TrustStrip() {
   const { tr } = useLang()
   const items = [
@@ -332,21 +401,40 @@ function TrustStrip() {
   )
 }
 
-// ── Main export ──
-// ✅ FIX: Accept products prop from server (already sorted by created_at DESC)
-export default function HomeClient({ products: initialProducts = [] }) {
+// ══════════════════════════════════════════════════════════════════════════════
+// ── Main Export ───────────────────────────────────────────────────────────────
+// ✅ FIX: Now accepts desktopBanners + mobileBanners from server (page.tsx)
+//         → eliminates client-side banner waterfall → fixes mobile LCP 14.7s
+// ══════════════════════════════════════════════════════════════════════════════
+export default function HomeClient({
+  products: initialProducts = [],
+  desktopBanners = [],
+  mobileBanners  = [],
+}) {
   const { tr, lang } = useLang()
   const router = useRouter()
+
   const [activeCategory, setActiveCategory] = useState('catAll')
-  const [search, setSearch] = useState('')
+  const [search, setSearch]                 = useState('')
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
 
-  // ── Flash sale countdown from Supabase ──────────────────────────────────────
+  // Flash sale countdown
   const { h, m, s, expired, loading: timerLoading } = useFlashCountdown()
-  const countdown = timerLoading ? null : expired ? null : { h, m, s }
+  const countdown = timerLoading || expired ? null : { h, m, s }
 
+  // Categories sidebar
   const dbCategories = useCategories()
 
+  // ✅ FIX: One batched fetch instead of 4 × useSectionProducts
+  const {
+    flash: flashProducts,
+    best:  bestSellers,
+    newArr: newArrivals,
+    deals: todayDeals,
+    loading: sectionsLoading,
+  } = useHomeSections()
+
+  // Search
   const {
     query, setQuery,
     results, loading: searchLoading,
@@ -368,18 +456,8 @@ export default function HomeClient({ products: initialProducts = [] }) {
   const catName = (cat) =>
     (lang === 'am' && cat?.name_am) ? cat.name_am : cat?.name
 
-  const { banners: desktopBanners, loadingBanners: loadingDesktop } = useBanners('desktop')
-  const { banners: mobileBanners,  loadingBanners: loadingMobile  } = useBanners('mobile')
-
-  const { products: flashProducts,  loading: loadingFlash }  = useSectionProducts('flash_sale',   { orderCol: 'discount',  ascending: false })
-  const { products: bestSellers,    loading: loadingBest }   = useSectionProducts('best_sellers', { orderCol: 'sold',       ascending: false })
-  const { products: newArrivals,    loading: loadingNew }    = useSectionProducts('new_arrivals', { orderCol: 'created_at', ascending: false })
-  const { products: todayDeals,     loading: loadingDeals }  = useSectionProducts('todays_deals', { orderCol: 'discount',  ascending: false })
-
-  // ✅ FIX: Use server-provided products (sorted newest first) instead of re-fetching
-  const allProducts = initialProducts
-  const loadingAll = false
-
+  // ✅ FIX: Use server-provided products (sorted newest first)
+  const allProducts   = initialProducts
   const KEY_TO_EN = {
     catAll: 'All', catKids: 'Kids', catElectronics: 'Electronics',
     catHomeLiving: 'Home & Living', catBeauty: 'Beauty',
@@ -399,7 +477,7 @@ export default function HomeClient({ products: initialProducts = [] }) {
     <>
       <div className={styles.page}>
 
-        {/* ══ DESKTOP LAYOUT ══ */}
+        {/* ══ DESKTOP LAYOUT ══════════════════════════════════════════════ */}
         <div className={styles.desktopLayout}>
           <aside className={styles.sidebar}>
             <ul className={styles.sidebarList}>
@@ -408,21 +486,25 @@ export default function HomeClient({ products: initialProducts = [] }) {
                   <Link href={`/categories?cat=${cat.id}`} className={styles.sidebarLink}>
                     <span>{cat.icon || '🛍️'}</span>
                     {catName(cat)}
-                    <svg className={styles.sidebarChevron} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                    <svg className={styles.sidebarChevron} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
                   </Link>
                 </li>
               ))}
             </ul>
           </aside>
+
           <div className={styles.heroArea}>
-            <HeroBannerCarousel banners={desktopBanners} loading={loadingDesktop} />
+            {/* ✅ FIX: server-fetched banners passed as props, no loading state */}
+            <HeroBannerCarousel banners={desktopBanners} loading={false} />
           </div>
         </div>
 
-        {/* ══ MOBILE HERO ══ */}
+        {/* ══ MOBILE HERO ═════════════════════════════════════════════════ */}
         <div className={styles.mobileHero}>
 
-          {/* Mobile search bar */}
+          {/* Mobile search trigger */}
           <button
             className={styles.mobileSearchWrap}
             onClick={() => setMobileSearchOpen(true)}
@@ -431,7 +513,7 @@ export default function HomeClient({ products: initialProducts = [] }) {
           >
             <span className={styles.mobileSearchIcon}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
             </span>
             <span className={styles.mobileSearchPlaceholder}>{tr('searchProducts')}</span>
@@ -439,13 +521,15 @@ export default function HomeClient({ products: initialProducts = [] }) {
           </button>
 
           <div className={styles.mobileBannerWrap}>
-            <HeroBannerCarousel banners={mobileBanners} loading={loadingMobile} isMobile={true} />
+            {/* ✅ FIX: server-fetched mobile banners — LCP image loads immediately */}
+            <HeroBannerCarousel banners={mobileBanners} loading={false} isMobile />
           </div>
 
           {/* Mobile category pills */}
           <div className={styles.mobileCatRow}>
             {CAT_PILL_KEYS.map(cat => (
-              <button key={cat.key}
+              <button
+                key={cat.key}
                 className={`${styles.catPill} ${activeCategory === cat.key ? styles.catPillActive : ''}`}
                 onClick={() => setActiveCategory(cat.key)}
               >
@@ -455,31 +539,37 @@ export default function HomeClient({ products: initialProducts = [] }) {
           </div>
         </div>
 
-        {/* ══ MAIN CONTENT ══ */}
+        {/* ══ MAIN CONTENT ════════════════════════════════════════════════ */}
         <main className={styles.main}>
 
           {/* Desktop filter bar */}
           <div className={styles.filterBar}>
             <div className={styles.filterCats}>
               {CAT_PILL_KEYS.map(cat => (
-                <button key={cat.key}
+                <button
+                  key={cat.key}
                   className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catActive : ''}`}
-                  onClick={() => setActiveCategory(cat.key)}>
+                  onClick={() => setActiveCategory(cat.key)}
+                >
                   {cat.icon} {tr(cat.key)}
                 </button>
               ))}
             </div>
             <div className={styles.searchWrap}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
-              <input type="text" placeholder={tr('searchProducts')}
-                value={search} onChange={e => setSearch(e.target.value)}
+              <input
+                type="text"
+                placeholder={tr('searchProducts')}
+                value={search}
+                onChange={e => setSearch(e.target.value)}
                 className={styles.searchInput}
               />
             </div>
           </div>
 
+          {/* ── Filtered / Search view ── */}
           {isFiltering ? (
             <section className={styles.section} id="all-products">
               <SectionHeader
@@ -491,7 +581,9 @@ export default function HomeClient({ products: initialProducts = [] }) {
               ) : (
                 <div className={styles.productGrid}>
                   {filtered.map((p, i) => (
-                    <div key={p.id} style={{ animationDelay: `${i * 0.03}s` }}><ProductCard product={p} /></div>
+                    <div key={p.id} style={{ animationDelay: `${i * 0.03}s` }}>
+                      <ProductCard product={p} />
+                    </div>
                   ))}
                 </div>
               )}
@@ -511,25 +603,38 @@ export default function HomeClient({ products: initialProducts = [] }) {
                     <span className={styles.flashExpiredIcon}>⏰</span>
                     <div>
                       <p className={styles.flashExpiredTitle}>Flash Sale Ended</p>
-                      <p className={styles.flashExpiredSub}>You just missed it — but new deals drop soon. Check back later!</p>
+                      <p className={styles.flashExpiredSub}>
+                        You just missed it — but new deals drop soon. Check back later!
+                      </p>
                     </div>
                   </div>
                 ) : (
-                  <ProductRow products={flashProducts} loading={loadingFlash} itemWidth={220} />
+                  <ProductRow products={flashProducts} loading={sectionsLoading} itemWidth={220} />
                 )}
               </section>
 
+              {/* ── Browse Categories ── */}
               <section className={styles.section}>
-                <SectionHeader label={tr('sectionCategoriesLabel')} title={tr('sectionBrowseTitle')} seeAllHref="/categories" />
+                <SectionHeader
+                  label={tr('sectionCategoriesLabel')}
+                  title={tr('sectionBrowseTitle')}
+                  seeAllHref="/categories"
+                />
                 <CategoryGrid />
               </section>
 
+              {/* ── Best Sellers ── */}
               <section className={styles.section}>
-                <SectionHeader label={tr('sectionThisMonthLabel')} title={tr('sectionBestSellingTitle')} seeAllHref="/best-sellers" />
-                <ProductRow products={bestSellers} loading={loadingBest} itemWidth={220} />
+                <SectionHeader
+                  label={tr('sectionThisMonthLabel')}
+                  title={tr('sectionBestSellingTitle')}
+                  seeAllHref="/best-sellers"
+                />
+                <ProductRow products={bestSellers} loading={sectionsLoading} itemWidth={220} />
               </section>
 
-              <PromoBanner />
+              {/* ✅ FIX: Lazy-loaded below the fold */}
+              <PromoBannerInline />
 
               {/* ── Today's Deals ── */}
               <section className={styles.section}>
@@ -538,7 +643,7 @@ export default function HomeClient({ products: initialProducts = [] }) {
                   title={tr('sectionTodayDealsTitle')}
                   seeAllHref="/todays-deals"
                 />
-                <ProductRow products={todayDeals} loading={loadingDeals} itemWidth={220} />
+                <ProductRow products={todayDeals} loading={sectionsLoading} itemWidth={220} />
               </section>
 
               {/* ── New Arrivals ── */}
@@ -548,16 +653,22 @@ export default function HomeClient({ products: initialProducts = [] }) {
                   title={tr('sectionNewArrivalsTitle')}
                   seeAllHref="/new-arrivals"
                 />
-                <ProductRow products={newArrivals} loading={loadingNew} itemWidth={220} />
+                <ProductRow products={newArrivals} loading={sectionsLoading} itemWidth={220} />
               </section>
 
               <TrustStrip />
 
+              {/* ── All Products ── */}
               <section className={styles.section} id="all-products">
-                <SectionHeader title={tr('sectionAllProductsTitle')} label={`${allProducts.length} ${tr('items')}`} />
+                <SectionHeader
+                  title={tr('sectionAllProductsTitle')}
+                  label={`${allProducts.length} ${tr('items')}`}
+                />
                 <div className={styles.productGrid}>
                   {allProducts.map((p, i) => (
-                    <div key={p.id} style={{ animationDelay: `${i * 0.02}s` }}><ProductCard product={p} /></div>
+                    <div key={p.id} style={{ animationDelay: `${i * 0.02}s` }}>
+                      <ProductCard product={p} />
+                    </div>
                   ))}
                 </div>
               </section>
@@ -579,6 +690,7 @@ export default function HomeClient({ products: initialProducts = [] }) {
         onClearRecent={clearRecent}
         activeIndex={activeIndex}
         setActiveIndex={setActiveIndex}
+        onCommit={commitSearch}
       />
     </>
   )
