@@ -188,16 +188,73 @@ function ReviewCard({ review }) {
 }
 
 /* ─────────────────────────────────────────────────
-   REVIEW FORM  –  submit new review
+   REVIEW FORM  –  submit new review + image upload
 ───────────────────────────────────────────────── */
 function ReviewForm({ productId, userId, onSubmitted }) {
   const { tr } = useLang()
-  const [rating,  setRating]  = useState(0)
-  const [title,   setTitle]   = useState('')
-  const [body,    setBody]    = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error,   setError]   = useState('')
-  const [success, setSuccess] = useState(false)
+  const [rating,     setRating]     = useState(0)
+  const [title,      setTitle]      = useState('')
+  const [body,       setBody]       = useState('')
+  const [images,     setImages]     = useState([])   // Array of { file, preview }
+  const [loading,    setLoading]    = useState(false)
+  const [error,      setError]      = useState('')
+  const [success,    setSuccess]    = useState(false)
+  const fileInputRef = useRef(null)
+
+  const MAX_IMAGES = 4
+  const MAX_SIZE_MB = 5
+
+  // Cleanup object URLs when component unmounts
+  useEffect(() => {
+    return () => { images.forEach(img => URL.revokeObjectURL(img.preview)) }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files)
+    const remaining = MAX_IMAGES - images.length
+    const toAdd = files.slice(0, remaining)
+
+    const oversized = toAdd.filter(f => f.size > MAX_SIZE_MB * 1024 * 1024)
+    if (oversized.length) {
+      setError(`Each image must be under ${MAX_SIZE_MB}MB`)
+      e.target.value = ''
+      return
+    }
+
+    const newImages = toAdd.map(file => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }))
+    setImages(prev => [...prev, ...newImages])
+    e.target.value = '' // reset so same file can be re-selected
+    setError('')
+  }
+
+  const removeImage = (index) => {
+    setImages(prev => {
+      URL.revokeObjectURL(prev[index].preview)
+      return prev.filter((_, i) => i !== index)
+    })
+  }
+
+  const uploadImages = async () => {
+    if (images.length === 0) return []
+    const urls = []
+    for (const { file } of images) {
+      const ext  = file.name.split('.').pop().toLowerCase()
+      const path = `reviews/${productId}/${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+      const { error: upErr } = await supabase.storage
+        .from('review-images')
+        .upload(path, file, { contentType: file.type, upsert: false })
+      if (upErr) throw upErr
+      const { data: { publicUrl } } = supabase.storage
+        .from('review-images')
+        .getPublicUrl(path)
+      urls.push(publicUrl)
+    }
+    return urls
+  }
 
   const handleSubmit = async () => {
     if (!rating)      { setError(tr('pleaseSelectRating')); return }
@@ -205,12 +262,14 @@ function ReviewForm({ productId, userId, onSubmitted }) {
     setError('')
     setLoading(true)
     try {
+      const imageUrls = await uploadImages()
       const { error: dbErr } = await supabase.from('reviews').insert({
         product_id: productId,
-        user_id: userId,
+        user_id:    userId,
         rating,
-        title: title.trim() || null,
-        body: body.trim(),
+        title:      title.trim() || null,
+        body:       body.trim(),
+        images:     imageUrls.length > 0 ? imageUrls : null,
         verified_purchase: true,
       })
       if (dbErr) throw dbErr
@@ -273,6 +332,80 @@ function ReviewForm({ productId, userId, onSubmitted }) {
         <span className={styles.charCount}>{body.length}/1000</span>
       </div>
 
+      {/* ── Image Upload ── */}
+      <div className={styles.reviewFormRow}>
+        <label className={styles.reviewFormLabel}>
+          Add Photos{' '}
+          <span style={{ fontWeight: 400, opacity: .6, textTransform: 'none', letterSpacing: 0 }}>
+            (optional, up to {MAX_IMAGES})
+          </span>
+        </label>
+
+        {/* Preview strip — shown once at least one image is selected */}
+        {images.length > 0 && (
+          <div className={styles.reviewImgPreviews}>
+            {images.map((img, i) => (
+              <div key={i} className={styles.reviewImgPreviewWrap}>
+                <img src={img.preview} alt="" className={styles.reviewImgPreview} />
+                <button
+                  type="button"
+                  className={styles.reviewImgRemove}
+                  onClick={() => removeImage(i)}
+                  aria-label="Remove image"
+                >
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              </div>
+            ))}
+
+            {/* + add-more tile */}
+            {images.length < MAX_IMAGES && (
+              <button
+                type="button"
+                className={styles.reviewImgAddMore}
+                onClick={() => fileInputRef.current?.click()}
+                aria-label="Add more images"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Drop zone — shown when no images selected yet */}
+        {images.length === 0 && (
+          <button
+            type="button"
+            className={styles.reviewImgDropzone}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" opacity=".5">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <span>Click to upload photos</span>
+            <span style={{ fontSize: 11, opacity: .5 }}>JPG, PNG, WEBP · max {MAX_SIZE_MB}MB each</span>
+          </button>
+        )}
+
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          multiple
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
+      </div>
+
       {error && (
         <div className={styles.errorBox}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -288,7 +421,9 @@ function ReviewForm({ productId, userId, onSubmitted }) {
         disabled={loading}
         style={{ marginTop: 4, maxWidth: 220 }}
       >
-        {loading ? tr('submitting') : tr('submitReview')}
+        {loading
+          ? (images.length > 0 ? 'Uploading…' : tr('submitting'))
+          : tr('submitReview')}
       </button>
     </div>
   )
