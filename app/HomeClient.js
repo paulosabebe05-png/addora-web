@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import ProductCard from '../components/ui/ProductCard'
@@ -15,20 +16,24 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
 
-const PRODUCT_FIELDS =
-  'id, name, price, image_url, discount, section, rating, sold, created_at, category_id, stock, active'
-
-function useCategories() {
-  const [categories, setCategories] = useState([])
+// ✅ FIX 2b: Single query, split client-side (was 2 separate Supabase round trips)
+function useBanners() {
+  const [allBanners, setAllBanners] = useState([])
+  const [loadingBanners, setLoadingBanners] = useState(true)
   useEffect(() => {
     supabase
-      .from('categories')
-      .select('id, name, name_am, icon')
-      .is('parent_id', null)
+      .from('banners')
+      .select('id, image_url, target_url, title, sort_order, device')
+      .eq('active', true)
       .order('sort_order', { ascending: true })
-      .then(({ data }) => setCategories(data || []))
+      .then(({ data }) => {
+        setAllBanners(data || [])
+        setLoadingBanners(false)
+      })
   }, [])
-  return categories
+  const desktopBanners = allBanners.filter(b => b.device === 'desktop' || b.device === 'all')
+  const mobileBanners  = allBanners.filter(b => b.device === 'mobile'  || b.device === 'all')
+  return { desktopBanners, mobileBanners, loadingBanners }
 }
 
 const CAT_PILL_KEYS = [
@@ -41,47 +46,6 @@ const CAT_PILL_KEYS = [
   { key: 'catWatches',     icon: '⌚' },
   { key: 'catSports',      icon: '⚽' },
 ]
-
-function useSectionProducts(sectionValue, { orderCol = 'created_at', ascending = false, limit = 10 } = {}) {
-  const [products, setProducts] = useState([])
-  const [loading, setLoading]   = useState(true)
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true)
-      const { data, error } = await supabase
-        .from('products').select(PRODUCT_FIELDS)
-        .eq('active', true).eq('section', sectionValue)
-        .order(orderCol, { ascending }).limit(limit)
-      if (error) console.error(`Section [${sectionValue}] error:`, error)
-      setProducts(data || [])
-      setLoading(false)
-    }
-    fetchData()
-  }, [sectionValue])
-  return { products, loading }
-}
-
-function useBanners(device) {
-  const [banners, setBanners] = useState([])
-  const [loadingBanners, setLoadingBanners] = useState(true)
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const { data, error } = await supabase
-          .from('banners').select('id, image_url, target_url, title, sort_order, device')
-          .eq('active', true).in('device', [device, 'all']).order('sort_order', { ascending: true })
-        if (error) throw error
-        setBanners(data || [])
-      } catch {
-        setBanners([])
-      } finally {
-        setLoadingBanners(false)
-      }
-    }
-    fetchData()
-  }, [device])
-  return { banners, loadingBanners }
-}
 
 function SkeletonCard() {
   return (
@@ -149,7 +113,7 @@ function HeroBannerCarousel({ banners, loading, isMobile = false }) {
       <div
         className={styles.heroBannerSlide}
         key={activeIdx}
-        style={{ cursor: banner.target_url ? 'pointer' : 'default' }}
+        style={{ cursor: banner.target_url ? 'pointer' : 'default', position: 'relative', width: '100%', height: '100%' }}
         onClick={() => banner.target_url && router.push(banner.target_url)}
         onTouchStart={e => { touchStartX.current = e.touches[0].clientX }}
         onTouchEnd={e => {
@@ -159,7 +123,17 @@ function HeroBannerCarousel({ banners, loading, isMobile = false }) {
           touchStartX.current = null
         }}
       >
-        <img src={banner.image_url} alt={banner.title || ''} className={styles.heroBannerImg} />
+        {/* ✅ FIX 2a: next/image with priority on first slide — massive LCP improvement */}
+        <Image
+          src={banner.image_url}
+          alt={banner.title || ''}
+          fill
+          className={styles.heroBannerImg}
+          priority={activeIdx === 0}
+          fetchPriority={activeIdx === 0 ? 'high' : 'low'}
+          sizes="(max-width: 768px) 100vw, 75vw"
+          style={{ objectFit: 'cover' }}
+        />
       </div>
       <BannerDots count={banners.length} active={activeIdx} onSelect={setActiveIdx} />
       {banners.length > 1 && (
@@ -208,6 +182,7 @@ function SectionHeader({ label, title, countdown, seeAllHref }) {
   )
 }
 
+// ✅ FIX 2c: lazy prop passed in, used on ProductCard images
 function ProductRow({ products, loading, itemWidth = 200 }) {
   if (loading) {
     return (
@@ -219,9 +194,10 @@ function ProductRow({ products, loading, itemWidth = 200 }) {
   if (!products.length) return null
   return (
     <div className={styles.hScrollRow}>
-      {products.map(p => (
+      {products.map((p, i) => (
         <div key={p.id} className={styles.hScrollItem} style={{ width: itemWidth }}>
-          <ProductCard product={p} />
+          {/* lazy={i > 2} tells ProductCard to lazy-load images below the fold */}
+          <ProductCard product={p} lazy={i > 2} />
         </div>
       ))}
     </div>
@@ -333,8 +309,16 @@ function TrustStrip() {
 }
 
 // ── Main export ──
-// ✅ FIX: Accept products prop from server (already sorted by created_at DESC)
-export default function HomeClient({ products: initialProducts = [] }) {
+// ✅ FIX 2d: Accept all section data as props from the server component (page.js)
+// This eliminates 5 client-side Supabase calls on load.
+export default function HomeClient({
+  products: initialProducts = [],
+  flashProducts = [],
+  bestSellers = [],
+  newArrivals = [],
+  todayDeals = [],
+  categories: initialCategories = [],
+}) {
   const { tr, lang } = useLang()
   const router = useRouter()
   const [activeCategory, setActiveCategory] = useState('catAll')
@@ -345,7 +329,8 @@ export default function HomeClient({ products: initialProducts = [] }) {
   const { h, m, s, expired, loading: timerLoading } = useFlashCountdown()
   const countdown = timerLoading ? null : expired ? null : { h, m, s }
 
-  const dbCategories = useCategories()
+  // ✅ FIX 2d: Use server-provided categories instead of client-side hook
+  const dbCategories = initialCategories
 
   const {
     query, setQuery,
@@ -368,17 +353,19 @@ export default function HomeClient({ products: initialProducts = [] }) {
   const catName = (cat) =>
     (lang === 'am' && cat?.name_am) ? cat.name_am : cat?.name
 
-  const { banners: desktopBanners, loadingBanners: loadingDesktop } = useBanners('desktop')
-  const { banners: mobileBanners,  loadingBanners: loadingMobile  } = useBanners('mobile')
+  // ✅ FIX 2b: Single useBanners call (1 query instead of 2)
+  const { desktopBanners, mobileBanners, loadingBanners } = useBanners()
+  const loadingDesktop = loadingBanners
+  const loadingMobile  = loadingBanners
 
-  const { products: flashProducts,  loading: loadingFlash }  = useSectionProducts('flash_sale',   { orderCol: 'discount',  ascending: false })
-  const { products: bestSellers,    loading: loadingBest }   = useSectionProducts('best_sellers', { orderCol: 'sold',       ascending: false })
-  const { products: newArrivals,    loading: loadingNew }    = useSectionProducts('new_arrivals', { orderCol: 'created_at', ascending: false })
-  const { products: todayDeals,     loading: loadingDeals }  = useSectionProducts('todays_deals', { orderCol: 'discount',  ascending: false })
+  // ✅ FIX 2d: All section data comes from props — no client-side hooks needed
+  const loadingFlash = false
+  const loadingBest  = false
+  const loadingNew   = false
+  const loadingDeals = false
 
-  // ✅ FIX: Use server-provided products (sorted newest first) instead of re-fetching
   const allProducts = initialProducts
-  const loadingAll = false
+  const loadingAll  = false
 
   const KEY_TO_EN = {
     catAll: 'All', catKids: 'Kids', catElectronics: 'Electronics',
