@@ -20,13 +20,19 @@ export const metadata = {
     title: 'Addora — Shop Local, Pay on Delivery',
     description: 'Fast delivery across Ethiopia. No payment required upfront.',
   },
- icons: {
-  icon: [
-    { url: '/favicon.ico?v=2', type: 'image/x-icon' },
-    { url: '/icon.png?v=2', type: 'image/png' },
-  ],
-  apple: '/apple-icon.png?v=2',
-  shortcut: '/favicon.ico?v=2',
+  icons: {
+    icon: [
+      { url: '/favicon.ico?v=2', type: 'image/x-icon' },
+      { url: '/icon.png?v=2', type: 'image/png' },
+    ],
+    apple: '/apple-icon.png?v=2',
+    shortcut: '/favicon.ico?v=2',
+  },
+
+  // ← Google Search Console verification
+  // Replace the value below with the code from your meta tag: content="PASTE_HERE"
+  verification: {
+  google: 'c3a50c68bb229ced',
 },
 }
 
@@ -36,8 +42,7 @@ export default function RootLayout({ children }) {
       <body>
         <Providers>
           <Header />
-         <main style={{ width: '100%', minHeight: 'calc(100vh - 64px)', paddingBottom: 'var(--bottom-nav-height, 0px)' }}>
-
+          <main style={{ width: '100%', minHeight: 'calc(100vh - 64px)', paddingBottom: 'var(--bottom-nav-height, 0px)' }}>
             {children}
           </main>
           <Footer />
