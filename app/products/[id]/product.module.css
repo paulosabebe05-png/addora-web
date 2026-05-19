@@ -358,6 +358,7 @@
   transition: border-color .2s;
 }
 .storeCard:hover { border-color: var(--gold); }
+
 .storeLogoWrap {
   width: 40px;
   height: 40px;
@@ -1661,4 +1662,98 @@
 
 @media (max-width: 420px) {
   .relatedGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ═══════════════════════════════════════════
+   REVIEW IMAGE UPLOAD
+═══════════════════════════════════════════ */
+
+/* Drop zone — shown before any image is selected */
+.reviewImgDropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 90px;
+  border: 1.5px dashed var(--border);
+  border-radius: 10px;
+  background: var(--surface2);
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  padding: 16px;
+  font-family: 'DM Sans', sans-serif;
+}
+.reviewImgDropzone:hover {
+  border-color: var(--gold);
+  background: var(--gold-dim);
+}
+
+/* Strip of selected image previews */
+.reviewImgPreviews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* Individual preview wrapper */
+.reviewImgPreviewWrap {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.reviewImgPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* × remove button */
+.reviewImgRemove {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.55);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background .15s;
+}
+.reviewImgRemove:hover { background: rgba(0,0,0,.8); }
+
+/* + add-more tile */
+.reviewImgAddMore {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  border: 1.5px dashed var(--border);
+  background: var(--surface2);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color .2s, color .2s, background .2s;
+}
+.reviewImgAddMore:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold-dim);
 }
