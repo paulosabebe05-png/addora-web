@@ -1,28 +1,4 @@
 // app/layout.js
-// ─────────────────────────────────────────────────────────────────────────────
-// RENDER-BLOCKING FIX:
-//
-// The original globals.css had:
-//   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans...')
-//
-// That @import is the #1 cause of the blank screen / slow FCP:
-//   Browser hits your page
-//   → starts parsing CSS
-//   → finds @import → STOPS rendering
-//   → opens new connection to fonts.googleapis.com (~100–300 ms DNS+TCP+TLS)
-//   → downloads the CSS file
-//   → that CSS file triggers MORE requests to fonts.gstatic.com
-//   → only THEN does rendering resume
-//   Total extra cost on slow 4G: ~1,500–2,000 ms of blank screen
-//
-// next/font/google fix:
-//   → Downloads font files at BUILD TIME
-//   → Self-hosts them on your own domain (no Google Fonts requests at runtime)
-//   → Inlines the @font-face CSS directly into <head> (no extra HTTP request)
-//   → Adds font-display: swap automatically
-//   → Zero render-blocking font requests at runtime
-// ─────────────────────────────────────────────────────────────────────────────
-
 import './globals.css'
 import {
   Plus_Jakarta_Sans,
@@ -36,29 +12,22 @@ import Header    from '../components/layout/Header'
 import Footer    from '../components/layout/Footer'
 import BottomNav from '../components/layout/BottomNav'
 
-// ── Font definitions ──────────────────────────────────────────────────────────
-// Each font is downloaded once at build time and served from your own domain.
-// CSS variables are injected into <html> so any component can use them.
-
-// Primary UI font (body text, buttons, labels)
 const plusJakarta = Plus_Jakarta_Sans({
   subsets:  ['latin'],
   weight:   ['400', '500', '600', '700', '800'],
   display:  'swap',
   variable: '--font-plus-jakarta',
-  preload:  true,   // preloaded because it's the body font — used everywhere
+  preload:  true,
 })
 
-// Secondary / heading accent
 const spaceGrotesk = Space_Grotesk({
   subsets:  ['latin'],
   weight:   ['300', '400', '500', '600', '700'],
   display:  'swap',
   variable: '--font-space-grotesk',
-  preload:  false,  // only used in specific headings — don't block initial load
+  preload:  false,
 })
 
-// Editorial / luxury accent (product page, promo banners)
 const cormorant = Cormorant_Garamond({
   subsets:  ['latin'],
   weight:   ['300', '400', '500', '600'],
@@ -68,7 +37,6 @@ const cormorant = Cormorant_Garamond({
   preload:  false,
 })
 
-// Clean sans for secondary UI text
 const dmSans = DM_Sans({
   subsets:  ['latin'],
   weight:   ['300', '400', '500', '600'],
@@ -77,16 +45,14 @@ const dmSans = DM_Sans({
   preload:  false,
 })
 
-// Display font for the logo / hero headlines
 const playfair = Playfair_Display({
   subsets:  ['latin'],
   weight:   ['700'],
   display:  'swap',
   variable: '--font-playfair',
-  preload:  true,   // used in the logo — visible above fold
+  preload:  true,
 })
 
-// ── Metadata ──────────────────────────────────────────────────────────────────
 export const metadata = {
   metadataBase: new URL('https://addora.com.et'),
   title: {
@@ -115,50 +81,61 @@ export const metadata = {
   },
 }
 
-// ── Viewport ──────────────────────────────────────────────────────────────────
 export const viewport = {
   width:        'device-width',
   initialScale: 1,
   themeColor:   '#ffffff',
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 export default function RootLayout({ children }) {
-  // Derive real Supabase host from env var for preconnect hints
-  const supabaseHost = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '')
+  // API host — e.g. xyzxyz.supabase.co
+  const supabaseUrl  = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
+  const supabaseHost = supabaseUrl
     .replace(/^https?:\/\//, '')
     .replace(/\/$/, '')
 
-  // Combine all font class names + CSS variables into one string
+  // Storage images are served from a separate CDN subdomain:
+  // projectref.supabase.co  →  images go through  projectref.supabase.co/storage/v1/...
+  // BUT on some plans they go through  cdn.supabase.co — preconnect both
+  const supabaseRef     = supabaseHost.split('.')[0]           // e.g. "xyzxyz"
+  const supabaseStorage = `${supabaseRef}.supabase.co`         // same host, storage path
+
   const fontClasses = [
     plusJakarta.variable,
     spaceGrotesk.variable,
     cormorant.variable,
     dmSans.variable,
     playfair.variable,
-    plusJakarta.className,  // applies Plus Jakarta as the active body font
+    plusJakarta.className,
   ].join(' ')
 
   return (
     <html lang="en" className={fontClasses}>
       <head>
-        {/*
-          Preconnect to Supabase — saves DNS+TCP+TLS cost on first DB/storage
-          request. Derived from your actual env var, not hardcoded.
-        */}
+        {/* ── Supabase API (auth, database) ─────────────────────────── */}
         {supabaseHost && (
           <>
-            <link rel="dns-prefetch" href={`https://${supabaseHost}`} />
-            <link
-              rel="preconnect"
-              href={`https://${supabaseHost}`}
-              crossOrigin="anonymous"
-            />
+            <link rel="dns-prefetch"  href={`https://${supabaseHost}`} />
+            <link rel="preconnect"    href={`https://${supabaseHost}`} crossOrigin="anonymous" />
           </>
         )}
+
+        {/* ── Supabase Storage (product images — the LCP element) ───── */}
+        {supabaseStorage && supabaseStorage !== supabaseHost && (
+          <>
+            <link rel="dns-prefetch" href={`https://${supabaseStorage}`} />
+            <link rel="preconnect"   href={`https://${supabaseStorage}`} crossOrigin="anonymous" />
+          </>
+        )}
+
         {/*
-          Hero banner preload is NOT here — app/page.js injects the correct
-          dynamic URL server-side after fetching the real first banner.
+          ── LCP image preload hint ──────────────────────────────────────
+          We can't preload a dynamic product image URL here because we
+          don't know it at layout level. Instead we rely on:
+            1. priority={true} on the first 2 ProductCards  → Next.js injects
+               <link rel="preload"> for those images automatically
+            2. fetchPriority="high" on the Image component
+          Both are set in ProductCard.js below.
         */}
       </head>
 
