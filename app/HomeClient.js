@@ -332,7 +332,14 @@ const SectionHeader = memo(function SectionHeader({ label, title, countdown, see
 // Product Row (horizontal scroll)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const ProductRow = memo(function ProductRow({ products, loading, itemWidth = 200 }) {
+const ProductRow = memo(function ProductRow({
+  products,
+  loading,
+  itemWidth = 200,
+  // aboveFold=true on the flash sale row: passes priority to first 4 cards
+  // next/image sets fetchpriority="high" → fixes LCP for product images
+  aboveFold = false,
+}) {
   if (loading) {
     return (
       <div className={styles.hScrollRow}>
@@ -343,9 +350,9 @@ const ProductRow = memo(function ProductRow({ products, loading, itemWidth = 200
   if (!products.length) return null
   return (
     <div className={styles.hScrollRow}>
-      {products.map(p => (
+      {products.map((p, i) => (
         <div key={p.id} className={styles.hScrollItem} style={{ width: itemWidth }}>
-          <ProductCard product={p} />
+          <ProductCard product={p} priority={aboveFold && i < 4} />
         </div>
       ))}
     </div>
@@ -756,6 +763,7 @@ export default function HomeClient({
                     products={flashProducts}
                     loading={loadingFlash}
                     itemWidth={220}
+                    aboveFold={true}
                   />
                 )}
               </section>
