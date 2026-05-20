@@ -1,43 +1,92 @@
-// app/layout.js  ─  Root Layout (Server Component)
+// app/layout.js
 // ─────────────────────────────────────────────────────────────────────────────
-// Performance fixes vs original:
+// RENDER-BLOCKING FIX:
 //
-//  FIX 1 ▸ Real Supabase hostname in dns-prefetch / preconnect
-//           → saves ~200–400 ms on first DB/storage request
+// The original globals.css had:
+//   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans...')
 //
-//  FIX 2 ▸ Removed hardcoded <link rel="preload"> for banner
-//           → page.js now injects the correct dynamic URL instead
+// That @import is the #1 cause of the blank screen / slow FCP:
+//   Browser hits your page
+//   → starts parsing CSS
+//   → finds @import → STOPS rendering
+//   → opens new connection to fonts.googleapis.com (~100–300 ms DNS+TCP+TLS)
+//   → downloads the CSS file
+//   → that CSS file triggers MORE requests to fonts.gstatic.com
+//   → only THEN does rendering resume
+//   Total extra cost on slow 4G: ~1,500–2,000 ms of blank screen
 //
-//  FIX 3 ▸ next/font with display:'swap' + preload:true
-//           → font never blocks render, swap shows fallback instantly
-//
-//  FIX 4 ▸ Security headers moved to next.config.js (handled there)
-//           → layout stays clean; headers() in layout don't set HTTP headers
-//
-//  FIX 5 ▸ viewport export (Next.js 14+ best practice)
-//           → removes "viewport" from metadata warning in build output
+// next/font/google fix:
+//   → Downloads font files at BUILD TIME
+//   → Self-hosts them on your own domain (no Google Fonts requests at runtime)
+//   → Inlines the @font-face CSS directly into <head> (no extra HTTP request)
+//   → Adds font-display: swap automatically
+//   → Zero render-blocking font requests at runtime
 // ─────────────────────────────────────────────────────────────────────────────
 
 import './globals.css'
-import { Playfair_Display } from 'next/font/google'
-import Providers  from './Providers'
-import Header     from '../components/layout/Header'
-import Footer     from '../components/layout/Footer'
-import BottomNav  from '../components/layout/BottomNav'
+import {
+  Plus_Jakarta_Sans,
+  Space_Grotesk,
+  Cormorant_Garamond,
+  DM_Sans,
+  Playfair_Display,
+} from 'next/font/google'
+import Providers from './Providers'
+import Header    from '../components/layout/Header'
+import Footer    from '../components/layout/Footer'
+import BottomNav from '../components/layout/BottomNav'
 
-// ── Font ──────────────────────────────────────────────────────────────────────
-// Only load the weights we actually use — keeps font payload small.
+// ── Font definitions ──────────────────────────────────────────────────────────
+// Each font is downloaded once at build time and served from your own domain.
+// CSS variables are injected into <html> so any component can use them.
+
+// Primary UI font (body text, buttons, labels)
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets:  ['latin'],
+  weight:   ['400', '500', '600', '700', '800'],
+  display:  'swap',
+  variable: '--font-plus-jakarta',
+  preload:  true,   // preloaded because it's the body font — used everywhere
+})
+
+// Secondary / heading accent
+const spaceGrotesk = Space_Grotesk({
+  subsets:  ['latin'],
+  weight:   ['300', '400', '500', '600', '700'],
+  display:  'swap',
+  variable: '--font-space-grotesk',
+  preload:  false,  // only used in specific headings — don't block initial load
+})
+
+// Editorial / luxury accent (product page, promo banners)
+const cormorant = Cormorant_Garamond({
+  subsets:  ['latin'],
+  weight:   ['300', '400', '500', '600'],
+  style:    ['normal', 'italic'],
+  display:  'swap',
+  variable: '--font-cormorant',
+  preload:  false,
+})
+
+// Clean sans for secondary UI text
+const dmSans = DM_Sans({
+  subsets:  ['latin'],
+  weight:   ['300', '400', '500', '600'],
+  display:  'swap',
+  variable: '--font-dm-sans',
+  preload:  false,
+})
+
+// Display font for the logo / hero headlines
 const playfair = Playfair_Display({
   subsets:  ['latin'],
   weight:   ['700'],
-  display:  'swap',       // FIX 3: never blocks render
+  display:  'swap',
   variable: '--font-playfair',
-  preload:  true,
+  preload:  true,   // used in the logo — visible above fold
 })
 
-// ── Static metadata ───────────────────────────────────────────────────────────
-// Page-level metadata (title, description, OG) lives in app/page.js so it can
-// be dynamic. Layout only carries site-wide defaults.
+// ── Metadata ──────────────────────────────────────────────────────────────────
 export const metadata = {
   metadataBase: new URL('https://addora.com.et'),
   title: {
@@ -47,24 +96,26 @@ export const metadata = {
   description:
     "Ethiopia's trusted eCommerce platform. Browse thousands of products. Pay cash on delivery.",
   openGraph: {
-    siteName: 'Addora',
-    locale:   'en_ET',
-    type:     'website',
+    siteName:    'Addora',
+    locale:      'en_ET',
+    type:        'website',
+    title:       'Addora — Shop Local, Pay on Delivery',
+    description: 'Fast delivery across Ethiopia. No payment required upfront.',
   },
   icons: {
     icon: [
       { url: '/favicon.ico?v=2', type: 'image/x-icon' },
       { url: '/icon.png?v=2',    type: 'image/png'    },
     ],
-    apple:   '/apple-icon.png?v=2',
-    shortcut:'/favicon.ico?v=2',
+    apple:    '/apple-icon.png?v=2',
+    shortcut: '/favicon.ico?v=2',
   },
   verification: {
     google: 'c3a50c68bb229ced',
   },
 }
 
-// ── Viewport (Next.js 14 + best practice — keeps it out of metadata) ─────────
+// ── Viewport ──────────────────────────────────────────────────────────────────
 export const viewport = {
   width:        'device-width',
   initialScale: 1,
@@ -73,24 +124,31 @@ export const viewport = {
 
 // ─────────────────────────────────────────────────────────────────────────────
 export default function RootLayout({ children }) {
-  // ── Read your real Supabase project ref from the env var ──────────────────
-  // e.g. https://abcdefghijklmnop.supabase.co  →  abcdefghijklmnop.supabase.co
+  // Derive real Supabase host from env var for preconnect hints
   const supabaseHost = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '')
-    .replace(/^https?:\/\//, '')   // strip protocol
-    .replace(/\/$/, '')            // strip trailing slash
+    .replace(/^https?:\/\//, '')
+    .replace(/\/$/, '')
+
+  // Combine all font class names + CSS variables into one string
+  const fontClasses = [
+    plusJakarta.variable,
+    spaceGrotesk.variable,
+    cormorant.variable,
+    dmSans.variable,
+    playfair.variable,
+    plusJakarta.className,  // applies Plus Jakarta as the active body font
+  ].join(' ')
 
   return (
-    <html lang="en" className={playfair.variable}>
+    <html lang="en" className={fontClasses}>
       <head>
         {/*
-          FIX 1 — real Supabase hostname, derived from your env var.
-          dns-prefetch  → resolves DNS before any fetch fires
-          preconnect    → opens TCP + TLS handshake early (bigger win)
-          Without this the first Supabase call pays ~200–400 ms extra.
+          Preconnect to Supabase — saves DNS+TCP+TLS cost on first DB/storage
+          request. Derived from your actual env var, not hardcoded.
         */}
         {supabaseHost && (
           <>
-            <link rel="dns-prefetch"  href={`https://${supabaseHost}`} />
+            <link rel="dns-prefetch" href={`https://${supabaseHost}`} />
             <link
               rel="preconnect"
               href={`https://${supabaseHost}`}
@@ -98,33 +156,24 @@ export default function RootLayout({ children }) {
             />
           </>
         )}
-
         {/*
-          NOTE — hero banner <link rel="preload"> is intentionally NOT here.
-          app/page.js fetches the real first-banner URL server-side and
-          injects the correct preload tag dynamically. A hardcoded URL here
-          would either be wrong or stale after a banner change.
+          Hero banner preload is NOT here — app/page.js injects the correct
+          dynamic URL server-side after fetching the real first banner.
         */}
       </head>
 
       <body>
         <Providers>
           <Header />
-
-          {/*
-            min-height accounts for the fixed header (64 px) and the mobile
-            bottom nav (--bottom-nav-height CSS var, 0 on desktop).
-          */}
           <main
             style={{
-              width:      '100%',
-              minHeight:  'calc(100vh - 64px)',
+              width:         '100%',
+              minHeight:     'calc(100vh - 64px)',
               paddingBottom: 'var(--bottom-nav-height, 0px)',
             }}
           >
             {children}
           </main>
-
           <Footer />
           <BottomNav />
         </Providers>
