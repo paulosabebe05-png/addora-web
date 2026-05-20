@@ -30,10 +30,8 @@
   overflow: hidden;
 }
 
-/* FIX: Removed `object-fit: cover` — it was overriding the inline
-   `style={{ objectFit: 'contain' }}` set on the <Image> component.
-   object-fit is now controlled entirely via inline style on <Image>
-   so the full product image is always visible without cropping. */
+/* object-fit is set via inline style={{ objectFit: 'cover' }} on <Image>.
+   Do NOT add object-fit here — it would conflict with the inline style. */
 .image {
   width: 100%;
   height: 100%;
@@ -135,7 +133,7 @@
   flex: 1;
 }
 
-/* ── Social proof row — prominent, above name ── */
+/* ── Social proof row ── */
 .socialRow {
   display: flex;
   align-items: center;
@@ -251,7 +249,7 @@
 }
 
 .addBtn:hover:not(.disabled) { background: #E75525; transform: scale(1.03); }
-.addBtn.added { background: #16a34a; }
+.addBtn.added    { background: #16a34a; }
 .addBtn.disabled { background: #e8eaf0; color: #aaa; cursor: not-allowed; }
 
 /* ══════════════════════════════════════════
@@ -275,9 +273,7 @@
     background: #f0f4f8;
   }
 
-  .image {
-    transition: none;
-  }
+  .image { transition: none; }
 
   .card:hover .image { transform: none; }
 
@@ -300,18 +296,10 @@
     gap: 3px;
   }
 
-  /* Social proof badges on mobile — still prominent */
   .socialRow { gap: 4px; }
 
-  .soldBadge {
-    font-size: 10px;
-    padding: 1px 5px;
-  }
-
-  .reviewBadge {
-    font-size: 10px;
-    padding: 1px 5px;
-  }
+  .soldBadge  { font-size: 10px; padding: 1px 5px; }
+  .reviewBadge { font-size: 10px; padding: 1px 5px; }
 
   .name {
     font-size: 12px;
@@ -319,10 +307,7 @@
     -webkit-line-clamp: 2;
   }
 
-  .lowStock {
-    font-size: 10px;
-    gap: 3px;
-  }
+  .lowStock { font-size: 10px; gap: 3px; }
 
   .footer {
     flex-direction: row;
@@ -330,11 +315,7 @@
     padding-top: 5px;
   }
 
-  .price {
-    font-size: 13px;
-    font-weight: 800;
-  }
-
+  .price        { font-size: 13px; font-weight: 800; }
   .originalPrice { font-size: 10px; }
 
   /* Icon-only add button on mobile */
@@ -349,12 +330,12 @@
 
   .addBtnText { display: none; }
 
-  .addBtn.added { background: #16a34a; }
+  .addBtn.added    { background: #16a34a; }
   .addBtn.disabled { background: #e8eaf0; color: #aaa; }
 }
 
 @media (max-width: 360px) {
-  .price { font-size: 12px; }
+  .price  { font-size: 12px; }
   .addBtn { width: 28px; height: 28px; min-width: 28px; }
-  .name { font-size: 11px; }
+  .name   { font-size: 11px; }
 }
