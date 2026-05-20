@@ -2,8 +2,8 @@
 const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256],
+    deviceSizes: [384, 640, 750, 828, 1080, 1200],
+    imageSizes:  [64, 128, 256],
     minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       {
@@ -28,9 +28,10 @@ const nextConfig = {
         ],
       },
       {
-        source: '/_next/image',
+        // Override Netlify's default max-age=0 on optimized images
+        source: '/_next/image(.*)',
         headers: [
-          { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=3600' },
+          { key: 'Cache-Control', value: 'public, max-age=2592000, stale-while-revalidate=86400' },
         ],
       },
       {
