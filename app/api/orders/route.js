@@ -8,7 +8,6 @@ const adminSupabase = createClient(
 
 export async function POST(request) {
   try {
-    // ── Verify auth via Authorization header ──────────────────────────────────
     const authHeader = request.headers.get('Authorization')
     const token = authHeader?.replace('Bearer ', '')
     if (!token) {
@@ -21,7 +20,6 @@ export async function POST(request) {
     }
     const user_id = user.id
 
-    // ── Parse body ────────────────────────────────────────────────────────────
     const body = await request.json()
     const { items, phone, address, notes, subtotal, delivery_fee } = body
     if (!items?.length || !phone || !address) {
@@ -29,7 +27,6 @@ export async function POST(request) {
     }
     const total = Number(subtotal) + Number(delivery_fee)
 
-    // ── Create order ──────────────────────────────────────────────────────────
     const { data: order, error: orderErr } = await adminSupabase
       .from('orders')
       .insert({
@@ -53,7 +50,6 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Failed to create order' }, { status: 500 })
     }
 
-    // ── Create order items ────────────────────────────────────────────────────
     const orderItems = items.map(item => {
       const row = {
         order_id:      order.id,
@@ -78,8 +74,8 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Failed to create order items' }, { status: 500 })
     }
 
-    // ── Notify user (fire and forget) ─────────────────────────────────────────
-    adminSupabase
+    // ── Notify user ───────────────────────────────────────────────────────────
+    const { error: notifErr } = await adminSupabase
       .from('notifications')
       .insert({
         user_id:    user_id,
@@ -88,9 +84,9 @@ export async function POST(request) {
         body:       `Your order of ETB ${total.toFixed(2)} has been placed and is being processed.`,
         is_read:    false,
       })
-      .then(({ error }) => {
-        if (error) console.error('[notification insert]', error)
-      })
+    if (notifErr) {
+      console.error('[notification insert error]', JSON.stringify(notifErr))
+    }
 
     return NextResponse.json({ order }, { status: 201 })
 
