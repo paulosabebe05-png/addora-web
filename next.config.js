@@ -26,9 +26,16 @@ const nextConfig = {
     // Cache optimised images for 30 days (reduces Vercel image-optimization cost)
     minimumCacheTTL: 60 * 60 * 24 * 30,
     // Breakpoints used to generate srcset for banner / hero images
+    // 390 = iPhone SE, 640 = small tablet, 768 = tablet, 1024+ = desktop
     deviceSizes: [390, 640, 768, 1024, 1280, 1600],
-    // Sizes for fixed/fill images (product cards, icons)
-    imageSizes: [64, 128, 256, 384],
+    // FIX: Sizes tuned to actual rendered widths of product cards:
+    //   • 176px  = desktop card (~220px slot × 0.8 for contain padding)
+    //   • 220px  = desktop card full slot
+    //   • 300px  = tablet 3-col card (~30vw of 1024px)
+    //   • 384px  = mobile 2-col card (~45vw of 768px, retina × 2)
+    // Without these, Next.js would skip straight from 128px → 256px → 384px
+    // and pick a size that's too small (blurry) or too large (wasteful).
+    imageSizes: [64, 128, 176, 220, 300, 384],
   },
 
   // ── HTTP response headers ──────────────────────────────────────────────────
