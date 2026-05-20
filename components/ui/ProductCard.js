@@ -22,7 +22,8 @@ function getPastelBg(id) {
   return PASTEL_COLORS[index]
 }
 
-// ── Tiny 1x1 px base64 placeholder (avoids layout shift while image loads) ───
+// 1×1 px transparent PNG — gives Next.js something to blur while real image loads.
+// Prevents layout shift (CLS) and shows pastelBg colour underneath immediately.
 const BLUR_DATA_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='
 
@@ -61,6 +62,10 @@ const NoImagePlaceholder = memo(function NoImagePlaceholder({ bg }) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ProductCard
+// Props:
+//   product  — product object from Supabase
+//   priority — true for first 2 cards (LCP cards): skips lazy-load,
+//              adds fetchPriority="high", Next.js auto-injects <link rel="preload">
 // ─────────────────────────────────────────────────────────────────────────────
 const ProductCard = memo(function ProductCard({ product, priority = false }) {
   const { user }                         = useAuth()
@@ -123,18 +128,36 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
             src={product.image_url}
             alt={product.name}
             fill
-            // Precise sizes tell Next.js exactly which breakpoint image to serve
-            // Prevents downloading a 1920px image for a 220px card
+            /*
+              sizes MUST match your real CSS card widths:
+                Mobile  (<480px):  2-col grid  → each card ≈ 44vw
+                Tablet  (<768px):  3-col grid  → each card ≈ 30vw
+                Desktop (<1280px): 4-col grid  → each card ≈ 22vw
+                Wide:              fixed cards  → 220px max
+              This tells Next.js to serve a ~200px image on mobile
+              instead of a full 640px image — fixes the 538 KB waste.
+            */
             sizes="(max-width: 480px) 44vw, (max-width: 768px) 30vw, (max-width: 1280px) 22vw, 220px"
             className={styles.image}
             style={{ objectFit: 'cover' }}
-            // priority=true on first ~4 cards skips lazy-load → fixes LCP
+            /*
+              priority=true  → disables lazy-load, Next.js injects
+                               <link rel="preload"> in <head> automatically.
+              Only pass true for the first 2 cards (above the fold).
+            */
             priority={priority}
-            // quality 80 is sweet spot: visually identical to 100, ~40% smaller
             quality={80}
-            // Blur placeholder prevents layout shift & shows color while loading
             placeholder="blur"
             blurDataURL={BLUR_DATA_URL}
+            /*
+              fetchPriority:
+                "high" on LCP cards  → browser fetches before other images
+                "low"  on rest       → browser defers until LCP is done
+              loading="lazy" on non-priority cards saves bandwidth on
+              images the user may never scroll to.
+            */
+            fetchPriority={priority ? 'high' : 'low'}
+            loading={priority ? undefined : 'lazy'}
             onError={() => setImgError(true)}
           />
         ) : (
@@ -174,15 +197,12 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
       {/* ── Body ───────────────────────────────────────────────────────── */}
       <div className={styles.body}>
 
-        {/* 1. Product name */}
         <h3 className={styles.name}>{product.name}</h3>
 
-        {/* 2. Stars */}
         {product.rating > 0 && (
           <StarRating rating={product.rating} reviews={product.reviews} />
         )}
 
-        {/* 3. Sold count */}
         {product.sold > 0 && (
           <div className={styles.soldRow}>
             <span className={styles.soldBadge}>
@@ -191,7 +211,6 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
           </div>
         )}
 
-        {/* 4. Low stock */}
         {lowStock && (
           <p className={styles.lowStock}>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
@@ -204,7 +223,6 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
           </p>
         )}
 
-        {/* 5. Price + Add to cart */}
         <div className={styles.footer}>
           <div className={styles.pricing}>
             <span className={styles.price}>
