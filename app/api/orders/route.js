@@ -11,28 +11,22 @@ export async function POST(request) {
     // ── Verify auth via Authorization header ──────────────────────────────────
     const authHeader = request.headers.get('Authorization')
     const token = authHeader?.replace('Bearer ', '')
-
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
-
     const { data: { user }, error: authError } = await adminSupabase.auth.getUser(token)
-
     if (authError || !user) {
       console.error('Auth error:', authError)
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 })
     }
-
     const user_id = user.id
 
     // ── Parse body ────────────────────────────────────────────────────────────
     const body = await request.json()
     const { items, phone, address, notes, subtotal, delivery_fee } = body
-
     if (!items?.length || !phone || !address) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
-
     const total = Number(subtotal) + Number(delivery_fee)
 
     // ── Create order ──────────────────────────────────────────────────────────
@@ -54,7 +48,6 @@ export async function POST(request) {
       })
       .select()
       .single()
-
     if (orderErr) {
       console.error('[order insert]', orderErr)
       return NextResponse.json({ error: 'Failed to create order' }, { status: 500 })
@@ -76,16 +69,28 @@ export async function POST(request) {
       if (item.color_hex)  row.color_hex  = item.color_hex
       return row
     })
-
     const { error: itemsErr } = await adminSupabase
       .from('order_items')
       .insert(orderItems)
-
     if (itemsErr) {
       console.error('[order_items insert]', itemsErr)
       await adminSupabase.from('orders').delete().eq('id', order.id)
       return NextResponse.json({ error: 'Failed to create order items' }, { status: 500 })
     }
+
+    // ── Notify user (fire and forget) ─────────────────────────────────────────
+    adminSupabase
+      .from('notifications')
+      .insert({
+        user_id:    user_id,
+        profile_id: user_id,
+        title:      'Order Placed Successfully! 🎉',
+        body:       `Your order of ETB ${total.toFixed(2)} has been placed and is being processed.`,
+        is_read:    false,
+      })
+      .then(({ error }) => {
+        if (error) console.error('[notification insert]', error)
+      })
 
     return NextResponse.json({ order }, { status: 201 })
 
