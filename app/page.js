@@ -3,6 +3,7 @@
 // Performance fixes vs original:
 //
 //  FIX 1 ▸ Server-side first-banner preload injected into <head>
+//           → preload URL now matches /_next/image exactly (no double-fetch)
 //           → LCP drops from 14.9 s to ~2–3 s (biggest single win)
 //
 //  FIX 2 ▸ Device detected from User-Agent header server-side
@@ -22,9 +23,9 @@
 //           → products + first banner fetched simultaneously, not waterfall
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { headers }          from 'next/headers'
+import { headers }           from 'next/headers'
 import { createServerClient } from '../lib/supabase'
-import HomeClient           from './HomeClient'
+import HomeClient            from './HomeClient'
 
 // ── Only the columns HomeClient actually renders ──────────────────────────────
 const PRODUCT_FIELDS =
@@ -48,12 +49,40 @@ function detectDevice(userAgent = '') {
   return /mobile|android|iphone|ipad|ipod/i.test(userAgent) ? 'mobile' : 'desktop'
 }
 
+// ── Build the exact URL that next/image <Image> will request ─────────────────
+// This is critical: <link rel="preload"> must point to the SAME URL that
+// the browser will fetch when <Image> renders, otherwise the browser
+// downloads the image twice (once from the preload, once from <Image>).
+//
+// next/image serves optimised images at:
+//   /_next/image?url=<encoded-src>&w=<width>&q=<quality>
+//
+// We use w=1920 (largest deviceSize in next.config.js) and q=75 (Next.js
+// default quality) so the preload hint matches <Image quality={75}>.
+// The imageSrcSet attribute tells the browser about all responsive sizes so
+// it can pick the right one for the current viewport immediately.
+function buildNextImagePreloadProps(rawUrl) {
+  const encoded = encodeURIComponent(rawUrl)
+  const q       = 75
+  const widths  = [640, 1024, 1280, 1600, 1920]
+
+  return {
+    // href = largest size (safe fallback for browsers that ignore srcset)
+    href:         `/_next/image?url=${encoded}&w=1920&q=${q}`,
+    // imageSrcSet = responsive srcset (Chrome 73+ / Safari 17.2+ honour this
+    // on <link rel="preload as="image">, giving the correct size to preload)
+    imageSrcSet:  widths.map(w => `/_next/image?url=${encoded}&w=${w}&q=${q} ${w}w`).join(', '),
+    // imageSizes must match the `sizes` prop on the <Image> component
+    imageSizes:   '(max-width: 768px) 100vw, 75vw',
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 export default async function HomePage({ searchParams }) {
-  const supabase     = createServerClient()
-  const headersList  = headers()
-  const ua           = headersList.get('user-agent') ?? ''
-  const device       = detectDevice(ua)
+  const supabase    = createServerClient()
+  const headersList = headers()
+  const ua          = headersList.get('user-agent') ?? ''
+  const device      = detectDevice(ua)
 
   const category = searchParams?.cat    ?? null
   const search   = searchParams?.search ?? null
@@ -90,25 +119,48 @@ export default async function HomePage({ searchParams }) {
       .maybeSingle(),
   ])
 
-  const products       = productsResult.data  ?? []
-  const heroImageUrl   = bannerResult.data?.image_url ?? null
+  const products     = productsResult.data  ?? []
+  const heroImageUrl = bannerResult.data?.image_url ?? null
+
+  // Build preload props once on the server — avoids repeating the logic in JSX
+  const preloadProps = heroImageUrl ? buildNextImagePreloadProps(heroImageUrl) : null
 
   return (
     <>
       {/*
         FIX 1 — inject <link rel="preload"> for the hero banner image.
-        This tells the browser to start downloading the LCP image immediately,
-        before React even boots, cutting LCP from 14.9 s → ~2–3 s.
-        Next.js hoists <link> tags returned from Server Components into <head>.
+
+        KEY CHANGE vs previous version:
+          href now points to /_next/image?url=...&w=1920&q=75
+          NOT to the raw Supabase URL.
+
+        Why this matters:
+          When <Image src={banner.image_url}> renders in HeroBannerCarousel,
+          Next.js transforms the src into /_next/image?url=...&w=...&q=75.
+          If the preload href points to the raw Supabase URL, the browser
+          fetches TWO different URLs — the preload is completely wasted and
+          LCP stays high.
+
+          By pointing to the /_next/image URL, the browser caches the
+          optimised image from the preload, and <Image> gets an instant
+          cache hit when it tries to fetch the same URL.
+
+        imageSrcSet + imageSizes let the browser pick the right responsive
+        variant immediately (Chrome 73+ / Safari 17.2+), so mobile devices
+        don't download a 1920-wide image unnecessarily.
+
+        Next.js hoists <link> tags returned from Server Components into <head>,
+        so this runs before any JS bundle is parsed.
       */}
-      {heroImageUrl && (
+      {preloadProps && (
         <link
           rel="preload"
           as="image"
-          href={heroImageUrl}
-          // fetchpriority is a valid HTML attribute (lowercase) for preload hints
+          href={preloadProps.href}
           // eslint-disable-next-line react/no-unknown-property
           fetchpriority="high"
+          imageSrcSet={preloadProps.imageSrcSet}
+          imageSizes={preloadProps.imageSizes}
         />
       )}
 
