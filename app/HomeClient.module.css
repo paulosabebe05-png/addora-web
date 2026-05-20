@@ -710,6 +710,44 @@
 }
 
 /* ══════════════════════════════════════════
+   LOAD MORE BUTTON
+   ══════════════════════════════════════════ */
+
+.loadMoreWrap {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0 8px;
+}
+
+.loadMoreBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 36px;
+  background: #10182B;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, transform 0.15s;
+  letter-spacing: -0.01em;
+}
+
+.loadMoreBtn:hover {
+  background: #E75525;
+  transform: translateY(-1px);
+}
+
+.loadMoreCount {
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.65;
+}
+
+/* ══════════════════════════════════════════
    MOBILE (≤ 768px)
    ══════════════════════════════════════════ */
 
@@ -728,7 +766,6 @@
     padding: 62px 0 10px;
     background: #ffffff;
   }
-
 
   /* Mobile search bar */
   .mobileSearchWrap {
@@ -917,6 +954,18 @@
     background: white;
     animation: none;
   }
+
+  /* Load More — full width on mobile */
+  .loadMoreWrap {
+    padding: 20px 12px 8px;
+  }
+
+  .loadMoreBtn {
+    width: 100%;
+    justify-content: center;
+    font-size: 13px;
+    padding: 12px 24px;
+  }
 }
 
 @media (max-width: 400px) {
@@ -963,8 +1012,8 @@
   .promoFeatures { gap: 6px; }
   .promoFeatureText { font-size: 12px; }
 }
-/* ── Add these lines at the bottom of HomeClient.module.css ── */
 
+/* ── Flash expired state ── */
 .flashExpired {
   display: flex;
   align-items: center;
