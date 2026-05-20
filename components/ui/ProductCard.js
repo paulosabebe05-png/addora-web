@@ -1,5 +1,4 @@
 'use client'
-// components/ui/ProductCard.js
 
 import { memo, useState }        from 'react'
 import Link                      from 'next/link'
@@ -11,7 +10,6 @@ import { useRouter }             from 'next/navigation'
 import { useLang }               from '../../lib/lang'
 import styles                    from './ProductCard.module.css'
 
-// ── Pastel background per product (deterministic, no flash) ──────────────────
 const PASTEL_COLORS = [
   '#EEF2FF', '#FDF2F8', '#F0FDF4', '#FFFBEB',
   '#FFF5F5', '#F0F9FF', '#F5F3FF', '#FAFAF0',
@@ -24,9 +22,13 @@ function getPastelBg(id) {
   return PASTEL_COLORS[index]
 }
 
+// ── Tiny 1x1 px base64 placeholder (avoids layout shift while image loads) ───
+const BLUR_DATA_URL =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='
+
 // ── Star rating ───────────────────────────────────────────────────────────────
 const StarRating = memo(function StarRating({ rating = 0, reviews = 0 }) {
-  const fmt = n => (n >= 1000 ? (n / 1000).toFixed(1) + 'k' : n)
+  const fmt     = n => (n >= 1000 ? (n / 1000).toFixed(1) + 'k' : n)
   const rounded = Math.round(rating)
   return (
     <div className={styles.stars}>
@@ -59,9 +61,6 @@ const NoImagePlaceholder = memo(function NoImagePlaceholder({ bg }) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ProductCard
-// Props:
-//   product  — product object from Supabase
-//   priority — true for first ~4 cards in a row (LCP optimisation)
 // ─────────────────────────────────────────────────────────────────────────────
 const ProductCard = memo(function ProductCard({ product, priority = false }) {
   const { user }                         = useAuth()
@@ -124,12 +123,18 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
             src={product.image_url}
             alt={product.name}
             fill
-            sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 220px"
+            // Precise sizes tell Next.js exactly which breakpoint image to serve
+            // Prevents downloading a 1920px image for a 220px card
+            sizes="(max-width: 480px) 44vw, (max-width: 768px) 30vw, (max-width: 1280px) 22vw, 220px"
             className={styles.image}
-            // cover = always fills the card fully, no white gaps
             style={{ objectFit: 'cover' }}
+            // priority=true on first ~4 cards skips lazy-load → fixes LCP
             priority={priority}
-            quality={75}
+            // quality 80 is sweet spot: visually identical to 100, ~40% smaller
+            quality={80}
+            // Blur placeholder prevents layout shift & shows color while loading
+            placeholder="blur"
+            blurDataURL={BLUR_DATA_URL}
             onError={() => setImgError(true)}
           />
         ) : (
