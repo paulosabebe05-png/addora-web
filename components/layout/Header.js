@@ -1,30 +1,42 @@
 'use client'
-import Link from 'next/link'
-import Image from 'next/image'
-import { useAuth } from '../../lib/auth'
-import { useCart } from '../../lib/cart'
-import { useLang } from '../../lib/lang'
-import { useRouter, usePathname } from 'next/navigation'
+import Link                                         from 'next/link'
+import Image                                        from 'next/image'
+import { useAuth }                                  from '../../lib/auth'
+import { useCart }                                  from '../../lib/cart'
+import { useLang }                                  from '../../lib/lang'
+import { useRouter, usePathname }                   from 'next/navigation'
 import { useState, useEffect, useRef, useCallback } from 'react'
-import NotificationBell from './NotificationBell'
-import { useSearch } from '../search/useSearch'
-import SearchDropdown from '../search/SearchDropdown'
-import MobileSearchOverlay from './MobileSearchOverlay'
-import LangToggle from '../ui/LangToggle'
-import styles from './Header.module.css'
+import dynamic                                      from 'next/dynamic'
+import { useSearch }                                from '../search/useSearch'
+import LangToggle                                   from '../ui/LangToggle'
+import styles                                       from './Header.module.css'
+
+/*
+  Heavy components loaded only after the page is interactive.
+  This eliminates them from the critical render path — the main
+  cause of the 720ms render-blocking insight in PageSpeed.
+
+  NotificationBell: makes a Supabase realtime subscription on mount
+  SearchDropdown:   renders a large dropdown with images
+  MobileSearchOverlay: full-screen overlay — never needed on first paint
+*/
+const NotificationBell     = dynamic(() => import('./NotificationBell'),           { ssr: false })
+const SearchDropdown       = dynamic(() => import('../search/SearchDropdown'),      { ssr: false })
+const MobileSearchOverlay  = dynamic(() => import('./MobileSearchOverlay'),         { ssr: false })
 
 export default function Header() {
   const { user, signOut } = useAuth()
-  const { count } = useCart()
-  const { tr } = useLang()
-  const router = useRouter()
-  const pathname = usePathname()
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
+  const { count }         = useCart()
+  const { tr }            = useLang()
+  const router            = useRouter()
+  const pathname          = usePathname()
+  const [menuOpen, setMenuOpen]   = useState(false)
+  const [scrolled, setScrolled]   = useState(false)
+  const [mounted, setMounted]     = useState(false)
 
   // Desktop search state
   const [desktopOpen, setDesktopOpen] = useState(false)
-  const desktopRef = useRef(null)
+  const desktopRef                    = useRef(null)
   const [activeIndex, setActiveIndex] = useState(-1)
 
   // Mobile overlay
@@ -37,10 +49,19 @@ export default function Header() {
     clearRecent, removeRecent,
   } = useSearch()
 
-  const isHome = pathname === '/'
+  const isHome    = pathname === '/'
   const transparent = isHome && !scrolled
 
-  // Scroll listener
+  /*
+    Defer non-critical effects until after first paint.
+    `mounted` gate ensures heavy dynamic imports + subscriptions
+    don't block the initial render.
+  */
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Scroll listener — passive, no render impact
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -67,8 +88,12 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', close)
   }, [])
 
-  // Keyboard navigation for desktop dropdown
-  const allItems = [...(results.categories || []), ...(results.products || []), ...(recent || [])]
+  const allItems = [
+    ...(results.categories || []),
+    ...(results.products   || []),
+    ...(recent             || []),
+  ]
+
   const handleDesktopKey = (e) => {
     if (!desktopOpen) return
     if (e.key === 'ArrowDown') {
@@ -109,17 +134,6 @@ export default function Header() {
           {/* ── Logo ── */}
           <Link href="/" className={styles.logo}>
             <div className={styles.logoMark}>
-              {/*
-                Changed from <img> to <Image priority> for two reasons:
-                1. priority adds fetchpriority="high" + a <link rel="preload">
-                   automatically — fixes the "render blocking requests 370ms"
-                   PageSpeed warning caused by the raw <img> being queued
-                   behind other resources.
-                2. Next.js serves the logo through /_next/image which applies
-                   cache headers (30-day minimumCacheTTL in next.config.js),
-                   so repeat visitors get an instant cache hit instead of a
-                   network round-trip to /logo.png every page load.
-              */}
               <Image
                 src="/logo.png"
                 alt="Addora logo"
@@ -127,6 +141,7 @@ export default function Header() {
                 height={32}
                 className={styles.logoImg}
                 priority
+                fetchPriority="high"
               />
             </div>
             <span className={styles.logoText}>Addora</span>
@@ -136,7 +151,8 @@ export default function Header() {
           <div ref={desktopRef} className={styles.desktopSearchWrap}>
             <div className={styles.desktopSearch}>
               <span className={styles.desktopSearchIcon}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
                   <circle cx="11" cy="11" r="8"/>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
@@ -160,8 +176,10 @@ export default function Header() {
                   tabIndex={-1}
                   aria-label={tr('clear')}
                 >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" strokeWidth="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
                   </svg>
                 </button>
               )}
@@ -174,8 +192,11 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Dropdown */}
-            {desktopOpen && (
+            {/*
+              Only render dropdown after mount — keeps it out of SSR HTML
+              and off the critical render path entirely.
+            */}
+            {mounted && desktopOpen && (
               <div className={styles.desktopDropdownWrap}>
                 <SearchDropdown
                   query={query}
@@ -194,13 +215,18 @@ export default function Header() {
 
           {/* ── Desktop nav links ── */}
           <nav className={styles.nav}>
-            <Link href="/" className={styles.navLink}>{tr('home')}</Link>
+            <Link href="/"          className={styles.navLink}>{tr('home')}</Link>
             <Link href="/#products" className={styles.navLink}>{tr('shop')}</Link>
-            <Link href="/categories" className={`${styles.navLink} ${pathname === '/categories' ? styles.navLinkActive : ''}`}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="1.5"/>
-                <rect x="14" y="3" width="7" height="7" rx="1.5"/>
-                <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+            <Link
+              href="/categories"
+              className={`${styles.navLink} ${pathname === '/categories' ? styles.navLinkActive : ''}`}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2.2"
+                strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3"  y="3"  width="7" height="7" rx="1.5"/>
+                <rect x="14" y="3"  width="7" height="7" rx="1.5"/>
+                <rect x="3"  y="14" width="7" height="7" rx="1.5"/>
                 <rect x="14" y="14" width="7" height="7" rx="1.5"/>
               </svg>
               {tr('categories')}
@@ -210,19 +236,27 @@ export default function Header() {
 
           {/* ── Right actions ── */}
           <div className={styles.actions}>
-            {/* Language toggle */}
             <LangToggle transparent={transparent} />
 
-            <NotificationBell transparent={transparent} />
+            {/*
+              NotificationBell is dynamic (ssr:false) — it makes a Supabase
+              realtime subscription. Rendering it only after mount prevents
+              it from blocking the initial paint.
+            */}
+            {mounted && <NotificationBell transparent={transparent} />}
 
             {/* Cart */}
             <Link href="/cart" className={styles.cartBtn} aria-label={tr('cart')}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="1.8"
+                strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
                 <line x1="3" y1="6" x2="21" y2="6"/>
                 <path d="M16 10a4 4 0 01-8 0"/>
               </svg>
-              {count > 0 && <span className={styles.cartBadge}>{count > 9 ? '9+' : count}</span>}
+              {count > 0 && (
+                <span className={styles.cartBadge}>{count > 9 ? '9+' : count}</span>
+              )}
             </Link>
 
             {/* Auth */}
@@ -231,7 +265,8 @@ export default function Header() {
                 <button className={styles.userBtn} onClick={() => setMenuOpen(!menuOpen)}>
                   <span className={styles.avatar}>{user.name[0].toUpperCase()}</span>
                   <span className={styles.userName}>{user.name.split(' ')[0]}</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" strokeWidth="2.5"
                     style={{ transform: menuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
                     <polyline points="6 9 12 15 18 9"/>
                   </svg>
@@ -239,13 +274,16 @@ export default function Header() {
 
                 {menuOpen && (
                   <div className={styles.dropdown}>
-                    <Link href="/account" className={styles.dropdownHead} onClick={() => setMenuOpen(false)} style={{ textDecoration: 'none', cursor: 'pointer' }}>
+                    <Link href="/account" className={styles.dropdownHead}
+                      onClick={() => setMenuOpen(false)}
+                      style={{ textDecoration: 'none', cursor: 'pointer' }}>
                       <div className={styles.dropdownAvatar}>{user.name[0].toUpperCase()}</div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div className={styles.dropdownName}>{user.name}</div>
                         <div className={styles.dropdownPhone}>{user.email || ''}</div>
                       </div>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2.5" style={{ flexShrink: 0 }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                        stroke="#bbb" strokeWidth="2.5" style={{ flexShrink: 0 }}>
                         <path d="M9 18l6-6-6-6"/>
                       </svg>
                     </Link>
@@ -292,21 +330,23 @@ export default function Header() {
         </div>
       </header>
 
-      {/* ── Mobile search full-screen overlay ── */}
-      <MobileSearchOverlay
-        open={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-        query={query}
-        setQuery={setQuery}
-        results={results}
-        loading={loading}
-        recent={recent}
-        saveRecent={saveRecent}
-        onRemoveRecent={removeRecent}
-        onClearRecent={clearRecent}
-        activeIndex={activeIndex}
-        setActiveIndex={setActiveIndex}
-      />
+      {/* Only mount overlay after hydration — it's never needed on first paint */}
+      {mounted && (
+        <MobileSearchOverlay
+          open={mobileOpen}
+          onClose={() => setMobileOpen(false)}
+          query={query}
+          setQuery={setQuery}
+          results={results}
+          loading={loading}
+          recent={recent}
+          saveRecent={saveRecent}
+          onRemoveRecent={removeRecent}
+          onClearRecent={clearRecent}
+          activeIndex={activeIndex}
+          setActiveIndex={setActiveIndex}
+        />
+      )}
     </>
   )
 }
