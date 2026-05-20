@@ -22,12 +22,9 @@ function getPastelBg(id) {
   return PASTEL_COLORS[index]
 }
 
-// 1×1 px transparent PNG — gives Next.js something to blur while real image loads.
-// Prevents layout shift (CLS) and shows pastelBg colour underneath immediately.
 const BLUR_DATA_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='
 
-// ── Star rating ───────────────────────────────────────────────────────────────
 const StarRating = memo(function StarRating({ rating = 0, reviews = 0 }) {
   const fmt     = n => (n >= 1000 ? (n / 1000).toFixed(1) + 'k' : n)
   const rounded = Math.round(rating)
@@ -46,7 +43,6 @@ const StarRating = memo(function StarRating({ rating = 0, reviews = 0 }) {
   )
 })
 
-// ── No-image placeholder ──────────────────────────────────────────────────────
 const NoImagePlaceholder = memo(function NoImagePlaceholder({ bg }) {
   return (
     <div className={styles.noImage} style={{ background: bg }}>
@@ -60,13 +56,6 @@ const NoImagePlaceholder = memo(function NoImagePlaceholder({ bg }) {
   )
 })
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ProductCard
-// Props:
-//   product  — product object from Supabase
-//   priority — true for first 2 cards (LCP cards): skips lazy-load,
-//              adds fetchPriority="high", Next.js auto-injects <link rel="preload">
-// ─────────────────────────────────────────────────────────────────────────────
 const ProductCard = memo(function ProductCard({ product, priority = false }) {
   const { user }                         = useAuth()
   const { addItem }                      = useCart()
@@ -120,66 +109,55 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
   return (
     <Link href={`/products/${product.id}`} className={styles.card}>
 
-      {/* ── Image area ─────────────────────────────────────────────────── */}
       <div className={styles.imageWrap} style={{ background: pastelBg }}>
-
         {showImage ? (
           <Image
             src={product.image_url}
             alt={product.name}
             fill
             /*
-              sizes MUST match your real CSS card widths:
-                Mobile  (<480px):  2-col grid  → each card ≈ 44vw
-                Tablet  (<768px):  3-col grid  → each card ≈ 30vw
-                Desktop (<1280px): 4-col grid  → each card ≈ 22vw
-                Wide:              fixed cards  → 220px max
-              This tells Next.js to serve a ~200px image on mobile
-              instead of a full 640px image — fixes the 538 KB waste.
+              FIX: was (max-width: 480px) → Next.js picked w=640 on mobile
+              Now  (max-width: 390px)  → Next.js picks w=384 on mobile
+
+              Math: 390px × 44vw = 171px × 2x DPR = 342px → rounds up to w=384 ✓
+              Before: 480px breakpoint never triggered on 390px phone → fell
+                      through to 768px rule → picked w=640 (256px wasted)
             */
-            sizes="(max-width: 480px) 44vw, (max-width: 768px) 30vw, (max-width: 1280px) 22vw, 220px"
+            sizes="(max-width: 390px) 44vw, (max-width: 768px) 30vw, (max-width: 1280px) 22vw, 220px"
             className={styles.image}
             style={{ objectFit: 'cover' }}
-            /*
-              priority=true  → disables lazy-load, Next.js injects
-                               <link rel="preload"> in <head> automatically.
-              Only pass true for the first 2 cards (above the fold).
-            */
             priority={priority}
             quality={80}
             placeholder="blur"
             blurDataURL={BLUR_DATA_URL}
-            /*
-              fetchPriority:
-                "high" on LCP cards  → browser fetches before other images
-                "low"  on rest       → browser defers until LCP is done
-              loading="lazy" on non-priority cards saves bandwidth on
-              images the user may never scroll to.
-            */
+            // fetchPriority: high on LCP cards, low on below-fold cards
             fetchPriority={priority ? 'high' : 'low'}
+            // loading: undefined on priority (Next.js handles it), lazy on rest
             loading={priority ? undefined : 'lazy'}
+            /*
+              decoding:
+                "sync"  on LCP cards  → browser paints immediately, no queue wait
+                "async" on rest       → decode off main thread, avoids jank
+            */
+            decoding={priority ? 'sync' : 'async'}
             onError={() => setImgError(true)}
           />
         ) : (
           <NoImagePlaceholder bg={pastelBg} />
         )}
 
-        {/* Discount badge */}
         {product.discount > 0 && (
           <span className={styles.discountBadge}>-{product.discount}%</span>
         )}
 
-        {/* Hot badge — only when no discount */}
         {product.badge && product.badge !== '' && !product.discount && (
           <span className={styles.hotBadge}>{product.badge}</span>
         )}
 
-        {/* Out of stock overlay */}
         {product.stock === 0 && (
           <div className={styles.outOfStock}>{tr('soldOut')}</div>
         )}
 
-        {/* Wishlist button */}
         <button
           className={`${styles.wishBtn} ${wishlisted ? styles.wishlisted : ''}`}
           onClick={handleWishlist}
@@ -194,9 +172,7 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
         </button>
       </div>
 
-      {/* ── Body ───────────────────────────────────────────────────────── */}
       <div className={styles.body}>
-
         <h3 className={styles.name}>{product.name}</h3>
 
         {product.rating > 0 && (
