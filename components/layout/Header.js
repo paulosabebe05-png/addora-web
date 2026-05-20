@@ -1,21 +1,22 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useAuth } from '../../lib/auth'
 import { useCart } from '../../lib/cart'
-import { useLang } from '../../lib/lang'                          // ← NEW
+import { useLang } from '../../lib/lang'
 import { useRouter, usePathname } from 'next/navigation'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import NotificationBell from './NotificationBell'
 import { useSearch } from '../search/useSearch'
 import SearchDropdown from '../search/SearchDropdown'
 import MobileSearchOverlay from './MobileSearchOverlay'
-import LangToggle from '../ui/LangToggle'                         // ← NEW
+import LangToggle from '../ui/LangToggle'
 import styles from './Header.module.css'
 
 export default function Header() {
   const { user, signOut } = useAuth()
   const { count } = useCart()
-  const { tr } = useLang()                                        // ← NEW
+  const { tr } = useLang()
   const router = useRouter()
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -108,7 +109,25 @@ export default function Header() {
           {/* ── Logo ── */}
           <Link href="/" className={styles.logo}>
             <div className={styles.logoMark}>
-              <img src="/logo.png" alt="Addora logo" className={styles.logoImg} />
+              {/*
+                Changed from <img> to <Image priority> for two reasons:
+                1. priority adds fetchpriority="high" + a <link rel="preload">
+                   automatically — fixes the "render blocking requests 370ms"
+                   PageSpeed warning caused by the raw <img> being queued
+                   behind other resources.
+                2. Next.js serves the logo through /_next/image which applies
+                   cache headers (30-day minimumCacheTTL in next.config.js),
+                   so repeat visitors get an instant cache hit instead of a
+                   network round-trip to /logo.png every page load.
+              */}
+              <Image
+                src="/logo.png"
+                alt="Addora logo"
+                width={32}
+                height={32}
+                className={styles.logoImg}
+                priority
+              />
             </div>
             <span className={styles.logoText}>Addora</span>
           </Link>
@@ -192,7 +211,7 @@ export default function Header() {
           {/* ── Right actions ── */}
           <div className={styles.actions}>
             {/* Language toggle */}
-            <LangToggle transparent={transparent} />                {/* ← NEW */}
+            <LangToggle transparent={transparent} />
 
             <NotificationBell transparent={transparent} />
 
@@ -271,8 +290,6 @@ export default function Header() {
             )}
           </div>
         </div>
-
-
       </header>
 
       {/* ── Mobile search full-screen overlay ── */}
