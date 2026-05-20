@@ -1,29 +1,5 @@
 'use client'
 // components/ui/ProductCard.js
-// ─────────────────────────────────────────────────────────────────────────────
-// Performance fixes vs original:
-//
-//  FIX 1 ▸ Replace raw <img> with next/image
-//           → fixes "Improve image delivery — 3,401 KiB"
-//           → auto WebP/AVIF conversion, correct srcset, lazy loading
-//           → raw <img> was downloading full-size Supabase images every time
-//
-//  FIX 2 ▸ Remove custom ImageWithSkeleton shimmer using raw <img>
-//           → next/image handles loading state natively via placeholder
-//           → eliminates the double-render (skeleton div + img both mounted)
-//
-//  FIX 3 ▸ Correct sizes= attribute on the Image
-//           → tells browser exactly how wide the card is per breakpoint
-//           → without this, browser downloads a 1200px image for a 200px card
-//
-//  FIX 4 ▸ loading="lazy" is next/image default for non-priority images
-//           → only set priority={true} on above-fold cards (first 4 in flash row)
-//           → controlled by optional `priority` prop from parent
-//
-//  FIX 5 ▸ Memoize the entire card with React.memo
-//           → product rows re-render on parent state changes (search, filters)
-//           → memo prevents re-rendering cards whose product data hasn't changed
-// ─────────────────────────────────────────────────────────────────────────────
 
 import { memo, useState }       from 'react'
 import Link                     from 'next/link'
@@ -96,7 +72,6 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
   const { tr }                          = useLang()
   const router                          = useRouter()
   const [added, setAdded]               = useState(false)
-  // FIX 2 — track image error state (next/image uses onError too)
   const [imgError, setImgError]         = useState(false)
 
   const wishlisted      = isWishlisted(product.id)
@@ -147,29 +122,16 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
       <div className={styles.imageWrap} style={{ background: pastelBg }}>
 
         {showImage ? (
-          /*
-            FIX 1 — next/image instead of raw <img>
-            • Automatically serves WebP/AVIF (saves up to 50 % bandwidth)
-            • Generates a proper srcset so mobile gets a small image
-            • lazy loads by default (pass priority={true} for above-fold cards)
-
-            FIX 3 — sizes tells the browser the rendered width of this image:
-            • On mobile (< 640 px): cards are ~45 vw wide (2-column grid)
-            • On tablet (640–1024 px): ~30 vw (3-column)
-            • On desktop (> 1024 px): ~200 px fixed (horizontal scroll row)
-            Without sizes, browser defaults to 100vw → downloads a 1200px image
-            for a 200px slot → wastes ~5× bandwidth.
-          */
           <Image
             src={product.image_url}
             alt={product.name}
             fill
             sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 220px"
+            // FIX: className only handles transition/display — objectFit is set via style below
             className={styles.image}
-            style={{ objectFit: 'contain' }}
-            // FIX 4 — priority only for above-fold cards
+            // FIX: 'contain' so the full product is always visible, no cropping
+            style={{ objectFit: 'contain', padding: '8px' }}
             priority={priority}
-            // quality 75 saves ~25% vs default 100 with no visible difference
             quality={75}
             onError={() => setImgError(true)}
           />
