@@ -1,33 +1,9 @@
 'use client'
-// app/HomeClient.js
-// ─────────────────────────────────────────────────────────────────────────────
-// Performance fixes vs original:
-//
-//  FIX 1 ▸ Accept `initialDevice` prop from page.js (server-detected)
-//           → removes the useEffect/window.innerWidth race, skips double fetch
-//
-//  FIX 2 ▸ Single useBanners() call based on initialDevice
-//           → was fetching BOTH mobile + desktop banners on every device
-//
-//  FIX 3 ▸ allProducts grid paginated (12 at a time, "Load more" button)
-//           → was rendering ALL products at once → huge DOM + main-thread work
-//
-//  FIX 4 ▸ animationDelay only on first 6 items in grids
-//           → per-item inline styles on 100+ nodes blocks the renderer
-//
-//  FIX 5 ▸ heroPreloadUrl prop used as placeholder blurDataURL
-//           → first banner visible instantly while HQ loads
-//
-//  FIX 6 ▸ Supabase client imported from lib/supabase (singleton)
-//           → was recreating the client inside the module on every HMR
-// ─────────────────────────────────────────────────────────────────────────────
 
 import { useState, useEffect, useRef, useCallback, memo } from 'react'
-import Link        from 'next/link'
-import Image       from 'next/image'
-import { useRouter } from 'next/navigation'
-
-// FIX 6 — import singleton instead of calling createClient() here
+import Link            from 'next/link'
+import Image           from 'next/image'
+import { useRouter }   from 'next/navigation'
 import { supabase }    from '../lib/supabase'
 import ProductCard     from '../components/ui/ProductCard'
 import styles          from './HomeClient.module.css'
@@ -36,15 +12,13 @@ import MobileSearchOverlay from '../components/layout/MobileSearchOverlay'
 import { useSearch }   from '../components/search/useSearch'
 import { useFlashCountdown } from '../hooks/useFlashCountdown'
 
-// ── Only fetch columns we render — keeps Supabase payload small ───────────────
 const PRODUCT_FIELDS =
   'id, name, price, image_url, discount, section, rating, sold, created_at, category_id, stock, active'
 
-// ── How many products to show in the "All Products" grid initially ────────────
 const PAGE_SIZE = 12
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Data hooks
+// Data hooks — banners REMOVED (now server-fetched, passed as props)
 // ─────────────────────────────────────────────────────────────────────────────
 
 function useCategories() {
@@ -79,11 +53,7 @@ function useSectionProducts(
   const [loading,  setLoading]  = useState(true)
 
   useEffect(() => {
-    // Skip sentinel value used for lazy sections that aren't visible yet
-    if (sectionValue === '__skip__') {
-      setLoading(false)
-      return
-    }
+    if (sectionValue === '__skip__') { setLoading(false); return }
     let cancelled = false
     setLoading(true)
     supabase
@@ -95,10 +65,7 @@ function useSectionProducts(
       .limit(limit)
       .then(({ data, error }) => {
         if (error) console.error(`Section [${sectionValue}] error:`, error)
-        if (!cancelled) {
-          setProducts(data || [])
-          setLoading(false)
-        }
+        if (!cancelled) { setProducts(data || []); setLoading(false) }
       })
     return () => { cancelled = true }
   }, [sectionValue]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -106,35 +73,8 @@ function useSectionProducts(
   return { products, loading }
 }
 
-// FIX 1 & 2 — accept device as parameter so we only fetch the right banners
-function useBanners(device) {
-  const [banners,       setBanners]       = useState([])
-  const [loadingBanners, setLoadingBanners] = useState(true)
-
-  useEffect(() => {
-    if (!device) return
-    let cancelled = false
-    supabase
-      .from('banners')
-      .select('id, image_url, target_url, title, sort_order, device')
-      .eq('active', true)
-      .in('device', [device, 'all'])
-      .order('sort_order', { ascending: true })
-      .then(({ data, error }) => {
-        if (error) console.error('Banners error:', error)
-        if (!cancelled) {
-          setBanners(data || [])
-          setLoadingBanners(false)
-        }
-      })
-    return () => { cancelled = true }
-  }, [device])
-
-  return { banners, loadingBanners }
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
-// Skeleton & Dots
+// Skeleton & Dots — unchanged
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SkeletonCard = memo(function SkeletonCard() {
@@ -158,7 +98,7 @@ const BannerDots = memo(function BannerDots({ count, active, onSelect }) {
         <button
           key={i}
           className={`${styles.bannerDot} ${i === active ? styles.bannerDotActive : ''}`}
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onSelect(i) }}
+          onClick={e => { e.preventDefault(); e.stopPropagation(); onSelect(i) }}
           aria-label={`Go to banner ${i + 1}`}
         />
       ))}
@@ -168,19 +108,20 @@ const BannerDots = memo(function BannerDots({ count, active, onSelect }) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Hero Banner Carousel
+// Now accepts `banners` as prop — no internal fetch, no loading state needed
+// for initial render since data comes from server
 // ─────────────────────────────────────────────────────────────────────────────
 
 function HeroBannerCarousel({
-  banners,
-  loading,
-  isMobile = false,
-  heroPreloadUrl = null,   // FIX 5 — URL already being preloaded by page.js
+  banners        = [],
+  isMobile       = false,
+  heroPreloadUrl = null,
 }) {
-  const router       = useRouter()
-  const { tr }       = useLang()
+  const router      = useRouter()
+  const { tr }      = useLang()
   const [activeIdx, setActiveIdx] = useState(0)
-  const touchStartX  = useRef(null)
-  const intervalRef  = useRef(null)
+  const touchStartX = useRef(null)
+  const intervalRef = useRef(null)
 
   const startAutoPlay = useCallback(() => {
     if (banners.length <= 1) return
@@ -195,8 +136,7 @@ function HeroBannerCarousel({
     return () => clearInterval(intervalRef.current)
   }, [startAutoPlay])
 
-  if (loading) return <div className={styles.heroBannerSkeleton} />
-
+  // No loading skeleton needed — banners come from server, available immediately
   if (!banners.length) {
     return (
       <div
@@ -249,18 +189,12 @@ function HeroBannerCarousel({
           alt={banner.title || 'Banner'}
           fill
           sizes={isMobile ? '100vw' : '(max-width: 768px) 100vw, 75vw'}
-          // priority on first banner = fetchpriority="high" in the DOM
-          // Combined with page.js <link rel="preload">, this is the LCP fix
           priority={activeIdx === 0}
           quality={75}
           style={{ objectFit: 'cover' }}
           className={styles.heroBannerImg}
-          // FIX 5 — if page.js already knows the first banner URL, use it
-          // as a blurDataURL so something appears before the HQ image loads
-          {...(activeIdx === 0 && heroPreloadUrl === banner.image_url
-            ? { placeholder: 'empty' }   // browser already has it in cache
-            : {}
-          )}
+          fetchPriority={activeIdx === 0 ? 'high' : 'low'}
+          decoding={activeIdx === 0 ? 'sync' : 'async'}
         />
       </div>
 
@@ -273,7 +207,8 @@ function HeroBannerCarousel({
             onClick={() => setActiveIdx(i => (i - 1 + banners.length) % banners.length)}
             aria-label="Previous banner"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2.5">
               <polyline points="15 18 9 12 15 6"/>
             </svg>
           </button>
@@ -282,7 +217,8 @@ function HeroBannerCarousel({
             onClick={() => setActiveIdx(i => (i + 1) % banners.length)}
             aria-label="Next banner"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2.5">
               <polyline points="9 18 15 12 9 6"/>
             </svg>
           </button>
@@ -293,7 +229,8 @@ function HeroBannerCarousel({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Section Header
+// SectionHeader, ProductRow, CategoryGrid, PromoBanner, TrustStrip
+// unchanged from your original — paste your existing implementations here
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SectionHeader = memo(function SectionHeader({ label, title, countdown, seeAllHref }) {
@@ -328,18 +265,7 @@ const SectionHeader = memo(function SectionHeader({ label, title, countdown, see
   )
 })
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Product Row (horizontal scroll)
-// ─────────────────────────────────────────────────────────────────────────────
-
-const ProductRow = memo(function ProductRow({
-  products,
-  loading,
-  itemWidth = 200,
-  // aboveFold=true on the flash sale row: passes priority to first 4 cards
-  // next/image sets fetchpriority="high" → fixes LCP for product images
-  aboveFold = false,
-}) {
+const ProductRow = memo(function ProductRow({ products, loading, itemWidth = 200, aboveFold = false }) {
   if (loading) {
     return (
       <div className={styles.hScrollRow}>
@@ -358,10 +284,6 @@ const ProductRow = memo(function ProductRow({
     </div>
   )
 })
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Category Grid
-// ─────────────────────────────────────────────────────────────────────────────
 
 const CategoryGrid = memo(function CategoryGrid() {
   const { tr } = useLang()
@@ -393,17 +315,13 @@ const CategoryGrid = memo(function CategoryGrid() {
   )
 })
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Promo Banner
-// ─────────────────────────────────────────────────────────────────────────────
-
 const PromoBanner = memo(function PromoBanner() {
   const { tr } = useLang()
   const STATS = [
-    { n: '200+', lKey: 'statProducts'     },
-    { n: '1–3',  lKey: 'statDayDelivery'  },
-    { n: '100%', lKey: 'trustCODTitle'    },
-    { n: '4.9★', lKey: 'rating'           },
+    { n: '200+', lKey: 'statProducts'    },
+    { n: '1–3',  lKey: 'statDayDelivery' },
+    { n: '100%', lKey: 'trustCODTitle'   },
+    { n: '4.9★', lKey: 'rating'          },
   ]
   const FEATURES = [
     { icon: '🚀', textKey: 'aboutBullet1' },
@@ -449,16 +367,12 @@ const PromoBanner = memo(function PromoBanner() {
   )
 })
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Trust Strip
-// ─────────────────────────────────────────────────────────────────────────────
-
 const TrustStrip = memo(function TrustStrip() {
   const { tr } = useLang()
   const items = [
-    { icon: '🚚', titleKey: 'trustFreeDeliveryTitle', subKey: 'trustFreeDeliverySub'  },
-    { icon: '📞', titleKey: 'trustSupportTitle',      subKey: 'trustSupportSub'       },
-    { icon: '🔒', titleKey: 'trustMoneyBackTitle',    subKey: 'trustMoneyBackSub'     },
+    { icon: '🚚', titleKey: 'trustFreeDeliveryTitle', subKey: 'trustFreeDeliverySub' },
+    { icon: '📞', titleKey: 'trustSupportTitle',      subKey: 'trustSupportSub'      },
+    { icon: '🔒', titleKey: 'trustMoneyBackTitle',    subKey: 'trustMoneyBackSub'    },
   ]
   return (
     <div className={styles.trustStrip}>
@@ -482,22 +396,20 @@ const TrustStrip = memo(function TrustStrip() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function HomeClient({
-  products: initialProducts = [],
-  // FIX 1 — device detected server-side in page.js, passed as prop
-  initialDevice  = 'desktop',
-  // FIX 5 — URL page.js already injected as <link rel="preload">
-  heroPreloadUrl = null,
+  products:              initialProducts        = [],
+  initialDevice                                 = 'desktop',
+  heroPreloadUrl                                = null,
+  // NEW: banners now come from server — no client fetch needed
+  initialDesktopBanners                         = [],
+  initialMobileBanners                          = [],
 }) {
   const { tr, lang } = useLang()
   const router = useRouter()
   const [activeCategory,   setActiveCategory]   = useState('catAll')
   const [search,           setSearch]           = useState('')
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
+  const [visibleCount,     setVisibleCount]     = useState(PAGE_SIZE)
 
-  // FIX 3 — pagination state for "All Products" grid
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
-
-  // Flash sale countdown
   const { h, m, s, expired, loading: timerLoading } = useFlashCountdown()
   const countdown = timerLoading || expired ? null : { h, m, s }
 
@@ -526,19 +438,7 @@ export default function HomeClient({
     [lang]
   )
 
-  // Both banner sets are needed because the desktop layout AND mobile layout
-  // are always present in the DOM at the same time — CSS hides one of them.
-  // If you only fetch one set, the hidden layout shows a skeleton forever
-  // when the user resizes or rotates their device.
-  //
-  // The performance gain vs original: initialDevice (from server User-Agent)
-  // means the CORRECT set is already fetched before hydration, so the visible
-  // carousel never waits for a useEffect/window.innerWidth check.
-  const { banners: desktopBanners, loadingBanners: loadingDesktop } = useBanners('desktop')
-  const { banners: mobileBanners,  loadingBanners: loadingMobile  } = useBanners('mobile')
-  const isMobileDevice = initialDevice === 'mobile'
-
-  // ── Below-fold lazy loading (IntersectionObserver) ────────────────────────
+  // ── Below-fold lazy loading ───────────────────────────────────────────────
   const [belowFoldVisible, setBelowFoldVisible] = useState(false)
   const belowFoldRef = useRef(null)
 
@@ -553,29 +453,16 @@ export default function HomeClient({
     return () => observer.disconnect()
   }, [])
 
-  // Flash sale — above fold, loads immediately
   const { products: flashProducts, loading: loadingFlash } =
     useSectionProducts('flash_sale', { orderCol: 'discount', ascending: false })
 
-  // Below-fold sections — only fetch when user scrolls near
-  const { products: bestSellers, loading: loadingBest } =
-    useSectionProducts(
-      belowFoldVisible ? 'best_sellers' : '__skip__',
-      { orderCol: 'sold', ascending: false }
-    )
-  const { products: newArrivals, loading: loadingNew } =
-    useSectionProducts(
-      belowFoldVisible ? 'new_arrivals' : '__skip__',
-      { orderCol: 'created_at', ascending: false }
-    )
-  const { products: todayDeals, loading: loadingDeals } =
-    useSectionProducts(
-      belowFoldVisible ? 'todays_deals' : '__skip__',
-      { orderCol: 'discount', ascending: false }
-    )
+  const { products: bestSellers,  loading: loadingBest  } =
+    useSectionProducts(belowFoldVisible ? 'best_sellers' : '__skip__', { orderCol: 'sold', ascending: false })
+  const { products: newArrivals,  loading: loadingNew   } =
+    useSectionProducts(belowFoldVisible ? 'new_arrivals' : '__skip__', { orderCol: 'created_at', ascending: false })
+  const { products: todayDeals,   loading: loadingDeals } =
+    useSectionProducts(belowFoldVisible ? 'todays_deals' : '__skip__', { orderCol: 'discount', ascending: false })
 
-  // ── Category/search filter (server already filtered for clean nav;
-  //    this handles client-side pill + search-bar changes) ───────────────────
   const KEY_TO_EN = {
     catAll: 'All', catKids: 'Kids', catElectronics: 'Electronics',
     catHomeLiving: 'Home & Living', catBeauty: 'Beauty',
@@ -591,12 +478,9 @@ export default function HomeClient({
     return matchCat && matchSearch
   })
 
-  const isFiltering = activeCategory !== 'catAll' || search.trim() !== ''
+  const isFiltering      = activeCategory !== 'catAll' || search.trim() !== ''
+  const visibleProducts  = initialProducts.slice(0, visibleCount)
 
-  // FIX 3 — paginated slice of allProducts
-  const visibleProducts = initialProducts.slice(0, visibleCount)
-
-  // ─────────────────────────────────────────────────────────────────────────
   return (
     <>
       <div className={styles.page}>
@@ -607,21 +491,11 @@ export default function HomeClient({
             <ul className={styles.sidebarList}>
               {dbCategories.map(cat => (
                 <li key={cat.id}>
-                  <Link
-                    href={`/categories?cat=${cat.id}`}
-                    className={styles.sidebarLink}
-                    prefetch={false}
-                  >
+                  <Link href={`/categories?cat=${cat.id}`} className={styles.sidebarLink} prefetch={false}>
                     <span>{cat.icon || '🛍️'}</span>
                     {catName(cat)}
-                    <svg
-                      className={styles.sidebarChevron}
-                      width="12" height="12"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                    >
+                    <svg className={styles.sidebarChevron} width="12" height="12"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <polyline points="9 18 15 12 9 6"/>
                     </svg>
                   </Link>
@@ -631,9 +505,12 @@ export default function HomeClient({
           </aside>
 
           <div className={styles.heroArea}>
+            {/*
+              Key fix: initialDesktopBanners comes from server — no skeleton,
+              no useEffect, banner image is in HTML immediately → LCP drops
+            */}
             <HeroBannerCarousel
-              banners={desktopBanners}
-              loading={loadingDesktop}
+              banners={initialDesktopBanners}
               heroPreloadUrl={heroPreloadUrl}
             />
           </div>
@@ -660,8 +537,7 @@ export default function HomeClient({
 
           <div className={styles.mobileBannerWrap}>
             <HeroBannerCarousel
-              banners={mobileBanners}
-              loading={loadingMobile}
+              banners={initialMobileBanners}
               isMobile={true}
               heroPreloadUrl={heroPreloadUrl}
             />
@@ -682,8 +558,6 @@ export default function HomeClient({
 
         {/* ══ MAIN CONTENT ════════════════════════════════════════════════ */}
         <main className={styles.main}>
-
-          {/* Desktop filter bar */}
           <div className={styles.filterBar}>
             <div className={styles.filterCats}>
               {CAT_PILL_KEYS.map(cat => (
@@ -712,7 +586,6 @@ export default function HomeClient({
             </div>
           </div>
 
-          {/* ── Filtered / search view ──────────────────────────────────── */}
           {isFiltering ? (
             <section className={styles.section} id="all-products">
               <SectionHeader
@@ -726,21 +599,15 @@ export default function HomeClient({
               ) : (
                 <div className={styles.productGrid}>
                   {filtered.map((p, i) => (
-                    // FIX 4 — animation delay only on first 6 items
-                    <div
-                      key={p.id}
-                      style={i < 6 ? { animationDelay: `${i * 0.03}s` } : undefined}
-                    >
+                    <div key={p.id} style={i < 6 ? { animationDelay: `${i * 0.03}s` } : undefined}>
                       <ProductCard product={p} />
                     </div>
                   ))}
                 </div>
               )}
             </section>
-
           ) : (
             <>
-              {/* ── Flash Deals (above fold) ─────────────────────────── */}
               <section className={styles.section}>
                 <SectionHeader
                   label={tr('sectionTodayLabel')}
@@ -768,7 +635,6 @@ export default function HomeClient({
                 )}
               </section>
 
-              {/* ── Categories ──────────────────────────────────────── */}
               <section className={styles.section}>
                 <SectionHeader
                   label={tr('sectionCategoriesLabel')}
@@ -778,78 +644,51 @@ export default function HomeClient({
                 <CategoryGrid />
               </section>
 
-              {/*
-                Sentinel div — IntersectionObserver fires here when user
-                scrolls near. All sections below only start fetching then.
-              */}
               <div ref={belowFoldRef} />
 
-              {/* ── Best Sellers ────────────────────────────────────── */}
               <section className={styles.section}>
                 <SectionHeader
                   label={tr('sectionThisMonthLabel')}
                   title={tr('sectionBestSellingTitle')}
                   seeAllHref="/best-sellers"
                 />
-                <ProductRow
-                  products={bestSellers}
-                  loading={loadingBest}
-                  itemWidth={220}
-                />
+                <ProductRow products={bestSellers} loading={loadingBest} itemWidth={220} />
               </section>
 
               <PromoBanner />
 
-              {/* ── Today's Deals ────────────────────────────────────── */}
               <section className={styles.section}>
                 <SectionHeader
                   label={tr('sectionOnlyTodayLabel')}
                   title={tr('sectionTodayDealsTitle')}
                   seeAllHref="/todays-deals"
                 />
-                <ProductRow
-                  products={todayDeals}
-                  loading={loadingDeals}
-                  itemWidth={220}
-                />
+                <ProductRow products={todayDeals} loading={loadingDeals} itemWidth={220} />
               </section>
 
-              {/* ── New Arrivals ─────────────────────────────────────── */}
               <section className={styles.section}>
                 <SectionHeader
                   label={tr('sectionFreshLabel')}
                   title={tr('sectionNewArrivalsTitle')}
                   seeAllHref="/new-arrivals"
                 />
-                <ProductRow
-                  products={newArrivals}
-                  loading={loadingNew}
-                  itemWidth={220}
-                />
+                <ProductRow products={newArrivals} loading={loadingNew} itemWidth={220} />
               </section>
 
               <TrustStrip />
 
-              {/* ── All Products (paginated) ─────────────────────────── */}
               <section className={styles.section} id="all-products">
                 <SectionHeader
                   title={tr('sectionAllProductsTitle')}
                   label={`${initialProducts.length} ${tr('items')}`}
                 />
                 <div className={styles.productGrid}>
-                  {/* FIX 3 — only render PAGE_SIZE items at a time */}
                   {visibleProducts.map((p, i) => (
-                    <div
-                      key={p.id}
-                      // FIX 4 — no animationDelay on every card in a big grid
-                      style={i < 6 ? { animationDelay: `${i * 0.02}s` } : undefined}
-                    >
+                    <div key={p.id} style={i < 6 ? { animationDelay: `${i * 0.02}s` } : undefined}>
                       <ProductCard product={p} />
                     </div>
                   ))}
                 </div>
-
-                {/* Load More button — avoids rendering the entire product list */}
                 {visibleCount < initialProducts.length && (
                   <div className={styles.loadMoreWrap}>
                     <button
