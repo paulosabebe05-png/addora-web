@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    // Removed unoptimized: true — this was causing 21.9s LCP
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
@@ -25,14 +24,12 @@ const nextConfig = {
       {
         source: '/_next/static/:path*',
         headers: [
-          // Immutable: hashed filenames never change
           { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
         ],
       },
       {
         source: '/_next/image',
         headers: [
-          // Cache optimized images aggressively
           { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=3600' },
         ],
       },
@@ -49,8 +46,6 @@ const nextConfig = {
         ],
       },
       {
-        // Pages: was max-age=0 before — now browsers cache for 60s
-        // CDN/Netlify edge caches for 1hr, revalidates in background
         source: '/:path*',
         headers: [
           { key: 'Cache-Control',          value: 'public, max-age=60, s-maxage=3600, stale-while-revalidate=59' },
@@ -64,11 +59,15 @@ const nextConfig = {
   },
 
   experimental: {
+    // Tree-shakes large packages — reduces bundle size
     optimizePackageImports: [
       'lucide-react',
       'framer-motion',
       '@radix-ui/react-icons',
     ],
+    // Uses browserslist above to skip legacy polyfills — saves ~77KB
+    browsersListForSwc: true,
+    legacyBrowsers:     false,
   },
 
   compress:        true,
