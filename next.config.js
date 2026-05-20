@@ -4,7 +4,7 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
-    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       {
         protocol: 'https',
@@ -59,13 +59,11 @@ const nextConfig = {
   },
 
   experimental: {
-    // Tree-shakes large packages — reduces bundle size
     optimizePackageImports: [
       'lucide-react',
       'framer-motion',
       '@radix-ui/react-icons',
     ],
-    // Uses browserslist above to skip legacy polyfills — saves ~77KB
     browsersListForSwc: true,
     legacyBrowsers:     false,
   },
