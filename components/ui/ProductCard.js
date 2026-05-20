@@ -1,15 +1,15 @@
 'use client'
 // components/ui/ProductCard.js
 
-import { memo, useState }       from 'react'
-import Link                     from 'next/link'
-import Image                    from 'next/image'
-import { useAuth }              from '../../lib/auth'
-import { useCart }              from '../../lib/cart'
-import { useWishlist }          from '@/context/WishlistContext'
-import { useRouter }            from 'next/navigation'
-import { useLang }              from '../../lib/lang'
-import styles                   from './ProductCard.module.css'
+import { memo, useState }        from 'react'
+import Link                      from 'next/link'
+import Image                     from 'next/image'
+import { useAuth }               from '../../lib/auth'
+import { useCart }               from '../../lib/cart'
+import { useWishlist }           from '@/context/WishlistContext'
+import { useRouter }             from 'next/navigation'
+import { useLang }               from '../../lib/lang'
+import styles                    from './ProductCard.module.css'
 
 // ── Pastel background per product (deterministic, no flash) ──────────────────
 const PASTEL_COLORS = [
@@ -59,20 +59,18 @@ const NoImagePlaceholder = memo(function NoImagePlaceholder({ bg }) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ProductCard
-//
 // Props:
-//   product  — the product object from Supabase
-//   priority — pass true for the first ~4 cards in the flash-sale row (LCP)
-//              e.g. <ProductCard product={p} priority={i < 4} />
+//   product  — product object from Supabase
+//   priority — true for first ~4 cards in a row (LCP optimisation)
 // ─────────────────────────────────────────────────────────────────────────────
 const ProductCard = memo(function ProductCard({ product, priority = false }) {
-  const { user }                        = useAuth()
-  const { addItem }                     = useCart()
+  const { user }                         = useAuth()
+  const { addItem }                      = useCart()
   const { toggleWishlist, isWishlisted } = useWishlist()
-  const { tr }                          = useLang()
-  const router                          = useRouter()
-  const [added, setAdded]               = useState(false)
-  const [imgError, setImgError]         = useState(false)
+  const { tr }                           = useLang()
+  const router                           = useRouter()
+  const [added, setAdded]                = useState(false)
+  const [imgError, setImgError]          = useState(false)
 
   const wishlisted      = isWishlisted(product.id)
   const discountedPrice = product.discount > 0
@@ -127,10 +125,9 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
             alt={product.name}
             fill
             sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 220px"
-            // FIX: className only handles transition/display — objectFit is set via style below
             className={styles.image}
-            // FIX: 'contain' so the full product is always visible, no cropping
-            style={{ objectFit: 'contain', padding: '8px' }}
+            // cover = always fills the card fully, no white gaps
+            style={{ objectFit: 'cover' }}
             priority={priority}
             quality={75}
             onError={() => setImgError(true)}
