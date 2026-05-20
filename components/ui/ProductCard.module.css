@@ -30,10 +30,13 @@
   overflow: hidden;
 }
 
+/* FIX: Removed `object-fit: cover` — it was overriding the inline
+   `style={{ objectFit: 'contain' }}` set on the <Image> component.
+   object-fit is now controlled entirely via inline style on <Image>
+   so the full product image is always visible without cropping. */
 .image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
   transition: transform 0.4s ease;
   display: block;
 }
