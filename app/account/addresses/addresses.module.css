@@ -1,20 +1,23 @@
-/* ── Addresses Page ── */
+/* ══════════════════════════════════════
+   Addresses Page — Addora
+══════════════════════════════════════ */
+
 .page {
   font-family: 'DM Sans', sans-serif;
   min-height: 100vh;
-  background: #f7f7f5;
-  padding: 90px 0 100px;
+  background: #f4f4f1;
+  padding: 88px 0 100px;
 }
 
-/* Top bar breadcrumb */
+/* ── Breadcrumb ── */
 .topBar {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 0 16px 16px;
+  padding: 0 20px 20px;
   font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted, #888);
+  color: #aaa;
+  font-weight: 500;
 }
 .backBtn {
   display: flex;
@@ -23,183 +26,310 @@
   color: var(--navy, #1a1a2e);
   font-weight: 700;
   font-size: 12px;
+  transition: opacity 0.15s;
 }
-.sep { color: #ccc; }
-.pageTitle { color: var(--text-muted, #888); }
+.backBtn:active { opacity: 0.6; }
+.sep { color: #d4d4d0; font-size: 14px; }
+.pageTitle { color: #aaa; }
 
-.content { padding: 0 16px; display: flex; flex-direction: column; gap: 16px; }
+/* ── Content ── */
+.content {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
-/* Header */
-.header {
+/* ── Hero header ── */
+.hero {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   background: white;
-  border-radius: 16px;
-  padding: 18px 20px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  border-radius: 20px;
+  padding: 20px 22px;
+  box-shadow: 0 1px 0 #e8e8e4, 0 4px 16px rgba(0,0,0,0.04);
 }
-.headerIcon { font-size: 28px; line-height: 1; }
-.title {
+.heroIconWrap {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--orange, #e75525) 0%, #f07040 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(231,85,37,0.3);
+}
+.heroTitle {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 800;
   color: var(--navy, #1a1a2e);
-  margin-bottom: 2px;
+  letter-spacing: -0.2px;
+  line-height: 1.15;
+  margin-bottom: 3px;
 }
-.sub { font-size: 12px; color: var(--text-muted, #888); }
+.heroSub {
+  font-size: 12px;
+  color: #aaa;
+  font-weight: 500;
+}
 
-/* Loading */
+/* ── Loading ── */
 .loadingWrap {
   display: flex;
-  justify-content: center;
-  padding: 40px;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 52px 0;
 }
-.spinner {
-  width: 28px; height: 28px;
-  border: 3px solid #e8e8e6;
+.spinnerRing {
+  width: 32px; height: 32px;
+  border: 3px solid #eae9e5;
   border-top-color: var(--orange, #e75525);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.75s linear infinite;
+}
+.loadingText {
+  font-size: 13px;
+  color: #bbb;
+  font-weight: 500;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Empty */
+/* ── Empty state ── */
 .emptyCard {
   background: white;
-  border-radius: 20px;
-  padding: 36px 24px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  border-radius: 24px;
+  padding: 48px 28px 36px;
+  box-shadow: 0 1px 0 #e8e8e4, 0 4px 16px rgba(0,0,0,0.04);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 10px;
-}
-.emptyIcon { font-size: 40px; }
-.emptyTitle { font-size: 17px; font-weight: 800; color: var(--navy, #1a1a2e); }
-.emptySub { font-size: 13px; color: var(--text-muted, #888); margin-bottom: 8px; }
-
-/* Add button (filled — used in empty state) */
-.addBtn {
-  display: inline-flex;
-  align-items: center;
   gap: 8px;
-  padding: 13px 28px;
-  background: var(--orange, #e75525);
-  color: white;
-  font-size: 14px;
-  font-weight: 700;
-  border-radius: 100px;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  box-shadow: 0 4px 14px rgba(231,85,37,0.3);
-  transition: all 0.2s;
 }
-.addBtn:active { transform: scale(0.97); }
-
-/* List */
-.listWrap { display: flex; flex-direction: column; gap: 12px; }
-
-/* Address card */
-.addressCard {
-  background: white;
-  border-radius: 16px;
-  padding: 16px 18px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  border: 1.5px solid #ececea;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  transition: border-color 0.2s;
-}
-.defaultCard {
-  border-color: var(--orange, #e75525);
-  background: #fdf9f7;
-}
-.defaultBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: var(--orange, #e75525);
-  color: white;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 100px;
-  align-self: flex-start;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-.addrMeta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.addrName {
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--navy, #1a1a2e);
-}
-.addrPhone {
-  font-size: 12px;
-  color: var(--text-muted, #888);
-  font-weight: 500;
-}
-.addrText {
-  font-size: 13px;
-  color: var(--text, #333);
-  line-height: 1.5;
-}
-.addrActions {
-  display: flex;
-  gap: 10px;
-  margin-top: 6px;
-  padding-top: 10px;
-  border-top: 1px solid #ececea;
-}
-.actionBtn {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--navy, #1a1a2e);
-  background: #f5f5f3;
-  border: none;
-  border-radius: 100px;
-  padding: 7px 16px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.actionBtn:active { opacity: 0.7; }
-.deleteBtn { color: #e53e3e; background: #fff5f5; }
-
-/* Add outline button (for non-empty state) */
-.addBtnOutline {
+.emptyIllustration {
+  width: 80px; height: 80px;
+  background: #f7f7f4;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 14px;
-  border: 2px dashed #d8d8d4;
-  border-radius: 16px;
-  background: transparent;
+  margin-bottom: 8px;
+}
+.emptyTitle {
+  font-size: 17px;
+  font-weight: 800;
   color: var(--navy, #1a1a2e);
+  margin: 0;
+}
+.emptySub {
+  font-size: 13px;
+  color: #aaa;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+
+/* ── Filled add button ── */
+.addBtnFilled {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 30px;
+  background: var(--orange, #e75525);
+  color: white;
   font-size: 14px;
   font-weight: 700;
+  border-radius: 100px;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(231,85,37,0.32);
+  transition: all 0.2s;
+  letter-spacing: 0.1px;
+}
+.addBtnFilled:active { transform: scale(0.97); box-shadow: none; }
+
+/* ── List ── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Address card ── */
+.card {
+  background: white;
+  border-radius: 20px;
+  border: 1.5px solid #eae9e5;
+  box-shadow: 0 1px 0 #e8e8e4, 0 4px 16px rgba(0,0,0,0.04);
+  overflow: hidden;
+  animation: cardIn 0.3s ease both;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.cardDefault {
+  border-color: var(--orange, #e75525);
+  box-shadow: 0 0 0 3px rgba(231,85,37,0.08), 0 4px 16px rgba(0,0,0,0.04);
+}
+
+/* Card top section */
+.cardTop {
+  display: flex;
+  gap: 14px;
+  padding: 18px 18px 14px;
+}
+.cardPin {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: #f7f7f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.cardBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.cardNameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cardName {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--navy, #1a1a2e);
+}
+.defaultPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--orange, #e75525);
+  color: white;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+.cardPhone {
+  font-size: 12px;
+  color: #aaa;
+  font-weight: 500;
+}
+.cardAddr {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.55;
+  margin: 2px 0 0;
+}
+
+/* Divider */
+.cardDivider {
+  height: 1px;
+  background: #f0f0ec;
+  margin: 0 18px;
+}
+
+/* Card actions */
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+}
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border: none;
+  border-radius: 100px;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--navy, #1a1a2e);
   cursor: pointer;
+  transition: background 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.btnGhost:active { background: #f0f0ec; }
+.btnGhost:disabled { opacity: 0.5; cursor: not-allowed; }
+.btnDelete { color: #e03e3e; margin-left: auto; }
+.btnDelete:active { background: #fff0f0; }
+
+/* Dot spinner (inside buttons) */
+.dotSpinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  opacity: 0.5;
+}
+
+/* ── Dashed add button ── */
+.addBtnDashed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  border: 2px dashed #d8d8d2;
+  border-radius: 18px;
+  background: transparent;
+  color: #999;
+  font-size: 14px;
+  font-weight: 700;
   text-decoration: none;
   transition: all 0.2s;
+  letter-spacing: 0.1px;
 }
-.addBtnOutline:active { border-color: var(--orange, #e75525); color: var(--orange, #e75525); }
+.addBtnDashedIcon {
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  background: #f0f0ec;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.addBtnDashed:active {
+  border-color: var(--orange, #e75525);
+  color: var(--orange, #e75525);
+}
+.addBtnDashed:active .addBtnDashedIcon {
+  background: rgba(231,85,37,0.1);
+}
 
+/* ── Desktop ── */
 @media (min-width: 769px) {
-  .page { padding: 110px 0 100px; }
-  .content { max-width: 600px; margin: 0 auto; padding: 0 32px; }
-  .addBtn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(231,85,37,0.35); }
-  .addBtnOutline:hover { border-color: var(--orange, #e75525); color: var(--orange, #e75525); }
-  .actionBtn:hover { background: #ececea; }
-  .deleteBtn:hover { background: #ffe5e5; }
+  .page { padding: 108px 0 100px; }
+  .topBar { padding: 0 32px 24px; max-width: 640px; margin: 0 auto; }
+  .content { max-width: 640px; margin: 0 auto; padding: 0 32px; gap: 16px; }
+  .hero { padding: 24px 28px; }
+  .heroTitle { font-size: 24px; }
+  .heroIconWrap { width: 52px; height: 52px; border-radius: 16px; }
+
+  .addBtnFilled:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(231,85,37,0.35); }
+  .addBtnDashed:hover { border-color: var(--orange, #e75525); color: var(--orange, #e75525); }
+  .addBtnDashed:hover .addBtnDashedIcon { background: rgba(231,85,37,0.08); color: var(--orange, #e75525); }
+  .btnGhost:hover { background: #f5f5f2; }
+  .btnDelete:hover { background: #fff0f0; }
+  .backBtn:hover { opacity: 0.7; }
 }
