@@ -11,6 +11,7 @@ import Providers from './Providers'
 import Header    from '../components/layout/Header'
 import Footer    from '../components/layout/Footer'
 import BottomNav from '../components/layout/BottomNav'
+import ChatBot   from '../components/ChatBot'
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets:  ['latin'],
@@ -88,17 +89,13 @@ export const viewport = {
 }
 
 export default function RootLayout({ children }) {
-  // API host — e.g. xyzxyz.supabase.co
   const supabaseUrl  = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
   const supabaseHost = supabaseUrl
     .replace(/^https?:\/\//, '')
     .replace(/\/$/, '')
 
-  // Storage images are served from a separate CDN subdomain:
-  // projectref.supabase.co  →  images go through  projectref.supabase.co/storage/v1/...
-  // BUT on some plans they go through  cdn.supabase.co — preconnect both
-  const supabaseRef     = supabaseHost.split('.')[0]           // e.g. "xyzxyz"
-  const supabaseStorage = `${supabaseRef}.supabase.co`         // same host, storage path
+  const supabaseRef     = supabaseHost.split('.')[0]
+  const supabaseStorage = `${supabaseRef}.supabase.co`
 
   const fontClasses = [
     plusJakarta.variable,
@@ -127,16 +124,6 @@ export default function RootLayout({ children }) {
             <link rel="preconnect"   href={`https://${supabaseStorage}`} crossOrigin="anonymous" />
           </>
         )}
-
-        {/*
-          ── LCP image preload hint ──────────────────────────────────────
-          We can't preload a dynamic product image URL here because we
-          don't know it at layout level. Instead we rely on:
-            1. priority={true} on the first 2 ProductCards  → Next.js injects
-               <link rel="preload"> for those images automatically
-            2. fetchPriority="high" on the Image component
-          Both are set in ProductCard.js below.
-        */}
       </head>
 
       <body>
@@ -153,6 +140,7 @@ export default function RootLayout({ children }) {
           </main>
           <Footer />
           <BottomNav />
+          <ChatBot />
         </Providers>
       </body>
     </html>
