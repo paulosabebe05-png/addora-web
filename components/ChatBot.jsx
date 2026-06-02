@@ -1,4 +1,5 @@
 // components/ChatBot.jsx
+'use client'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { getOrCreateSession, processMessage } from '@/lib/chatbotEngine'
 import { useLang } from '@/lib/lang'
