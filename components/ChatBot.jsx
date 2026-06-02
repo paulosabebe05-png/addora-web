@@ -1,15 +1,8 @@
 'use client'
 // components/ChatBot.jsx
-// Addora Buyer Chatbot Widget
-// Uses: Supabase DB + Rule-based engine (no external API)
-
 import { useState, useEffect, useRef } from 'react'
-import {
-  getOrCreateSession,
-  processMessage,
-  loadChatHistory,
-} from '@/lib/chatbotEngine'
-import { useLang } from '@/lib/lang' // ✅ fixed path
+import { getOrCreateSession, processMessage } from '@/lib/chatbotEngine'
+import { useLang } from '@/lib/lang'
 
 const WELCOME = {
   en: {
@@ -32,43 +25,33 @@ export default function ChatBot() {
   const [unreadCount, setUnreadCount] = useState(1)
   const bodyRef = useRef(null)
 
-  // Initialize session and welcome message
   useEffect(() => {
     async function init() {
       try {
         const sess = await getOrCreateSession()
         setSession(sess)
-
-        // Load previous history if exists
-        // const history = await loadChatHistory(sess.id)
-        // if (history.length > 0) { setMessages(mapHistory(history)); return }
-
-        // Show welcome message
-        const welcome = WELCOME[lang] || WELCOME.en
-        setMessages([
-          {
-            id: 'welcome',
-            role: 'bot',
-            text: welcome.text,
-            quickReplies: welcome.quick,
-            time: formatTime(new Date()),
-          },
-        ])
       } catch (err) {
         console.error('Chatbot init error:', err)
       }
+      // Always show welcome regardless of session success
+      const welcome = WELCOME[lang] || WELCOME.en
+      setMessages([{
+        id: 'welcome',
+        role: 'bot',
+        text: welcome.text,
+        quickReplies: welcome.quick,
+        time: formatTime(new Date()),
+      }])
     }
     init()
   }, [])
 
-  // Auto-scroll to bottom
   useEffect(() => {
     if (bodyRef.current) {
       bodyRef.current.scrollTop = bodyRef.current.scrollHeight
     }
   }, [messages, loading])
 
-  // Reset unread on open
   useEffect(() => {
     if (isOpen) setUnreadCount(0)
   }, [isOpen])
@@ -79,44 +62,32 @@ export default function ChatBot() {
 
   async function handleSend(text) {
     const msg = (text || input).trim()
-    if (!msg || !session) return
+    if (!msg) return
     setInput('')
 
-    // Add user message to UI
-    const userMsg = {
-      id: Date.now(),
-      role: 'user',
-      text: msg,
-      time: formatTime(new Date()),
-    }
+    const userMsg = { id: Date.now(), role: 'user', text: msg, time: formatTime(new Date()) }
     setMessages(prev => [...prev, userMsg])
     setLoading(true)
 
     try {
+      if (!session) throw new Error('No session')
       const { response, quickReplies } = await processMessage(msg, session.id, lang)
-
-      const botMsg = {
+      setMessages(prev => [...prev, {
         id: Date.now() + 1,
         role: 'bot',
         text: response,
         quickReplies: quickReplies || [],
         time: formatTime(new Date()),
-      }
-      setMessages(prev => [...prev, botMsg])
-
+      }])
       if (!isOpen) setUnreadCount(c => c + 1)
     } catch (err) {
-      console.error('Bot error:', err)
-      setMessages(prev => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          role: 'bot',
-          text: 'Sorry, something went wrong. Please try again.',
-          quickReplies: ['Contact support'],
-          time: formatTime(new Date()),
-        },
-      ])
+      setMessages(prev => [...prev, {
+        id: Date.now() + 1,
+        role: 'bot',
+        text: 'Sorry, something went wrong. Please try again.',
+        quickReplies: ['Contact support'],
+        time: formatTime(new Date()),
+      }])
     } finally {
       setLoading(false)
     }
@@ -127,20 +98,52 @@ export default function ChatBot() {
       {/* ── Floating Button ── */}
       <button
         onClick={() => setIsOpen(o => !o)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[#E75525] shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105 active:scale-95"
         aria-label="Open chat support"
+        style={{
+          position: 'fixed',
+          bottom: '80px',
+          right: '20px',
+          zIndex: 9999,
+          width: '56px',
+          height: '56px',
+          borderRadius: '50%',
+          backgroundColor: '#E75525',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 4px 20px rgba(231,85,37,0.4)',
+          transition: 'transform 0.2s',
+        }}
+        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
       >
         {isOpen ? (
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         ) : (
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+          <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
             <path d="M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2z" />
           </svg>
         )}
         {!isOpen && unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#10182B] text-white text-xs rounded-full flex items-center justify-center font-semibold">
+          <span style={{
+            position: 'absolute',
+            top: '-4px',
+            right: '-4px',
+            width: '20px',
+            height: '20px',
+            borderRadius: '50%',
+            backgroundColor: '#10182B',
+            color: 'white',
+            fontSize: '11px',
+            fontWeight: '600',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
             {unreadCount}
           </span>
         )}
@@ -148,72 +151,98 @@ export default function ChatBot() {
 
       {/* ── Chat Window ── */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-[370px] max-w-[calc(100vw-2rem)] shadow-2xl rounded-2xl overflow-hidden flex flex-col"
-          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-
+        <div style={{
+          position: 'fixed',
+          bottom: '150px',
+          right: '20px',
+          zIndex: 9999,
+          width: '370px',
+          maxWidth: 'calc(100vw - 2rem)',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+        }}>
           {/* Header */}
-          <div className="bg-[#10182B] px-5 py-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#E75525] flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-              A
-            </div>
-            <div className="flex-1">
-              <p className="text-white font-semibold text-sm">Addora Support</p>
-              <p className="text-[#9FB3C8] text-xs flex items-center gap-1 mt-0.5">
-                <span className="w-2 h-2 rounded-full bg-green-400 inline-block" />
+          <div style={{ background: '#10182B', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{
+              width: '40px', height: '40px', borderRadius: '50%',
+              background: '#E75525', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', color: 'white', fontWeight: '700',
+              fontSize: '18px', flexShrink: 0,
+            }}>A</div>
+            <div>
+              <p style={{ color: 'white', fontWeight: '600', fontSize: '14px', margin: 0 }}>Addora Support</p>
+              <p style={{ color: '#9FB3C8', fontSize: '12px', margin: '2px 0 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4ade80', display: 'inline-block' }} />
                 Always here to help
               </p>
             </div>
           </div>
 
           {/* Messages */}
-          <div
-            ref={bodyRef}
-            className="bg-gray-50 flex-1 overflow-y-auto p-4 flex flex-col gap-3"
-            style={{ height: '360px' }}
-          >
+          <div ref={bodyRef} style={{
+            background: '#f9fafb', height: '360px',
+            overflowY: 'auto', padding: '16px',
+            display: 'flex', flexDirection: 'column', gap: '12px',
+          }}>
             {messages.map(m => (
-              <div key={m.id} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'} max-w-[85%] ${m.role === 'user' ? 'self-end' : 'self-start'}`}>
+              <div key={m.id} style={{
+                display: 'flex', flexDirection: 'column',
+                alignItems: m.role === 'user' ? 'flex-end' : 'flex-start',
+                alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
+                maxWidth: '85%',
+              }}>
                 {m.role === 'bot' && (
-                  <p className="text-[11px] text-gray-400 mb-1 pl-1">Addora Bot</p>
+                  <p style={{ fontSize: '11px', color: '#9ca3af', marginBottom: '4px', marginLeft: '4px' }}>Addora Bot</p>
                 )}
                 <div
-                  className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
-                    m.role === 'user'
-                      ? 'bg-[#E75525] text-white rounded-br-sm'
-                      : 'bg-white border border-gray-200 text-[#10182B] rounded-bl-sm'
-                  }`}
+                  style={{
+                    padding: '10px 16px',
+                    borderRadius: '16px',
+                    fontSize: '14px',
+                    lineHeight: '1.6',
+                    ...(m.role === 'user'
+                      ? { background: '#E75525', color: 'white', borderBottomRightRadius: '4px' }
+                      : { background: 'white', border: '1px solid #e5e7eb', color: '#10182B', borderBottomLeftRadius: '4px' }
+                    )
+                  }}
                   dangerouslySetInnerHTML={{ __html: m.text }}
                 />
-                <p className="text-[11px] text-gray-400 mt-1">{m.time}</p>
-
-                {/* Quick reply buttons */}
+                <p style={{ fontSize: '11px', color: '#9ca3af', marginTop: '4px' }}>{m.time}</p>
                 {m.quickReplies && m.quickReplies.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-2">
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
                     {m.quickReplies.map(q => (
-                      <button
-                        key={q}
-                        onClick={() => handleSend(q)}
-                        className="text-xs px-3 py-1.5 rounded-full border border-[#E75525] text-[#E75525] bg-white hover:bg-[#E75525] hover:text-white transition-colors font-medium"
-                      >
-                        {q}
-                      </button>
+                      <button key={q} onClick={() => handleSend(q)} style={{
+                        fontSize: '12px', padding: '6px 12px', borderRadius: '999px',
+                        border: '1px solid #E75525', color: '#E75525',
+                        background: 'white', cursor: 'pointer', fontWeight: '500',
+                      }}
+                        onMouseEnter={e => { e.currentTarget.style.background = '#E75525'; e.currentTarget.style.color = 'white' }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = '#E75525' }}
+                      >{q}</button>
                     ))}
                   </div>
                 )}
               </div>
             ))}
 
-            {/* Typing indicator */}
             {loading && (
-              <div className="self-start flex flex-col items-start">
-                <p className="text-[11px] text-gray-400 mb-1 pl-1">Addora Bot</p>
-                <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1">
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                <p style={{ fontSize: '11px', color: '#9ca3af', marginBottom: '4px' }}>Addora Bot</p>
+                <div style={{
+                  background: 'white', border: '1px solid #e5e7eb',
+                  borderRadius: '16px', borderBottomLeftRadius: '4px',
+                  padding: '12px 16px', display: 'flex', gap: '4px',
+                }}>
                   {[0, 1, 2].map(i => (
-                    <span
-                      key={i}
-                      className="w-2 h-2 rounded-full bg-gray-400"
-                      style={{ animation: `bounce 1.2s ${i * 0.2}s infinite` }}
-                    />
+                    <span key={i} style={{
+                      width: '8px', height: '8px', borderRadius: '50%',
+                      background: '#9ca3af', display: 'inline-block',
+                      animation: `chatbotBounce 1.2s ${i * 0.2}s infinite`,
+                    }} />
                   ))}
                 </div>
               </div>
@@ -221,37 +250,50 @@ export default function ChatBot() {
           </div>
 
           {/* Input */}
-          <div className="bg-white border-t border-gray-100 p-3 flex gap-2 items-center">
+          <div style={{
+            background: 'white', borderTop: '1px solid #f3f4f6',
+            padding: '12px', display: 'flex', gap: '8px', alignItems: 'center',
+          }}>
             <input
               type="text"
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSend()}
               placeholder={lang === 'am' ? 'ጥያቄዎን ያስፍሩ...' : 'Type your question...'}
-              className="flex-1 bg-gray-50 border border-gray-200 rounded-full px-4 py-2 text-sm text-[#10182B] outline-none focus:border-[#E75525] focus:bg-white transition-colors"
+              style={{
+                flex: 1, background: '#f9fafb', border: '1px solid #e5e7eb',
+                borderRadius: '999px', padding: '8px 16px', fontSize: '14px',
+                color: '#10182B', outline: 'none',
+              }}
             />
             <button
               onClick={() => handleSend()}
               disabled={loading || !input.trim()}
-              className="w-10 h-10 rounded-full bg-[#E75525] flex items-center justify-center text-white flex-shrink-0 hover:bg-[#c94418] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              style={{
+                width: '40px', height: '40px', borderRadius: '50%',
+                background: loading || !input.trim() ? '#f3a07a' : '#E75525',
+                border: 'none', cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0,
+              }}
             >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <svg width="16" height="16" fill="white" viewBox="0 0 24 24">
                 <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" />
               </svg>
             </button>
           </div>
 
-          {/* Brand footer */}
-          <div className="bg-white text-center py-1.5 border-t border-gray-100">
-            <p className="text-[10px] text-gray-400">
-              Powered by <span className="text-[#E75525] font-semibold">Addora</span>
+          {/* Footer */}
+          <div style={{ background: 'white', textAlign: 'center', padding: '6px', borderTop: '1px solid #f3f4f6' }}>
+            <p style={{ fontSize: '10px', color: '#9ca3af', margin: 0 }}>
+              Powered by <span style={{ color: '#E75525', fontWeight: '600' }}>Addora</span>
             </p>
           </div>
         </div>
       )}
 
-      <style jsx>{`
-        @keyframes bounce {
+      <style>{`
+        @keyframes chatbotBounce {
           0%, 60%, 100% { transform: translateY(0); }
           30% { transform: translateY(-4px); }
         }
