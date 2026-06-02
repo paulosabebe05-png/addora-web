@@ -9,7 +9,7 @@ import {
   processMessage,
   loadChatHistory,
 } from '@/lib/chatbotEngine'
-import { useLang } from '@/context/LangProvider' // your existing lang context
+import { useLang } from '@/lib/lang' // ✅ fixed path
 
 const WELCOME = {
   en: {
