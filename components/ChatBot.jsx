@@ -1,4 +1,3 @@
-'use client'
 // components/ChatBot.jsx
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { getOrCreateSession, processMessage } from '@/lib/chatbotEngine'
@@ -36,17 +35,9 @@ function formatTime(date) {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
-/**
- * Minimal HTML sanitizer — strips script/event-handler attributes from bot
- * responses so XSS from a compromised FAQ row cannot execute in the browser.
- * We intentionally keep <strong>, <br>, <b> since the engine uses them.
- */
 function sanitizeHtml(html) {
-  // Remove <script> blocks
   let clean = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-  // Remove on* event attributes (onclick, onmouseover, …)
   clean = clean.replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, '')
-  // Remove javascript: hrefs
   clean = clean.replace(/href\s*=\s*["']?\s*javascript:[^"'\s>]*/gi, '')
   return clean
 }
@@ -62,14 +53,13 @@ export default function ChatBot() {
   const [loading, setLoading] = useState(false)
   const [session, setSession] = useState(null)
   const [sessionError, setSessionError] = useState(false)
-  // Start at 0 — bump to 1 only after the welcome message actually renders
   const [unreadCount, setUnreadCount] = useState(0)
 
   const bodyRef = useRef(null)
   const inputRef = useRef(null)
   const mountedRef = useRef(true)
 
-  // ── Session init (runs once) ────────────────────────────────────────────────
+  // ── Session init ────────────────────────────────────────────────────────────
   useEffect(() => {
     mountedRef.current = true
     let cancelled = false
@@ -91,7 +81,6 @@ export default function ChatBot() {
   // ── Welcome message respects current lang ──────────────────────────────────
   useEffect(() => {
     setMessages([buildWelcomeMessage(lang)])
-    // Show unread badge once welcome is set
     if (!isOpen) setUnreadCount(1)
   }, [lang]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -115,7 +104,6 @@ export default function ChatBot() {
     const msg = (quickText ?? input).trim()
     if (!msg || loading) return
 
-    // Clear input immediately for responsive feel
     if (!quickText) setInput('')
 
     const userMsg = {
@@ -128,10 +116,7 @@ export default function ChatBot() {
     setLoading(true)
 
     try {
-      if (sessionError || !session) {
-        // Session unavailable — give a graceful error instead of crashing
-        throw new Error('no-session')
-      }
+      if (sessionError || !session) throw new Error('no-session')
 
       const { response, quickReplies } = await processMessage(msg, session.id, lang)
 
@@ -163,7 +148,7 @@ export default function ChatBot() {
     }
   }, [input, loading, session, sessionError, isOpen, lang])
 
-  // ── Keyboard shortcut: Escape closes chat ──────────────────────────────────
+  // ── Escape closes chat ─────────────────────────────────────────────────────
   useEffect(() => {
     function onKey(e) {
       if (e.key === 'Escape' && isOpen) setIsOpen(false)
@@ -183,8 +168,9 @@ export default function ChatBot() {
         aria-expanded={isOpen}
         style={{
           position: 'fixed',
-          bottom: '24px',
-          right: '24px',
+          // Sit above the mobile bottom nav bar (~64px) + safe area for iOS home indicator
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 80px)',
+          right: '16px',
           zIndex: 9999,
           width: '56px',
           height: '56px',
@@ -211,16 +197,12 @@ export default function ChatBot() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          transition: 'transform 0.25s',
-          transform: isOpen ? 'rotate(0deg)' : 'rotate(0deg)',
         }}>
           {isOpen ? (
-            /* X icon */
             <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           ) : (
-            /* Chat bubble icon */
             <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
               <path d="M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2z" />
             </svg>
@@ -262,19 +244,20 @@ export default function ChatBot() {
           aria-modal="false"
           style={{
             position: 'fixed',
-            bottom: '92px',        // snug above the toggle button
-            right: '24px',
+            // Keep the window above the FAB, which is already above the nav bar
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 148px)',
+            right: '16px',
             zIndex: 9998,
             width: '370px',
             maxWidth: 'calc(100vw - 32px)',
-            maxHeight: 'calc(100vh - 112px)', // never overflow viewport
+            // Clamp height so it never overlaps the top of the screen
+            maxHeight: 'calc(100vh - env(safe-area-inset-bottom, 0px) - 220px)',
             boxShadow: '0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.1)',
             borderRadius: '16px',
             overflow: 'hidden',
             display: 'flex',
             flexDirection: 'column',
             fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-            // Subtle entrance animation
             animation: 'chatWindowIn 0.22s cubic-bezier(0.34,1.56,0.64,1) both',
           }}
         >
@@ -287,7 +270,6 @@ export default function ChatBot() {
             gap: '12px',
             flexShrink: 0,
           }}>
-            {/* Avatar */}
             <div style={{
               width: '38px',
               height: '38px',
@@ -305,7 +287,6 @@ export default function ChatBot() {
               A
             </div>
 
-            {/* Title */}
             <div style={{ flex: 1, minWidth: 0 }}>
               <p style={{ color: 'white', fontWeight: '600', fontSize: '14px', margin: 0, lineHeight: 1.3 }}>
                 Addora Support
@@ -330,7 +311,6 @@ export default function ChatBot() {
               </p>
             </div>
 
-            {/* Header close button */}
             <button
               onClick={() => setIsOpen(false)}
               aria-label="Close chat"
@@ -363,14 +343,12 @@ export default function ChatBot() {
               background: '#f8f9fb',
               flex: 1,
               minHeight: '200px',
-              maxHeight: '400px',
               overflowY: 'auto',
               overflowX: 'hidden',
               padding: '16px',
               display: 'flex',
               flexDirection: 'column',
               gap: '14px',
-              // Custom scrollbar
               scrollbarWidth: 'thin',
               scrollbarColor: '#d1d5db transparent',
             }}
@@ -383,7 +361,6 @@ export default function ChatBot() {
                 isLoading={loading}
               />
             ))}
-
             {loading && <TypingIndicator />}
           </div>
 
@@ -522,7 +499,6 @@ function MessageBubble({ message: m, onQuickReply, isLoading }) {
               }
           ),
         }}
-        // We sanitize before rendering to prevent XSS
         dangerouslySetInnerHTML={{ __html: sanitizeHtml(m.text) }}
       />
 
