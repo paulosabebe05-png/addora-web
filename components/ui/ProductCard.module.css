@@ -25,13 +25,29 @@
 /* ── Image area ── */
 .imageWrap {
   position: relative;
-  aspect-ratio: 1/1;
+  /*
+    FIX (crop): was aspect-ratio: 1/1.
+    Most catalog photos are portrait shots of kids (taller than wide).
+    Forcing them into a perfect square meant object-fit: cover had to
+    crop a lot off the top and bottom to fill the box — clipping heads
+    and feet. 4/5 is a much closer match to typical portrait photography,
+    so far less of the image needs to be cropped away to fill the frame.
+    Combined with the objectPosition fix in ProductCard.jsx, this should
+    eliminate almost all head/feet clipping.
+    If your catalog is a mix of portrait people-shots and square flat-lay
+    product shots, 4/5 is still a safe middle ground — flat-lays just get
+    a bit of side-cropping instead, which is far less noticeable/costly
+    than cutting off a face.
+  */
+  aspect-ratio: 4/5;
   background: #f0f4f8;
   overflow: hidden;
 }
 
 /* object-fit is set via inline style={{ objectFit: 'cover' }} on <Image>.
-   Do NOT add object-fit here — it would conflict with the inline style. */
+   Do NOT add object-fit here — it would conflict with the inline style.
+   Likewise, object-position is now set inline (objectPosition) — don't
+   duplicate/override it here or the two will fight each other. */
 .image {
   width: 100%;
   height: 100%;
@@ -269,7 +285,9 @@
   .card:hover { transform: none; box-shadow: none; }
 
   .imageWrap {
-    aspect-ratio: 1/1;
+    /* FIX (crop): match the desktop 4/5 ratio — was 1/1 here too,
+       so mobile had the exact same head/feet clipping issue. */
+    aspect-ratio: 4/5;
     background: #f0f4f8;
   }
 
