@@ -91,14 +91,23 @@
   transition: border-color .2s, opacity .2s;
   opacity: .55;
 }
-.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* FIX (crop): object-position added — same issue as the mainImg below.
+   Without it, portrait product photos get centered-cropped in the square
+   thumb, clipping heads. Bias toward the top of the photo instead. */
+.thumb img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; display: block; }
 .thumbOn { border-color: var(--gold) !important; opacity: 1; }
 .thumb:hover:not(.thumbOn) { border-color: var(--border-hover); opacity: .85; }
 
 .mainBox {
   position: relative;
   flex: 1;
-  aspect-ratio: 1;
+  /* FIX (crop): was aspect-ratio: 1. Product photos are portrait shots
+     of kids (taller than wide). A perfect square forces object-fit: cover
+     to crop heavily off the top/bottom to fill the box, clipping heads
+     and feet. 4/5 is a much closer match to typical portrait photography,
+     so far less needs to be cropped away. Same fix as the product-card
+     grid — keep these two in sync if you tune the ratio further. */
+  aspect-ratio: 4/5;
   background: var(--surface);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -110,6 +119,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* FIX (crop): object-position added. Without it, object-fit: cover
+     defaults to centering the crop at 50/50, which is what was clipping
+     heads even after the aspect-ratio fix above. Biasing toward the top
+     keeps faces in frame. Tune per your catalog's typical photo framing. */
+  object-position: center 15%;
   display: block;
   pointer-events: none;
   transition: transform .5s ease;
