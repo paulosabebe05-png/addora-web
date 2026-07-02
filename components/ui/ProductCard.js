@@ -25,6 +25,17 @@ function getPastelBg(id) {
 const BLUR_DATA_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='
 
+// FIX (crop): default anchor point for object-fit: cover.
+// Most product photos here are portrait shots of kids (more headroom
+// below the face than above it). Centering at 50% clips heads at the
+// top and/or feet at the bottom once the image is forced into the
+// square/near-square card. Anchoring closer to the top keeps faces
+// and headline garment details in frame. Tune the Y value against a
+// sample of real product photos — 12–20% works well for portrait
+// kid photography; go higher (30–40%) if your catalog is mostly
+// flat-lay or centered product shots instead.
+const DEFAULT_IMAGE_POSITION = 'center 15%'
+
 const StarRating = memo(function StarRating({ rating = 0, reviews = 0 }) {
   const fmt     = n => (n >= 1000 ? (n / 1000).toFixed(1) + 'k' : n)
   const rounded = Math.round(rating)
@@ -71,6 +82,14 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
     : product.price
   const pastelBg = getPastelBg(product.id)
   const lowStock = product.stock > 0 && product.stock <= 5
+
+  // FIX (crop): allow a per-product override (e.g. product.image_position
+  // = "center 30%") for sellers whose photos are framed differently —
+  // flat-lays, close-ups, landscape shots, etc. Falls back to the
+  // catalog-wide default above when the product doesn't specify one.
+  // This is optional — safe to delete this line and just use
+  // DEFAULT_IMAGE_POSITION directly if you don't want a per-product field.
+  const imagePosition = product.image_position || DEFAULT_IMAGE_POSITION
 
   const handleAddToCart = (e) => {
     e.preventDefault()
@@ -125,7 +144,11 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
             */
             sizes="(max-width: 390px) 44vw, (max-width: 768px) 30vw, (max-width: 1280px) 22vw, 220px"
             className={styles.image}
-            style={{ objectFit: 'cover' }}
+            // FIX (crop): objectPosition added. object-fit: cover alone
+            // defaults to centering the crop at 50/50, which clips heads
+            // and feet on portrait product photos. See DEFAULT_IMAGE_POSITION
+            // comment above for tuning notes.
+            style={{ objectFit: 'cover', objectPosition: imagePosition }}
             priority={priority}
             quality={80}
             placeholder="blur"
