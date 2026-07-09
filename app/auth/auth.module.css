@@ -33,8 +33,6 @@
   margin-bottom: 32px;
 }
 
-
-/* Logomark container */
 .logoMark {
   display: flex;
   align-items: center;
@@ -42,7 +40,6 @@
   flex-shrink: 0;
 }
 
-/* Premium 3D glow on the image itself */
 .logoImg {
   width: 72px;
   height: 72px;
@@ -63,7 +60,6 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-/* SVG fallback sits in same space */
 .logoFallback {
   display: flex;
   align-items: center;
@@ -72,7 +68,6 @@
   z-index: 1;
 }
 
-/* Wordmark beneath the mark */
 .logoWordmark {
   font-family: 'Space Grotesk', 'DM Sans', sans-serif;
   font-size: 22px;
@@ -81,7 +76,6 @@
   color: #10182B;
   line-height: 1;
 }
-
 
 /* ─────────────────────────────────────────
    Legacy inline brand (keep for other pages)
@@ -162,6 +156,44 @@
   color: #9ca3af;
   white-space: nowrap;
 }
+
+/* ─────────────────────────────────────────
+   Email / Phone Tab Switcher
+───────────────────────────────────────── */
+.tabRow {
+  display: flex;
+  background: #f5f5f7;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 22px;
+  gap: 4px;
+}
+
+.tabBtn {
+  flex: 1;
+  padding: 10px 8px;
+  border: none;
+  background: transparent;
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #6b7280;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.tabBtnActive {
+  background: white;
+  color: #10182B;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.tabBtn:hover:not(.tabBtnActive) { color: #374151; }
 
 /* Form */
 .form {
@@ -366,3 +398,128 @@
   margin: -10px 0 10px 2px;
   font-weight: 500;
 }
+
+/* ─────────────────────────────────────────
+   Phone Input (with fixed +251 prefix)
+───────────────────────────────────────── */
+.phoneInputWrap {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #e4e6ed;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.phoneInputWrap:focus-within { border-color: #E75525; }
+
+.phonePrefix {
+  padding: 11px 12px;
+  background: #f5f5f7;
+  color: #10182B;
+  font-weight: 700;
+  font-size: 15px;
+  border-right: 1.5px solid #e4e6ed;
+  flex-shrink: 0;
+}
+
+.phoneInput {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 11px 14px;
+  font-size: 15px;
+  color: #10182B;
+  outline: none;
+  font-family: inherit;
+  min-width: 0;
+}
+.phoneInput::placeholder { color: #9ca3af; }
+
+.helperText {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: -8px;
+}
+
+/* ─────────────────────────────────────────
+   OTP Code Entry
+───────────────────────────────────────── */
+.otpHeader {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.otpHeader h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #10182B;
+  margin-bottom: 6px;
+}
+.otpHeader p {
+  font-size: 14px;
+  color: #8a8f9e;
+  line-height: 1.5;
+}
+.otpHeader strong { color: #10182B; }
+
+.otpRow {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.otpBox {
+  width: 46px;
+  height: 54px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  border: 1.5px solid #e4e6ed;
+  border-radius: 10px;
+  color: #10182B;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.otpBox:focus {
+  border-color: #E75525;
+  box-shadow: 0 0 0 3px rgba(231, 85, 37, 0.12);
+}
+
+.resendRow {
+  text-align: center;
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.resendLink {
+  color: #E75525;
+  font-weight: 700;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 0;
+}
+.resendLink:disabled { color: #9ca3af; cursor: not-allowed; }
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  margin-bottom: 18px;
+  padding: 0;
+  transition: color 0.2s;
+}
+.backBtn:hover { color: #10182B; }
