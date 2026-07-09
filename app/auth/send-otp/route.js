@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { sendOtp, normalizePhone } from '../../../../lib/afromessage'
+import { sendOtp, normalizePhone } from '../../../lib/afromessage'
 
 export async function POST(request) {
   const { phone } = await request.json()
