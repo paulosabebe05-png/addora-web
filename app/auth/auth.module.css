@@ -1,577 +1,160 @@
+/* ─────────────────────────────────────────
+   Split-screen auth layout
+───────────────────────────────────────── */
 .page {
-  min-height: calc(100vh - 64px);
+  min-height: 100vh;
   display: flex;
-  align-items: flex-start;
+  background: #F5F5F3;
+}
+
+/* LEFT — brand / trust panel */
+.leftPanel {
+  flex: 0 0 42%;
+  background: #0B0F1E;
+  position: relative;
+  overflow: hidden;   /* clips anything that escapes .dotfield/.dot sizing */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 56px 56px 48px;
+  color: white;
+}
+
+.dotfield {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;   /* second layer of containment, belt-and-suspenders */
+  pointer-events: none;
+  z-index: 1;
+}
+
+/*
+  FIX: .dot previously had no default width/height/top/left — those only
+  ever came from an inline style={{...}} passed per-dot in the component.
+  If that inline style was ever missing, malformed, or computed a size of
+  NaN/undefined, the div fell back to being unconstrained, which is how
+  you got one dot inflating to cover the whole page.
+
+  Now .dot has safe defaults and a hard max-size cap. Inline styles from
+  the component still override width/height/top/left/opacity as before,
+  but even a broken/missing inline style can never render larger than
+  180px, and can never escape .leftPanel.
+*/
+.dot {
+  position: absolute;
+  border-radius: 50%;
+  background: #E75525;
+  width: 60px;
+  height: 60px;
+  max-width: 180px;
+  max-height: 180px;
+  top: 0;
+  left: 0;
+  opacity: 0.12;
+}
+
+.leftTop { position: relative; z-index: 2; }
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 64px;
+}
+
+.headline {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  max-width: 360px;
+  margin-bottom: 14px;
+}
+.headline em {
+  font-style: normal;
+  color: #FF7A47;
+}
+
+.subhead {
+  font-size: 15px;
+  color: rgba(255,255,255,0.55);
+  max-width: 320px;
+  line-height: 1.6;
+}
+
+.stats {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 32px;
+  margin-top: 48px;
+}
+.statNum {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+}
+.statLabel {
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 2px;
+}
+
+.leftBottom { position: relative; z-index: 2; }
+
+.trustRow {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.trustItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+}
+.trustIcon {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
   justify-content: center;
-  padding: 48px 20px 60px;
-  background: linear-gradient(135deg, #0b0f1e 0%, #10182b 100%);
+  flex-shrink: 0;
+}
+
+/* RIGHT — form panel */
+.rightPanel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: white;
 }
 
 .card {
-  background: white;
-  border-radius: 20px;
-  padding: 40px;
   width: 100%;
-  max-width: 420px;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.3);
-  animation: fadeUp 0.3s ease;
+  max-width: 380px;
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ─────────────────────────────────────────
-   Premium Centered Logo Lockup
-   FIX: .logoMark now has explicit width/height
-   matching .logoImg. Previously it was just a
-   flex container with no size, so if /logo.png
-   404s and the onError fallback swaps in the
-   inline SVG, there was a moment with nothing
-   constraining the container's size — that's
-   what produced the oversized orange blob.
-───────────────────────────────────────── */
-.logoCenter {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 32px;
-}
-
-.logoMark {
-  width: 72px;
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  position: relative;
-  border-radius: 20px;
-  overflow: hidden;
-  background: #E75525; /* visible immediately, before img/fallback resolve */
-}
-
-.logoImg {
-  width: 72px;
-  height: 72px;
-  object-fit: contain;
-  border-radius: 20px;
-  box-shadow:
-    0 12px 32px rgba(231, 85, 37, 0.45),
-    0 4px 10px  rgba(231, 85, 37, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.logoImg:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 18px 40px rgba(231, 85, 37, 0.52),
-    0 6px 14px  rgba(231, 85, 37, 0.32),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
-
-.logoFallback {
-  width: 72px;
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-.logoFallback svg {
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
-}
-
-.logoWordmark {
-  font-family: 'Space Grotesk', 'DM Sans', sans-serif;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: #10182B;
-  line-height: 1;
-}
-
-/* ─────────────────────────────────────────
-   Legacy inline brand (keep for other pages)
-───────────────────────────────────────── */
-.brand {
-  display: flex;
+.mobileHeader {
+  display: none;
   align-items: center;
   gap: 10px;
+  justify-content: center;
   margin-bottom: 28px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: #10182B;
 }
 
-.brandMark {
-  width: 36px;
-  height: 36px;
-  background: #E75525;
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-/* Header */
-.header { margin-bottom: 24px; text-align: center; }
-.header h1 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  color: #10182B;
-  margin-bottom: 4px;
-}
-.header p { font-size: 14px; color: #8a8f9e; }
-
-/* Google button */
-.googleBtn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 12px 16px;
-  background: white;
-  border: 1.5px solid #e4e6ed;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  cursor: pointer;
-  font-family: inherit;
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-  margin-bottom: 18px;
-}
-.googleBtn:hover:not(:disabled) {
-  border-color: #d1d5db;
-  background: #f9fafb;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-.googleBtn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-/* OR divider */
-.orDivider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-.orDivider span {
-  flex: 1;
-  height: 1px;
-  background: #e4e6ed;
-}
-.orDivider p {
-  font-size: 12px;
-  color: #9ca3af;
-  white-space: nowrap;
-}
-
-/* ─────────────────────────────────────────
-   Email / Phone Tab Switcher
-───────────────────────────────────────── */
-.tabRow {
-  display: flex;
-  background: #f5f5f7;
-  border-radius: 12px;
-  padding: 4px;
-  margin-bottom: 22px;
-  gap: 4px;
-}
-
-.tabBtn {
-  flex: 1;
-  padding: 10px 8px;
-  border: none;
-  background: transparent;
-  border-radius: 9px;
-  font-weight: 600;
-  font-size: 13px;
-  color: #6b7280;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.tabBtnActive {
-  background: white;
-  color: #10182B;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-.tabBtn:hover:not(.tabBtnActive) { color: #374151; }
-
-/* Form */
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.field label {
-  font-size: 12px;
-  font-weight: 700;
-  color: #374151;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.inputWrap {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border: 1.5px solid #e4e6ed;
-  border-radius: 10px;
-  padding: 11px 14px;
-  transition: border-color 0.2s;
-  color: #9ca3af;
-}
-.inputWrap:focus-within {
-  border-color: #E75525;
-  color: #E75525;
-}
-
-.input {
-  flex: 1;
-  border: none;
-  background: none;
-  font-size: 15px;
-  color: #10182B;
-  outline: none;
-  font-family: inherit;
-}
-.input::placeholder { color: #9ca3af; }
-
-.eye {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: inherit;
-  display: flex;
-  align-items: center;
-  padding: 0;
-  flex-shrink: 0;
-}
-
-.error {
-  background: #fff5f5;
-  border: 1px solid #fecaca;
-  color: #dc2626;
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.submitBtn {
-  width: 100%;
-  padding: 14px;
-  background: #E75525;
-  color: white;
-  font-size: 15px;
-  font-weight: 700;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 4px;
-  font-family: inherit;
-}
-.submitBtn:hover:not(:disabled) {
-  background: #ff6b3d;
-  transform: translateY(-1px);
-}
-.submitBtn:disabled { opacity: 0.65; cursor: not-allowed; }
-
-.spinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.switchLink {
-  text-align: center;
-  font-size: 13px;
-  color: #6b7280;
-  margin-top: 20px;
-}
-.switchLink a {
-  color: #E75525;
-  font-weight: 600;
-  text-decoration: none;
-}
-.switchLink a:hover { text-decoration: underline; }
-
-/* Success state */
-.successBox {
-  text-align: center;
-  padding: 20px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-.successIcon { font-size: 48px; }
-.successBox h2 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: #10182B;
-}
-.successBox p { font-size: 14px; color: #6b7280; line-height: 1.6; }
-
-/* ─────────────────────────────────────────
-   Terms & Privacy Agree Checkbox
-───────────────────────────────────────── */
-.agreeRow {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 14px;
-  border: 1.5px solid #e4e6ed;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-bottom: 16px;
-  transition: border-color 0.2s, background 0.2s;
-  background: #fafafa;
-}
-.agreeRow:hover { border-color: #d1d5db; background: #f5f5f5; }
-
-.agreeRowError {
-  border-color: #fca5a5;
-  background: #fff5f5;
-  animation: shake 0.35s ease;
-}
-
-@keyframes shake {
-  0%,100% { transform: translateX(0); }
-  20%      { transform: translateX(-5px); }
-  40%      { transform: translateX(5px); }
-  60%      { transform: translateX(-4px); }
-  80%      { transform: translateX(4px); }
-}
-
-.checkbox {
-  width: 18px;
-  height: 18px;
-  border: 2px solid #d1d5db;
-  border-radius: 5px;
-  flex-shrink: 0;
-  margin-top: 1px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s, border-color 0.15s;
-  background: white;
-  cursor: pointer;
-}
-
-.checkboxChecked {
-  background: #E75525;
-  border-color: #E75525;
-}
-
-.agreeText {
-  font-size: 13px;
-  color: #4b5563;
-  line-height: 1.5;
-  user-select: none;
-}
-
-.agreeLink {
-  color: #E75525;
-  font-weight: 600;
-  text-decoration: none;
-}
-.agreeLink:hover { text-decoration: underline; }
-
-.agreeErrorMsg {
-  font-size: 12px;
-  color: #dc2626;
-  margin: -10px 0 10px 2px;
-  font-weight: 500;
-}
-
-/* ─────────────────────────────────────────
-   Phone Input (with fixed +251 prefix)
-───────────────────────────────────────── */
-.phoneInputWrap {
-  display: flex;
-  align-items: center;
-  border: 1.5px solid #e4e6ed;
-  border-radius: 10px;
-  overflow: hidden;
-  transition: border-color 0.2s;
-}
-.phoneInputWrap:focus-within { border-color: #E75525; }
-
-.phonePrefix {
-  padding: 11px 12px;
-  background: #f5f5f7;
-  color: #10182B;
-  font-weight: 700;
-  font-size: 15px;
-  border-right: 1.5px solid #e4e6ed;
-  flex-shrink: 0;
-}
-
-.phoneInput {
-  flex: 1;
-  border: none;
-  background: none;
-  padding: 11px 14px;
-  font-size: 15px;
-  color: #10182B;
-  outline: none;
-  font-family: inherit;
-  min-width: 0;
-}
-.phoneInput::placeholder { color: #9ca3af; }
-
-.helperText {
-  font-size: 12px;
-  color: #9ca3af;
-  margin-top: -8px;
-}
-
-/* ─────────────────────────────────────────
-   OTP Code Entry
-───────────────────────────────────────── */
-.otpHeader {
-  text-align: center;
-  margin-bottom: 24px;
-}
-.otpHeader h1 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: #10182B;
-  margin-bottom: 6px;
-}
-.otpHeader p {
-  font-size: 14px;
-  color: #8a8f9e;
-  line-height: 1.5;
-}
-.otpHeader strong { color: #10182B; }
-
-.otpRow {
-  display: flex;
-  gap: 8px;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.otpBox {
-  width: 46px;
-  height: 54px;
-  text-align: center;
-  font-size: 20px;
-  font-weight: 700;
-  border: 1.5px solid #e4e6ed;
-  border-radius: 10px;
-  color: #10182B;
-  outline: none;
-  font-family: inherit;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.otpBox:focus {
-  border-color: #E75525;
-  box-shadow: 0 0 0 3px rgba(231, 85, 37, 0.12);
-}
-
-.resendRow {
-  text-align: center;
-  font-size: 13px;
-  color: #6b7280;
-  margin-top: 4px;
-  margin-bottom: 4px;
-}
-
-.resendLink {
-  color: #E75525;
-  font-weight: 700;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 13px;
-  padding: 0;
-}
-.resendLink:disabled { color: #9ca3af; cursor: not-allowed; }
-
-.backBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #6b7280;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  margin-bottom: 18px;
-  padding: 0;
-  transition: color 0.2s;
-}
-.backBtn:hover { color: #10182B; }
-
-/* ─────────────────────────────────────────
-   Logo mark — inline SVG icon, no external
-   image dependency (fixes blank orange square
-   when /logo.png 404s or renders empty)
-───────────────────────────────────────── */
-.logoMark {
-  width: 60px;
-  height: 60px;
-  border-radius: 16px;
-  background: #E75525;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow:
-    0 12px 32px rgba(231, 85, 37, 0.35),
-    0 4px 10px  rgba(231, 85, 37, 0.22);
-}
-
-/* ─────────────────────────────────────────
-   Step indicator (signup flow: 1 → 2)
-───────────────────────────────────────── */
+/* Step indicator */
 .steps {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 .stepDot {
   width: 22px;
@@ -601,5 +184,438 @@
   color: #9CA0AB;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  margin-left: 6px;
   white-space: nowrap;
+}
+
+/* Header */
+.header { margin-bottom: 6px; }
+.header h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #10182B;
+  margin-bottom: 6px;
+}
+.header p {
+  font-size: 14px;
+  color: #7A7E89;
+  margin-bottom: 30px;
+}
+
+/* Logo */
+.logoMark {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: #E75525;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.brandName {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: inherit;
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.field { margin-bottom: 18px; }
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #3A3D46;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 7px;
+}
+
+.inputWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1.5px solid #E7E6E2;
+  border-radius: 11px;
+  padding: 13px 15px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  color: #B4B7C0;
+}
+.inputWrap:focus-within {
+  border-color: #E75525;
+  box-shadow: 0 0 0 3.5px rgba(231,85,37,0.1);
+  color: #E75525;
+}
+
+.input {
+  flex: 1;
+  border: none;
+  background: none;
+  font-size: 15px;
+  color: #10182B;
+  outline: none;
+  font-family: inherit;
+}
+.input::placeholder { color: #B4B7C0; }
+
+.eye {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.error {
+  background: #FFF5F5;
+  border: 1px solid #FECACA;
+  color: #DC2626;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 15px;
+  background: #E75525;
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 11px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s, background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-family: inherit;
+  box-shadow: 0 8px 20px rgba(231,85,37,0.28);
+}
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(231,85,37,0.34);
+}
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Divider */
+.orDivider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 0;
+}
+.orDivider span {
+  flex: 1;
+  height: 1px;
+  background: #EDEDEA;
+}
+.orDivider p {
+  font-size: 12px;
+  color: #ABAEB6;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Google button */
+.googleBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: white;
+  border: 1.5px solid #E7E6E2;
+  border-radius: 11px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #3A3D46;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.googleBtn:hover:not(:disabled) { background: #FAFAF8; }
+.googleBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Tab switcher (email / phone) */
+.tabRow {
+  display: flex;
+  background: #F5F5F3;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 22px;
+  gap: 4px;
+}
+.tabBtn {
+  flex: 1;
+  padding: 10px 8px;
+  border: none;
+  background: transparent;
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #7A7E89;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.tabBtnActive {
+  background: white;
+  color: #10182B;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.tabBtn:hover:not(.tabBtnActive) { color: #3A3D46; }
+
+.switchLink {
+  text-align: center;
+  font-size: 13px;
+  color: #7A7E89;
+  margin-top: 26px;
+}
+.switchLink a {
+  color: #E75525;
+  font-weight: 700;
+  text-decoration: none;
+}
+.switchLink a:hover { text-decoration: underline; }
+
+/* Success state */
+.successBox {
+  text-align: center;
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.successIcon { font-size: 44px; }
+.successBox h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #10182B;
+}
+.successBox p { font-size: 14px; color: #7A7E89; line-height: 1.6; }
+
+/* Terms checkbox */
+.agreeRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  margin: 4px 0 20px;
+}
+.agreeRowError { animation: shake 0.35s ease; }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  border: 1.8px solid #D5D6DB;
+  border-radius: 6px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+  background: white;
+  cursor: pointer;
+}
+.checkboxChecked {
+  background: #E75525;
+  border-color: #E75525;
+}
+
+.agreeText {
+  font-size: 13px;
+  color: #6B6F7A;
+  line-height: 1.5;
+  user-select: none;
+}
+.agreeLink {
+  color: #E75525;
+  font-weight: 600;
+  text-decoration: none;
+}
+.agreeLink:hover { text-decoration: underline; }
+
+.agreeErrorMsg {
+  font-size: 12px;
+  color: #DC2626;
+  margin: -12px 0 12px 2px;
+  font-weight: 500;
+}
+
+/* Phone input (fixed +251 prefix) */
+.phoneInputWrap {
+  display: flex;
+  align-items: stretch;
+  border: 1.5px solid #E7E6E2;
+  border-radius: 11px;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.phoneInputWrap:focus-within {
+  border-color: #E75525;
+  box-shadow: 0 0 0 3.5px rgba(231,85,37,0.1);
+}
+
+.phonePrefix {
+  padding: 13px 14px;
+  background: #FAFAF8;
+  color: #10182B;
+  font-weight: 700;
+  font-size: 15px;
+  border-right: 1.5px solid #E7E6E2;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.phoneInput {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 13px 15px;
+  font-size: 15px;
+  color: #10182B;
+  outline: none;
+  font-family: inherit;
+  min-width: 0;
+}
+.phoneInput::placeholder { color: #B4B7C0; }
+
+.helperText {
+  font-size: 12px;
+  color: #9CA0AB;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* OTP code entry */
+.otpHeader { margin-bottom: 24px; }
+.otpHeader h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #10182B;
+  margin-bottom: 6px;
+}
+.otpHeader p {
+  font-size: 14px;
+  color: #7A7E89;
+  line-height: 1.5;
+}
+.otpHeader strong { color: #10182B; }
+
+.otpRow {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.otpBox {
+  width: 46px;
+  height: 54px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  border: 1.5px solid #E7E6E2;
+  border-radius: 11px;
+  color: #10182B;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.otpBox:focus {
+  border-color: #E75525;
+  box-shadow: 0 0 0 3.5px rgba(231,85,37,0.1);
+}
+
+.resendRow {
+  text-align: center;
+  font-size: 13px;
+  color: #7A7E89;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+.resendLink {
+  color: #E75525;
+  font-weight: 700;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 0;
+}
+.resendLink:disabled { color: #9CA0AB; cursor: not-allowed; }
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #7A7E89;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  margin-bottom: 18px;
+  padding: 0;
+  transition: color 0.2s;
+}
+.backBtn:hover { color: #10182B; }
+
+/* Responsive */
+@media (max-width: 860px) {
+  .leftPanel { display: none; }
+  .rightPanel { padding: 24px; }
+  .mobileHeader { display: flex; }
 }
