@@ -4,7 +4,7 @@ import { verifyOtpCode } from '../../../lib/afromessage'
 import { createServerClient } from '../../../lib/supabase'
 
 export async function POST(request) {
-  const { phone, code, name } = await request.json()
+  const { phone, code, name, mode } = await request.json()
   if (!phone || !code) {
     return NextResponse.json({ error: 'Phone and code are required' }, { status: 400 })
   }
@@ -19,9 +19,25 @@ export async function POST(request) {
 
   const { data: existingProfile } = await supabaseAdmin
     .from('profiles')
-    .select('id')
+    .select('id, phone_verified')
     .eq('phone', phone)
     .maybeSingle()
+
+  // Sign-in flow: no account for this number yet — don't auto-create one.
+  if (mode === 'signin' && !existingProfile) {
+    return NextResponse.json(
+      { error: 'No account found for this number. Please sign up first.' },
+      { status: 404 }
+    )
+  }
+
+  // Sign-up flow: account already exists — don't create a duplicate.
+  if (mode === 'signup' && existingProfile?.phone_verified) {
+    return NextResponse.json(
+      { error: 'An account with this number already exists. Please sign in instead.' },
+      { status: 409 }
+    )
+  }
 
   let userId = existingProfile?.id
 
