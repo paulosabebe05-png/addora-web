@@ -1,7 +1,7 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '../../../lib/auth'
 import styles from '../auth.module.css'
 
@@ -125,13 +125,15 @@ function OtpInput({ value, onChange }) {
   )
 }
 
-export default function SignUpPage() {
+function SignInContent() {
   const { signInWithGoogle, sendPhoneOtp, verifyPhoneOtp } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirect = searchParams.get('redirect') || '/'
 
   const [phoneStep, setPhoneStep] = useState('enter') // 'enter' | 'verify'
 
-  const [phoneForm, setPhoneForm] = useState({ name: '', phone: '' })
+  const [phone, setPhone] = useState('')
   const [otp, setOtp] = useState('')
   const [resendSeconds, setResendSeconds] = useState(0)
 
@@ -167,18 +169,15 @@ export default function SignUpPage() {
   const handleSendCode = async (e) => {
     e.preventDefault()
     setError('')
-    if (!phoneForm.name) {
-      setError('Please enter your full name'); return
-    }
     if (!agreed) { setAgreeError(true); return }
     setAgreeError(false)
-    if (!phoneForm.phone || phoneForm.phone.replace(/\D/g, '').length < 9) {
+    if (!phone || phone.replace(/\D/g, '').length < 9) {
       setError('Enter a valid phone number'); return
     }
     setLoading(true)
     try {
-      const { phone: normalized } = await sendPhoneOtp(phoneForm.phone)
-      setPhoneForm({ ...phoneForm, phone: normalized })
+      const { phone: normalized } = await sendPhoneOtp(phone)
+      setPhone(normalized)
       setPhoneStep('verify')
       startResendTimer()
     } catch (err) {
@@ -194,8 +193,8 @@ export default function SignUpPage() {
     }
     setLoading(true)
     try {
-      await verifyPhoneOtp(phoneForm.phone, otp, phoneForm.name)
-      router.push('/')
+      await verifyPhoneOtp(phone, otp, undefined, 'signin')
+      router.push(redirect)
     } catch (err) {
       setError(err.message)
     } finally { setLoading(false) }
@@ -205,7 +204,7 @@ export default function SignUpPage() {
     if (resendSeconds > 0) return
     setError('')
     try {
-      await sendPhoneOtp(phoneForm.phone)
+      await sendPhoneOtp(phone)
       startResendTimer()
     } catch (err) {
       setError(err.message)
@@ -227,7 +226,7 @@ export default function SignUpPage() {
 
           <div className={styles.otpHeader}>
             <h1>Enter verification code</h1>
-            <p>We sent a 6-digit code to<br /><strong>{phoneForm.phone}</strong></p>
+            <p>We sent a 6-digit code to<br /><strong>{phone}</strong></p>
           </div>
 
           <form onSubmit={handleVerifyCode} className={styles.form}>
@@ -247,7 +246,7 @@ export default function SignUpPage() {
             {error && <div className={styles.error}>{error}</div>}
 
             <button type="submit" className={styles.submitBtn} disabled={loading || otp.length !== 6}>
-              {loading ? <span className={styles.spinner} /> : 'Verify & Create Account'}
+              {loading ? <span className={styles.spinner} /> : 'Verify & Sign In'}
             </button>
           </form>
         </div>
@@ -255,27 +254,18 @@ export default function SignUpPage() {
     )
   }
 
-  /* ── MAIN SIGN UP CARD (phone only) ── */
+  /* ── MAIN SIGN IN CARD (phone only) ── */
   return (
     <div className={styles.page}>
       <div className={styles.card}>
         <Logo />
 
         <div className={styles.header}>
-          <h1>Create account</h1>
-          <p>Join Addora and start shopping today</p>
+          <h1>Welcome back</h1>
+          <p>Sign in to your Addora account</p>
         </div>
 
         <form onSubmit={handleSendCode} className={styles.form}>
-          <div className={styles.field}>
-            <label>Full Name</label>
-            <div className={styles.inputWrap}>
-              <input type="text" placeholder="Your full name" value={phoneForm.name}
-                onChange={e => setPhoneForm({ ...phoneForm, name: e.target.value })}
-                className={styles.input} autoComplete="name" />
-            </div>
-          </div>
-
           <div className={styles.field}>
             <label>Phone Number</label>
             <div className={styles.phoneInputWrap}>
@@ -283,18 +273,18 @@ export default function SignUpPage() {
               <input
                 type="tel"
                 placeholder="9XX XXX XXX"
-                value={phoneForm.phone}
+                value={phone}
                 onChange={e => {
                   let val = e.target.value.replace(/\D/g, '') // digits only
                   if (val.startsWith('251')) val = val.slice(3)
                   if (val.startsWith('0')) val = val.slice(1)
-                  setPhoneForm({ ...phoneForm, phone: val })
+                  setPhone(val)
                 }}
                 className={styles.phoneInput}
                 autoComplete="tel"
               />
             </div>
-            <p className={styles.helperText}>We'll text you a 6-digit code to verify</p>
+            <p className={styles.helperText}>We'll text you a 6-digit code to sign in</p>
           </div>
 
           <AgreeCheckbox agreed={agreed} setAgreed={setAgreed} agreeError={agreeError} setAgreeError={setAgreeError} />
@@ -310,10 +300,16 @@ export default function SignUpPage() {
 
         <GoogleButton onClick={handleGoogle} loading={googleLoading} />
 
-        <p className={styles.switchLink}>
-          Already have an account? <Link href="/auth/signin">Sign in</Link>
-        </p>
+        <p className={styles.switchLink}>Don't have an account? <Link href="/auth/signup">Create one</Link></p>
       </div>
     </div>
+  )
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignInContent />
+    </Suspense>
   )
 }
