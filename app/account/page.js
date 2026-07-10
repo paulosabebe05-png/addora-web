@@ -32,8 +32,12 @@ export default function AccountPage() {
     },
   ]
 
-  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
-  const initial     = (user?.email?.[0] ?? 'U').toUpperCase()
+  // `user` here is the flattened object from auth.js's toUser() —
+  // { id, email, name, avatar_url, phone } — not a raw Supabase user,
+  // so there's no `user_metadata` key to read from.
+  const displayName = user?.name || 'User'
+  const contactLine  = user?.email || user?.phone || ''
+  const initial      = (user?.name?.[0] || user?.email?.[0] || 'U').toUpperCase()
 
   return (
     <div className={styles.page}>
@@ -47,7 +51,7 @@ export default function AccountPage() {
               <div className={styles.avatar}>{initial}</div>
               <div className={styles.userInfo}>
                 <span className={styles.userName}>{displayName}</span>
-                <span className={styles.userEmail}>{user.email}</span>
+                <span className={styles.userEmail}>{contactLine}</span>
               </div>
               <Link href="/account/edit" className={styles.editBtn}>{tr('edit')}</Link>
             </div>
@@ -109,7 +113,7 @@ export default function AccountPage() {
             {user ? (
               <>
                 <h2 className={styles.sidebarName}>{displayName}</h2>
-                <p className={styles.sidebarEmail}>{user.email}</p>
+                <p className={styles.sidebarEmail}>{contactLine}</p>
                 <Link href="/account/edit" className={styles.sidebarEditBtn}>{tr('editProfile')}</Link>
               </>
             ) : (
