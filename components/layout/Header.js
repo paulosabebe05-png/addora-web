@@ -126,6 +126,11 @@ export default function Header() {
     setMenuOpen(false)
   }
 
+  // Guard against user.name being empty/undefined (e.g. phone sign-ins
+  // that never set a display name) so this never throws.
+  const displayName = user?.name || 'User'
+  const initial      = displayName.charAt(0).toUpperCase()
+
   return (
     <>
       <header className={`${styles.header} ${transparent ? styles.transparent : styles.solid}`}>
@@ -263,8 +268,8 @@ export default function Header() {
             {user ? (
               <div className={styles.userMenu} onClick={e => e.stopPropagation()}>
                 <button className={styles.userBtn} onClick={() => setMenuOpen(!menuOpen)}>
-                  <span className={styles.avatar}>{user.name[0].toUpperCase()}</span>
-                  <span className={styles.userName}>{user.name.split(' ')[0]}</span>
+                  <span className={styles.avatar}>{initial}</span>
+                  <span className={styles.userName}>{displayName.split(' ')[0]}</span>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" strokeWidth="2.5"
                     style={{ transform: menuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
@@ -277,9 +282,9 @@ export default function Header() {
                     <Link href="/account" className={styles.dropdownHead}
                       onClick={() => setMenuOpen(false)}
                       style={{ textDecoration: 'none', cursor: 'pointer' }}>
-                      <div className={styles.dropdownAvatar}>{user.name[0].toUpperCase()}</div>
+                      <div className={styles.dropdownAvatar}>{initial}</div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div className={styles.dropdownName}>{user.name}</div>
+                        <div className={styles.dropdownName}>{displayName}</div>
                         <div className={styles.dropdownPhone}>{user.email || ''}</div>
                       </div>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
