@@ -82,9 +82,6 @@ function GoogleButton({ onClick, loading }) {
   )
 }
 
-/* ───────────────────────────────────────────
-   OTP CODE INPUT (6 boxes, auto-advance)
-─────────────────────────────────────────── */
 function OtpInput({ value, onChange }) {
   const refs = useRef([])
 
@@ -129,15 +126,13 @@ function OtpInput({ value, onChange }) {
 }
 
 function SignInContent() {
-  const { signIn, signInWithGoogle, sendPhoneOtp, verifyPhoneOtp } = useAuth()
+  const { signInWithGoogle, sendPhoneOtp, verifyPhoneOtp } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirect = searchParams.get('redirect') || '/'
 
-  const [tab, setTab] = useState('email') // 'email' | 'phone'
   const [phoneStep, setPhoneStep] = useState('enter') // 'enter' | 'verify'
 
-  const [form, setForm] = useState({ email: '', password: '' })
   const [phone, setPhone] = useState('')
   const [otp, setOtp] = useState('')
   const [resendSeconds, setResendSeconds] = useState(0)
@@ -147,7 +142,6 @@ function SignInContent() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
-  const [showPass, setShowPass] = useState(false)
 
   const startResendTimer = () => {
     setResendSeconds(60)
@@ -157,25 +151,6 @@ function SignInContent() {
         return s - 1
       })
     }, 1000)
-  }
-
-  const handleEmailSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    if (!agreed) { setAgreeError(true); return }
-    setAgreeError(false)
-    if (!form.email || !form.password) {
-      setError('Please fill in all fields'); return
-    }
-    setLoading(true)
-    try {
-      await signIn({ email: form.email, password: form.password })
-      router.push(redirect)
-    } catch (err) {
-      setError(err.message === 'Invalid login credentials'
-        ? 'Incorrect email or password'
-        : err.message)
-    } finally { setLoading(false) }
   }
 
   const handleGoogle = async () => {
@@ -237,7 +212,7 @@ function SignInContent() {
   }
 
   /* ── OTP VERIFY STEP ── */
-  if (tab === 'phone' && phoneStep === 'verify') {
+  if (phoneStep === 'verify') {
     return (
       <div className={styles.page}>
         <div className={styles.card}>
@@ -279,7 +254,7 @@ function SignInContent() {
     )
   }
 
-  /* ── MAIN SIGN IN CARD ── */
+  /* ── MAIN SIGN IN CARD (phone only) ── */
   return (
     <div className={styles.page}>
       <div className={styles.card}>
@@ -290,84 +265,35 @@ function SignInContent() {
           <p>Sign in to your Addora account</p>
         </div>
 
-        <GoogleButton onClick={handleGoogle} loading={googleLoading} />
+        <form onSubmit={handleSendCode} className={styles.form}>
+          <div className={styles.field}>
+            <label>Phone Number</label>
+            <div className={styles.phoneInputWrap}>
+              <span className={styles.phonePrefix}>+251</span>
+              <input
+                type="tel"
+                placeholder="9XX XXX XXX"
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+                className={styles.phoneInput}
+                autoComplete="tel"
+              />
+            </div>
+            <p className={styles.helperText}>We'll text you a 6-digit code to sign in</p>
+          </div>
+
+          <AgreeCheckbox agreed={agreed} setAgreed={setAgreed} agreeError={agreeError} setAgreeError={setAgreeError} />
+
+          {error && <div className={styles.error}>{error}</div>}
+
+          <button type="submit" className={styles.submitBtn} disabled={loading}>
+            {loading ? <span className={styles.spinner} /> : 'Send Code'}
+          </button>
+        </form>
 
         <div className={styles.orDivider}><span /><p>or continue with</p><span /></div>
 
-        <div className={styles.tabRow}>
-          <button
-            type="button"
-            className={`${styles.tabBtn} ${tab === 'email' ? styles.tabBtnActive : ''}`}
-            onClick={() => { setTab('email'); setError('') }}
-          >
-            Email
-          </button>
-          <button
-            type="button"
-            className={`${styles.tabBtn} ${tab === 'phone' ? styles.tabBtnActive : ''}`}
-            onClick={() => { setTab('phone'); setError('') }}
-          >
-            Phone
-          </button>
-        </div>
-
-        {tab === 'email' ? (
-          <form onSubmit={handleEmailSubmit} className={styles.form}>
-            <div className={styles.field}>
-              <label>Email Address</label>
-              <div className={styles.inputWrap}>
-                <input type="email" placeholder="you@example.com" value={form.email}
-                  onChange={e => setForm({ ...form, email: e.target.value })}
-                  className={styles.input} autoComplete="email" />
-              </div>
-            </div>
-            <div className={styles.field}>
-              <label>Password</label>
-              <div className={styles.inputWrap}>
-                <input type={showPass ? 'text' : 'password'} placeholder="Your password"
-                  value={form.password} onChange={e => setForm({ ...form, password: e.target.value })}
-                  className={styles.input} autoComplete="current-password" />
-                <button type="button" onClick={() => setShowPass(!showPass)} className={styles.eye}>
-                  {showPass ? 'Hide' : 'Show'}
-                </button>
-              </div>
-            </div>
-
-            <AgreeCheckbox agreed={agreed} setAgreed={setAgreed} agreeError={agreeError} setAgreeError={setAgreeError} />
-
-            {error && <div className={styles.error}>{error}</div>}
-
-            <button type="submit" className={styles.submitBtn} disabled={loading}>
-              {loading ? <span className={styles.spinner} /> : 'Sign In'}
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={handleSendCode} className={styles.form}>
-            <div className={styles.field}>
-              <label>Phone Number</label>
-              <div className={styles.phoneInputWrap}>
-                <span className={styles.phonePrefix}>+251</span>
-                <input
-                  type="tel"
-                  placeholder="9XX XXX XXX"
-                  value={phone}
-                  onChange={e => setPhone(e.target.value)}
-                  className={styles.phoneInput}
-                  autoComplete="tel"
-                />
-              </div>
-              <p className={styles.helperText}>We'll text you a 6-digit code to sign in</p>
-            </div>
-
-            <AgreeCheckbox agreed={agreed} setAgreed={setAgreed} agreeError={agreeError} setAgreeError={setAgreeError} />
-
-            {error && <div className={styles.error}>{error}</div>}
-
-            <button type="submit" className={styles.submitBtn} disabled={loading}>
-              {loading ? <span className={styles.spinner} /> : 'Send Code'}
-            </button>
-          </form>
-        )}
+        <GoogleButton onClick={handleGoogle} loading={googleLoading} />
 
         <p className={styles.switchLink}>Don't have an account? <Link href="/auth/signup">Create one</Link></p>
       </div>
