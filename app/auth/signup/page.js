@@ -284,7 +284,12 @@ export default function SignUpPage() {
                 type="tel"
                 placeholder="9XX XXX XXX"
                 value={phoneForm.phone}
-                onChange={e => setPhoneForm({ ...phoneForm, phone: e.target.value })}
+                onChange={e => {
+                  let val = e.target.value.replace(/\D/g, '') // digits only
+                  if (val.startsWith('251')) val = val.slice(3)
+                  if (val.startsWith('0')) val = val.slice(1)
+                  setPhoneForm({ ...phoneForm, phone: val })
+                }}
                 className={styles.phoneInput}
                 autoComplete="tel"
               />
