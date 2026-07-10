@@ -544,3 +544,62 @@
   transition: color 0.2s;
 }
 .backBtn:hover { color: #10182B; }
+
+/* ─────────────────────────────────────────
+   Logo mark — inline SVG icon, no external
+   image dependency (fixes blank orange square
+   when /logo.png 404s or renders empty)
+───────────────────────────────────────── */
+.logoMark {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: #E75525;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow:
+    0 12px 32px rgba(231, 85, 37, 0.35),
+    0 4px 10px  rgba(231, 85, 37, 0.22);
+}
+
+/* ─────────────────────────────────────────
+   Step indicator (signup flow: 1 → 2)
+───────────────────────────────────────── */
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.stepDot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #E75525;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.stepDotPending {
+  background: #F0F0EE;
+  color: #9CA0AB;
+}
+.stepLine {
+  flex: 1;
+  height: 1px;
+  background: #E7E6E2;
+}
+.stepLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: #9CA0AB;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
