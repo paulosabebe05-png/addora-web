@@ -126,13 +126,11 @@ function OtpInput({ value, onChange }) {
 }
 
 export default function SignUpPage() {
-  const { signUp, signInWithGoogle, sendPhoneOtp, verifyPhoneOtp } = useAuth()
+  const { signInWithGoogle, sendPhoneOtp, verifyPhoneOtp } = useAuth()
   const router = useRouter()
 
-  const [tab, setTab] = useState('email') // 'email' | 'phone'
   const [phoneStep, setPhoneStep] = useState('enter') // 'enter' | 'verify'
 
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' })
   const [phoneForm, setPhoneForm] = useState({ name: '', phone: '' })
   const [otp, setOtp] = useState('')
   const [resendSeconds, setResendSeconds] = useState(0)
@@ -140,10 +138,8 @@ export default function SignUpPage() {
   const [agreed, setAgreed] = useState(false)
   const [agreeError, setAgreeError] = useState(false)
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
-  const [showPass, setShowPass] = useState(false)
 
   const startResendTimer = () => {
     setResendSeconds(60)
@@ -153,35 +149,6 @@ export default function SignUpPage() {
         return s - 1
       })
     }, 1000)
-  }
-
-  const handleEmailSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    if (!form.name || !form.email || !form.password) {
-      setError('Please fill in all fields'); return
-    }
-    if (form.password.length < 6) {
-      setError('Password must be at least 6 characters'); return
-    }
-    if (form.password !== form.confirm) {
-      setError('Passwords do not match'); return
-    }
-    if (!agreed) { setAgreeError(true); return }
-    setAgreeError(false)
-    setLoading(true)
-    try {
-      const data = await signUp({ name: form.name, email: form.email, password: form.password })
-      if (data?.user?.identities?.length === 0) {
-        setError('An account with this email already exists')
-      } else if (data?.session) {
-        router.push('/')
-      } else {
-        setSuccess(true)
-      }
-    } catch (err) {
-      setError(err.message)
-    } finally { setLoading(false) }
   }
 
   const handleGoogle = async () => {
@@ -245,28 +212,8 @@ export default function SignUpPage() {
     }
   }
 
-  /* ── EMAIL SUCCESS STATE ── */
-  if (success) return (
-    <div className={styles.page}>
-      <div className={styles.card}>
-        <Logo />
-        <div className={styles.successBox}>
-          <div className={styles.successIcon}>✉️</div>
-          <h2>Check your email!</h2>
-          <p>
-            We sent a confirmation link to <strong>{form.email}</strong>.
-            Click it to activate your account, then sign in.
-          </p>
-          <Link href="/auth/signin" className={styles.submitBtn} style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}>
-            Go to Sign In
-          </Link>
-        </div>
-      </div>
-    </div>
-  )
-
   /* ── OTP VERIFY STEP ── */
-  if (tab === 'phone' && phoneStep === 'verify') {
+  if (phoneStep === 'verify') {
     return (
       <div className={styles.page}>
         <div className={styles.card}>
@@ -308,7 +255,7 @@ export default function SignUpPage() {
     )
   }
 
-  /* ── MAIN SIGN UP CARD ── */
+  /* ── MAIN SIGN UP CARD (phone only) ── */
   return (
     <div className={styles.page}>
       <div className={styles.card}>
@@ -319,114 +266,44 @@ export default function SignUpPage() {
           <p>Join Addora and start shopping today</p>
         </div>
 
-        <GoogleButton onClick={handleGoogle} loading={googleLoading} />
+        <form onSubmit={handleSendCode} className={styles.form}>
+          <div className={styles.field}>
+            <label>Full Name</label>
+            <div className={styles.inputWrap}>
+              <input type="text" placeholder="Your full name" value={phoneForm.name}
+                onChange={e => setPhoneForm({ ...phoneForm, name: e.target.value })}
+                className={styles.input} autoComplete="name" />
+            </div>
+          </div>
+
+          <div className={styles.field}>
+            <label>Phone Number</label>
+            <div className={styles.phoneInputWrap}>
+              <span className={styles.phonePrefix}>+251</span>
+              <input
+                type="tel"
+                placeholder="9XX XXX XXX"
+                value={phoneForm.phone}
+                onChange={e => setPhoneForm({ ...phoneForm, phone: e.target.value })}
+                className={styles.phoneInput}
+                autoComplete="tel"
+              />
+            </div>
+            <p className={styles.helperText}>We'll text you a 6-digit code to verify</p>
+          </div>
+
+          <AgreeCheckbox agreed={agreed} setAgreed={setAgreed} agreeError={agreeError} setAgreeError={setAgreeError} />
+
+          {error && <div className={styles.error}>{error}</div>}
+
+          <button type="submit" className={styles.submitBtn} disabled={loading}>
+            {loading ? <span className={styles.spinner} /> : 'Send Code'}
+          </button>
+        </form>
 
         <div className={styles.orDivider}><span /><p>or continue with</p><span /></div>
 
-        <div className={styles.tabRow}>
-          <button
-            type="button"
-            className={`${styles.tabBtn} ${tab === 'email' ? styles.tabBtnActive : ''}`}
-            onClick={() => { setTab('email'); setError('') }}
-          >
-            Email
-          </button>
-          <button
-            type="button"
-            className={`${styles.tabBtn} ${tab === 'phone' ? styles.tabBtnActive : ''}`}
-            onClick={() => { setTab('phone'); setError('') }}
-          >
-            Phone
-          </button>
-        </div>
-
-        {tab === 'email' ? (
-          <form onSubmit={handleEmailSubmit} className={styles.form}>
-            <div className={styles.field}>
-              <label>Full Name</label>
-              <div className={styles.inputWrap}>
-                <input type="text" placeholder="Your full name" value={form.name}
-                  onChange={e => setForm({ ...form, name: e.target.value })}
-                  className={styles.input} autoComplete="name" />
-              </div>
-            </div>
-
-            <div className={styles.field}>
-              <label>Email Address</label>
-              <div className={styles.inputWrap}>
-                <input type="email" placeholder="you@example.com" value={form.email}
-                  onChange={e => setForm({ ...form, email: e.target.value })}
-                  className={styles.input} autoComplete="email" />
-              </div>
-            </div>
-
-            <div className={styles.field}>
-              <label>Password</label>
-              <div className={styles.inputWrap}>
-                <input type={showPass ? 'text' : 'password'} placeholder="Min. 6 characters"
-                  value={form.password}
-                  onChange={e => setForm({ ...form, password: e.target.value })}
-                  className={styles.input} autoComplete="new-password" />
-                <button type="button" onClick={() => setShowPass(!showPass)} className={styles.eye}>
-                  {showPass ? 'Hide' : 'Show'}
-                </button>
-              </div>
-            </div>
-
-            <div className={styles.field}>
-              <label>Confirm Password</label>
-              <div className={styles.inputWrap}>
-                <input type="password" placeholder="Repeat your password"
-                  value={form.confirm}
-                  onChange={e => setForm({ ...form, confirm: e.target.value })}
-                  className={styles.input} autoComplete="new-password" />
-              </div>
-            </div>
-
-            <AgreeCheckbox agreed={agreed} setAgreed={setAgreed} agreeError={agreeError} setAgreeError={setAgreeError} />
-
-            {error && <div className={styles.error}>{error}</div>}
-
-            <button type="submit" className={styles.submitBtn} disabled={loading}>
-              {loading ? <span className={styles.spinner} /> : 'Create Account'}
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={handleSendCode} className={styles.form}>
-            <div className={styles.field}>
-              <label>Full Name</label>
-              <div className={styles.inputWrap}>
-                <input type="text" placeholder="Your full name" value={phoneForm.name}
-                  onChange={e => setPhoneForm({ ...phoneForm, name: e.target.value })}
-                  className={styles.input} autoComplete="name" />
-              </div>
-            </div>
-
-            <div className={styles.field}>
-              <label>Phone Number</label>
-              <div className={styles.phoneInputWrap}>
-                <span className={styles.phonePrefix}>+251</span>
-                <input
-                  type="tel"
-                  placeholder="9XX XXX XXX"
-                  value={phoneForm.phone}
-                  onChange={e => setPhoneForm({ ...phoneForm, phone: e.target.value })}
-                  className={styles.phoneInput}
-                  autoComplete="tel"
-                />
-              </div>
-              <p className={styles.helperText}>We'll text you a 6-digit code to verify</p>
-            </div>
-
-            <AgreeCheckbox agreed={agreed} setAgreed={setAgreed} agreeError={agreeError} setAgreeError={setAgreeError} />
-
-            {error && <div className={styles.error}>{error}</div>}
-
-            <button type="submit" className={styles.submitBtn} disabled={loading}>
-              {loading ? <span className={styles.spinner} /> : 'Send Code'}
-            </button>
-          </form>
-        )}
+        <GoogleButton onClick={handleGoogle} loading={googleLoading} />
 
         <p className={styles.switchLink}>
           Already have an account? <Link href="/auth/signin">Sign in</Link>
