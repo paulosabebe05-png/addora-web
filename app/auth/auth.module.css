@@ -3,7 +3,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 48px 20px 60px;
+  padding: 72px 20px 60px;
   background: #f6f6f7;
 }
 
@@ -459,14 +459,18 @@
 
 .otpRow {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   justify-content: space-between;
   margin-bottom: 6px;
+  width: 100%;
 }
 
 .otpBox {
-  width: 44px;
-  height: 52px;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 44px;
+  aspect-ratio: 44 / 52;
+  height: auto;
   text-align: center;
   font-size: 19px;
   font-weight: 700;
@@ -476,10 +480,13 @@
   outline: none;
   font-family: inherit;
   transition: border-color 0.15s, box-shadow 0.15s;
+  padding: 0;
 }
-.otpBox:focus {
-  border-color: #E75525;
-  box-shadow: 0 0 0 3px rgba(231, 85, 37, 0.12);
+
+@media (max-width: 380px) {
+  .otpBox {
+    font-size: 17px;
+  }
 }
 
 .resendRow {
