@@ -193,10 +193,7 @@ function SignInContent() {
     }
     setLoading(true)
     try {
-      // FIX: pass mode='signin' explicitly. Without this, the server route's
-      // "no account found, please sign up first" check never ran, and any
-      // unregistered number silently got a fresh account created with no name.
-      await verifyPhoneOtp(phone, otp, null, 'signin')
+      await verifyPhoneOtp(phone, otp)
       router.push(redirect)
     } catch (err) {
       setError(err.message)
