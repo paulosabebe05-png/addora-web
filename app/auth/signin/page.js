@@ -193,7 +193,7 @@ function SignInContent() {
     }
     setLoading(true)
     try {
-      await verifyPhoneOtp(phone, otp)
+      await verifyPhoneOtp(phone, otp, undefined, 'signin')
       router.push(redirect)
     } catch (err) {
       setError(err.message)
