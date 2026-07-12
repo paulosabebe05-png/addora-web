@@ -86,7 +86,20 @@ function OtpInput({ value, onChange }) {
   const refs = useRef([])
 
   const handleChange = (i, val) => {
-    const digit = val.replace(/\D/g, '').slice(-1)
+    const digits = val.replace(/\D/g, '')
+
+    // Autofill (iOS QuickType, Android SMS suggestions) can drop the
+    // *entire* code into whichever box happens to be focused, not just
+    // one digit. Detect that and distribute it across all boxes instead
+    // of keeping only the last character.
+    if (digits.length > 1) {
+      onChange(digits.slice(0, 6))
+      const last = Math.min(digits.length, 6) - 1
+      refs.current[last]?.focus()
+      return
+    }
+
+    const digit = digits.slice(-1)
     const next = value.split('')
     next[i] = digit
     onChange(next.join('').slice(0, 6))
@@ -115,7 +128,8 @@ function OtpInput({ value, onChange }) {
           ref={el => (refs.current[i] = el)}
           className={styles.otpBox}
           inputMode="numeric"
-          maxLength={1}
+          maxLength={6}
+          autoComplete={i === 0 ? 'one-time-code' : 'off'}
           value={value[i] || ''}
           onChange={e => handleChange(i, e.target.value)}
           onKeyDown={e => handleKeyDown(i, e)}
