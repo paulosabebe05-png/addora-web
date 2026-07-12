@@ -3,6 +3,28 @@ import { randomBytes } from 'crypto'
 import { verifyOtpCode } from '../../../lib/afromessage'
 import { createServerClient } from '../../../lib/supabase'
 
+// Supabase Admin API has no getUserByPhone, so we page through listUsers.
+// Fine at small/medium scale; if the user base grows large, replace this
+// with a Postgres function (e.g. a SECURITY DEFINER RPC that queries
+// auth.users directly) for O(1) lookup instead of paging.
+async function findAuthUserByPhone(supabaseAdmin, phone) {
+  const normalizedTarget = phone.replace(/\D/g, '')
+  let page = 1
+  const perPage = 200
+
+  while (page <= 25) { // hard cap ~5000 users scanned, avoid runaway loops
+    const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage })
+    if (error || !data?.users?.length) break
+
+    const match = data.users.find(u => (u.phone || '').replace(/\D/g, '') === normalizedTarget)
+    if (match) return match
+
+    if (data.users.length < perPage) break // last page
+    page += 1
+  }
+  return null
+}
+
 export async function POST(request) {
   const { phone, code, name, mode } = await request.json()
   if (!phone || !code) {
@@ -49,15 +71,53 @@ export async function POST(request) {
       phone_confirm: true,
       user_metadata: { full_name: name || null, phone },
     })
-    if (createErr) return NextResponse.json({ error: createErr.message }, { status: 500 })
-    userId = created.user.id
 
-    await supabaseAdmin.from('profiles').upsert({
-      id: userId,
-      phone,
-      phone_verified: true,
-      full_name: name || null,
-    })
+    if (createErr) {
+      // This phone is still attached to an orphaned auth.users record —
+      // e.g. someone deleted the `profiles` row but not the actual auth
+      // user, so Supabase Auth still thinks the phone is taken even
+      // though our own app has no account for it. Recover instead of
+      // failing: find that orphaned auth user and reuse/repair it.
+      const isDupePhone = /already.*registered|already.*exists|duplicate/i.test(createErr.message || '')
+      if (!isDupePhone) {
+        return NextResponse.json({ error: createErr.message }, { status: 500 })
+      }
+
+      const orphan = await findAuthUserByPhone(supabaseAdmin, phone)
+      if (!orphan) {
+        // Genuinely stuck — surface a clearer error than the raw Auth message.
+        return NextResponse.json(
+          { error: 'This phone number is already registered but the account could not be recovered. Please contact support.' },
+          { status: 409 }
+        )
+      }
+
+      userId = orphan.id
+
+      const { error: updateErr } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+        password: tempPassword,
+        phone_confirm: true,
+        user_metadata: { full_name: name || null, phone },
+      })
+      if (updateErr) return NextResponse.json({ error: updateErr.message }, { status: 500 })
+
+      // Rebuild the missing profile row.
+      await supabaseAdmin.from('profiles').upsert({
+        id: userId,
+        phone,
+        phone_verified: true,
+        full_name: name || null,
+      })
+    } else {
+      userId = created.user.id
+
+      await supabaseAdmin.from('profiles').upsert({
+        id: userId,
+        phone,
+        phone_verified: true,
+        full_name: name || null,
+      })
+    }
   } else {
     // Existing user — rotate password so we can sign in server-side
     const { error: updateErr } = await supabaseAdmin.auth.admin.updateUserById(userId, {
