@@ -247,6 +247,24 @@ function SignInContent() {
             <OtpInput value={otp} onChange={setOtp} />
 
             <div className={styles.resendRow}>
+              <button
+                type="button"
+                className={styles.resendLink}
+                onClick={async () => {
+                  try {
+                    const text = await navigator.clipboard.readText()
+                    const digits = text.replace(/\D/g, '').slice(0, 6)
+                    if (digits) setOtp(digits)
+                  } catch {
+                    // Clipboard read denied/unsupported — user can still paste manually.
+                  }
+                }}
+              >
+                Paste code
+              </button>
+            </div>
+
+            <div className={styles.resendRow}>
               {resendSeconds > 0
                 ? <span>Resend code in {resendSeconds}s</span>
                 : <>Didn't get it?{' '}
