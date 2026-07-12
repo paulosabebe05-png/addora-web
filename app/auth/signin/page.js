@@ -176,7 +176,7 @@ function SignInContent() {
     }
     setLoading(true)
     try {
-      const { phone: normalized } = await sendPhoneOtp(phone)
+      const { phone: normalized } = await sendPhoneOtp(phone, 'signin')
       setPhone(normalized)
       setPhoneStep('verify')
       startResendTimer()
@@ -193,7 +193,7 @@ function SignInContent() {
     }
     setLoading(true)
     try {
-      await verifyPhoneOtp(phone, otp)
+      await verifyPhoneOtp(phone, otp, null, 'signin')
       router.push(redirect)
     } catch (err) {
       setError(err.message)
@@ -204,7 +204,7 @@ function SignInContent() {
     if (resendSeconds > 0) return
     setError('')
     try {
-      await sendPhoneOtp(phone)
+      await sendPhoneOtp(phone, 'signin')
       startResendTimer()
     } catch (err) {
       setError(err.message)
