@@ -49,63 +49,19 @@ export async function POST(request) {
       phone_confirm: true,
       user_metadata: { full_name: name || null, phone },
     })
+    if (createErr) return NextResponse.json({ error: createErr.message }, { status: 500 })
+    userId = created.user.id
 
-    if (createErr) {
-      // Most likely cause: the profiles row for this phone was deleted
-      // directly (e.g. from the DB/admin panel) without deleting the
-      // matching auth.users row first. The FK only cascades that way
-      // (auth.users delete -> profiles delete), never the reverse, so
-      // the phone number is still "taken" in auth.users even though
-      // there's no profile for it anymore. Recover by finding that
-      // orphaned account and re-attaching a profile to it, instead of
-      // permanently failing.
-      const phoneTaken = /already.*registered|already.*exists|duplicate/i.test(createErr.message)
-      if (!phoneTaken) {
-        return NextResponse.json({ error: createErr.message }, { status: 500 })
-      }
-
-      const bareDigits = phone.replace(/^\+/, '')
-      const { data: list, error: listErr } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 })
-      if (listErr) return NextResponse.json({ error: listErr.message }, { status: 500 })
-
-      const orphan = list.users.find(u => u.phone === bareDigits || u.phone === phone)
-      if (!orphan) {
-        return NextResponse.json(
-          { error: 'This number is registered but the account could not be recovered. Please contact support.' },
-          { status: 500 }
-        )
-      }
-
-      userId = orphan.id
-      const { error: recoverErr } = await supabaseAdmin.auth.admin.updateUserById(userId, {
-        password: tempPassword,
-        phone_confirm: true,
-      })
-      if (recoverErr) return NextResponse.json({ error: recoverErr.message }, { status: 500 })
-
-      await supabaseAdmin.from('profiles').upsert({
-        id: userId,
-        phone,
-        phone_verified: true,
-        full_name: name || null,
-      })
-    } else {
-      userId = created.user.id
-
-      await supabaseAdmin.from('profiles').upsert({
-        id: userId,
-        phone,
-        phone_verified: true,
-        full_name: name || null,
-      })
-    }
+    await supabaseAdmin.from('profiles').upsert({
+      id: userId,
+      phone,
+      phone_verified: true,
+      full_name: name || null,
+    })
   } else {
-    // Existing user — rotate password so we can sign in server-side.
-    // Also sync full_name into user_metadata if provided, so it never
-    // drifts out of sync with the profiles table.
+    // Existing user — rotate password so we can sign in server-side
     const { error: updateErr } = await supabaseAdmin.auth.admin.updateUserById(userId, {
       password: tempPassword,
-      ...(name ? { user_metadata: { full_name: name, phone } } : {}),
     })
     if (updateErr) return NextResponse.json({ error: updateErr.message }, { status: 500 })
 
