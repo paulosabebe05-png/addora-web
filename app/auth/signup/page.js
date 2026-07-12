@@ -177,7 +177,7 @@ export default function SignUpPage() {
     }
     setLoading(true)
     try {
-      const { phone: normalized } = await sendPhoneOtp(phoneForm.phone)
+      const { phone: normalized } = await sendPhoneOtp(phoneForm.phone, 'signup')
       setPhoneForm({ ...phoneForm, phone: normalized })
       setPhoneStep('verify')
       startResendTimer()
@@ -205,7 +205,7 @@ export default function SignUpPage() {
     if (resendSeconds > 0) return
     setError('')
     try {
-      await sendPhoneOtp(phoneForm.phone)
+      await sendPhoneOtp(phoneForm.phone, 'signup')
       startResendTimer()
     } catch (err) {
       setError(err.message)
