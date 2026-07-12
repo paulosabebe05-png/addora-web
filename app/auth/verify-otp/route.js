@@ -100,9 +100,12 @@ export async function POST(request) {
       })
     }
   } else {
-    // Existing user — rotate password so we can sign in server-side
+    // Existing user — rotate password so we can sign in server-side.
+    // Also sync full_name into user_metadata if provided, so it never
+    // drifts out of sync with the profiles table.
     const { error: updateErr } = await supabaseAdmin.auth.admin.updateUserById(userId, {
       password: tempPassword,
+      ...(name ? { user_metadata: { full_name: name, phone } } : {}),
     })
     if (updateErr) return NextResponse.json({ error: updateErr.message }, { status: 500 })
 
