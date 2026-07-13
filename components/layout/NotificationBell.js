@@ -13,22 +13,54 @@ export default function NotificationBell({ transparent }) {
 
   useEffect(() => {
     if (!user) return
-    fetchNotifications()
 
-    // Realtime subscription
-    const channel = supabase
-      .channel('notifications')
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'notifications',
-        filter: `profile_id=eq.${user.id}`
-      }, (payload) => {
-        setNotifications(prev => [payload.new, ...prev])
-      })
-      .subscribe()
+    let cancelled = false
+    let channel = null
 
-    return () => supabase.removeChannel(channel)
+    // Fetch initial notifications — never let this hang forever.
+    // On networks that block/throttle Supabase (e.g. some mobile carriers),
+    // an unresolved fetch here should not leave the UI in a broken state.
+    fetchNotifications(cancelled)
+
+    // Realtime subscription — wrapped defensively.
+    // If the WebSocket connection is blocked or fails (common on some
+    // mobile networks), we catch it instead of letting it hang or throw,
+    // and we simply fall back to polling-free, non-realtime notifications.
+    try {
+      channel = supabase
+        .channel('notifications')
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+          filter: `profile_id=eq.${user.id}`
+        }, (payload) => {
+          if (!cancelled) {
+            setNotifications(prev => [payload.new, ...prev])
+          }
+        })
+        .subscribe((status, err) => {
+          if (err) {
+            console.warn('[NotificationBell] realtime subscription error:', err)
+          }
+          // status can be 'SUBSCRIBED', 'CHANNEL_ERROR', 'TIMED_OUT', 'CLOSED'
+          // We deliberately do nothing UI-blocking on failure — notifications
+          // just won't arrive live, but the rest of the app keeps working.
+        })
+    } catch (err) {
+      console.warn('[NotificationBell] failed to open realtime channel:', err)
+    }
+
+    return () => {
+      cancelled = true
+      if (channel) {
+        try {
+          supabase.removeChannel(channel)
+        } catch (err) {
+          console.warn('[NotificationBell] error removing channel:', err)
+        }
+      }
+    }
   }, [user])
 
   // Close on outside click
@@ -39,19 +71,42 @@ export default function NotificationBell({ transparent }) {
     return () => window.removeEventListener('mousedown', handler)
   }, [open])
 
-  const fetchNotifications = async () => {
-    const { data } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('profile_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(5)
-    if (data) setNotifications(data)
+  const fetchNotifications = async (cancelled) => {
+    try {
+      // Guard the request with a timeout so a stalled connection
+      // (e.g. blocked/slow mobile network) can't hang this indefinitely.
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 8000)
+
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('profile_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(5)
+        .abortSignal(controller.signal)
+
+      clearTimeout(timeoutId)
+
+      if (error) {
+        console.warn('[NotificationBell] fetch error:', error)
+        return
+      }
+      if (data && !cancelled) setNotifications(data)
+    } catch (err) {
+      // AbortError (timeout) or network error — fail silently.
+      // Notifications are non-critical; the rest of the app must not break.
+      console.warn('[NotificationBell] fetchNotifications failed:', err)
+    }
   }
 
   const markAsRead = async (id) => {
-    await supabase.from('notifications').update({ is_read: true }).eq('id', id)
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
+    try {
+      await supabase.from('notifications').update({ is_read: true }).eq('id', id)
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
+    } catch (err) {
+      console.warn('[NotificationBell] markAsRead failed:', err)
+    }
   }
 
   const timeAgo = (dateStr) => {
