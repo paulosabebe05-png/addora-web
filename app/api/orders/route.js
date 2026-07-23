@@ -1,10 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
-
 const adminSupabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 )
+
+// Payment methods that are actually live and allowed to create an order.
+// Add to this list as you wire up telebirr / cbebirr / chapa on the backend.
+const ENABLED_PAYMENT_METHODS = ['cod']
 
 export async function POST(request) {
   try {
@@ -19,14 +22,24 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 })
     }
     const user_id = user.id
-
     const body = await request.json()
-    const { items, phone, address, notes, subtotal, delivery_fee } = body
+    const { items, phone, address, notes, subtotal, delivery_fee, payment_method } = body
     if (!items?.length || !phone || !address) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
-    const total = Number(subtotal) + Number(delivery_fee)
 
+    // Default to COD, and reject anything not yet supported server-side.
+    // This mirrors the disabled state on the checkout UI, but enforces it
+    // here too in case the request is ever sent directly (e.g. via API).
+    const requestedMethod = payment_method || 'cod'
+    if (!ENABLED_PAYMENT_METHODS.includes(requestedMethod)) {
+      return NextResponse.json(
+        { error: 'This payment method is not available yet. Please use Cash on Delivery.' },
+        { status: 400 }
+      )
+    }
+
+    const total = Number(subtotal) + Number(delivery_fee)
     const { data: order, error: orderErr } = await adminSupabase
       .from('orders')
       .insert({
@@ -35,7 +48,7 @@ export async function POST(request) {
         delivery_fee:      Number(delivery_fee),
         total,
         delivery_option:   'standard',
-        payment_method:    'cod',
+        payment_method:    requestedMethod,
         payment_status:    'pending',
         status:            'pending',
         delivery_address:  address,
@@ -49,7 +62,6 @@ export async function POST(request) {
       console.error('[order insert]', orderErr)
       return NextResponse.json({ error: 'Failed to create order' }, { status: 500 })
     }
-
     const orderItems = items.map(item => {
       const row = {
         order_id:      order.id,
@@ -73,7 +85,6 @@ export async function POST(request) {
       await adminSupabase.from('orders').delete().eq('id', order.id)
       return NextResponse.json({ error: 'Failed to create order items' }, { status: 500 })
     }
-
     // ── Notify user ───────────────────────────────────────────────────────────
     const { error: notifErr } = await adminSupabase
       .from('notifications')
@@ -87,9 +98,7 @@ export async function POST(request) {
     if (notifErr) {
       console.error('[notification insert error]', JSON.stringify(notifErr))
     }
-
     return NextResponse.json({ order }, { status: 201 })
-
   } catch (err) {
     console.error('[orders API]', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
