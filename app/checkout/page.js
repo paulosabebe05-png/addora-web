@@ -29,24 +29,27 @@ const PAYMENT_METHODS = [
     active: false,
     label: 'telebirr',
     sub: 'Pay with your telebirr wallet',
-    badgeColor: '#8DC63F', // telebirr brand green
+    badgeColor: '#8DC63F', // telebirr brand green — used only if no logo file below
     initials: 'te',
+    logo: '/payments/telebirr.png', // put the real file at public/payments/telebirr.png
   },
   {
     id: 'cbebirr',
     active: false,
     label: 'CBE Birr',
     sub: 'Pay with CBE Birr mobile banking',
-    badgeColor: '#5A2D82', // CBE purple
+    badgeColor: '#5A2D82', // CBE purple — used only if no logo file below
     initials: 'CB',
+    logo: '/payments/cbebirr.png', // put the real file at public/payments/cbebirr.png
   },
   {
     id: 'chapa',
     active: false,
     label: 'Chapa',
     sub: 'Cards, banks & mobile money',
-    badgeColor: '#00A99D', // chapa teal
+    badgeColor: '#00A99D', // chapa teal — used only if no logo file below
     initials: 'Ch',
+    logo: '/payments/chapa.png', // put the real file at public/payments/chapa.png
   },
 ]
 
@@ -312,6 +315,19 @@ export default function CheckoutPage() {
                           >
                             {method.icon ? (
                               <span className={styles.paymentIcon}>{method.icon}</span>
+                            ) : method.logo ? (
+                              <span className={styles.paymentLogoWrap}>
+                                <img
+                                  src={method.logo}
+                                  alt={method.label}
+                                  className={styles.paymentLogoImg}
+                                  onError={(e) => {
+                                    // Logo file missing — hide the broken image icon.
+                                    // Fallback badge below (with initials) still renders via CSS sibling.
+                                    e.currentTarget.style.display = 'none'
+                                  }}
+                                />
+                              </span>
                             ) : (
                               <span
                                 className={styles.paymentBadge}
