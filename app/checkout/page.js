@@ -8,6 +8,48 @@ import styles from './checkout.module.css'
 import { supabase } from '../../lib/supabase'
 import { useLang } from '../../lib/lang'
 
+// ── Payment methods config ──
+// Add/remove methods here. `active: true` methods are selectable.
+// Coming-soon methods render disabled with a badge.
+const PAYMENT_METHODS = [
+  {
+    id: 'cod',
+    active: true,
+    labelKey: 'codLabel',
+    subKey: 'codSub',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="1" y="4" width="22" height="16" rx="2" />
+        <line x1="1" y1="10" x2="23" y2="10" />
+      </svg>
+    ),
+  },
+  {
+    id: 'telebirr',
+    active: false,
+    label: 'telebirr',
+    sub: 'Pay with your telebirr wallet',
+    badgeColor: '#8DC63F', // telebirr brand green
+    initials: 'te',
+  },
+  {
+    id: 'cbebirr',
+    active: false,
+    label: 'CBE Birr',
+    sub: 'Pay with CBE Birr mobile banking',
+    badgeColor: '#5A2D82', // CBE purple
+    initials: 'CB',
+  },
+  {
+    id: 'chapa',
+    active: false,
+    label: 'Chapa',
+    sub: 'Cards, banks & mobile money',
+    badgeColor: '#00A99D', // chapa teal
+    initials: 'Ch',
+  },
+]
+
 export default function CheckoutPage() {
   const { items, total, clearCart } = useCart()
   const { user } = useAuth()
@@ -24,6 +66,7 @@ export default function CheckoutPage() {
   const [addressLoading, setAddressLoading] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState('cod')
 
   // ── Auto-fetch user's default (or latest) saved address ──
   useEffect(() => {
@@ -95,6 +138,10 @@ export default function CheckoutPage() {
       setError(tr('addDeliveryAddress') || 'Please add a delivery address first.')
       return
     }
+    if (paymentMethod !== 'cod') {
+      setError(tr('paymentComingSoon') || 'This payment method is coming soon. Please use Cash on Delivery for now.')
+      return
+    }
     setLoading(true)
 
     try {
@@ -114,6 +161,7 @@ export default function CheckoutPage() {
           notes: form.notes,
           subtotal: total,
           delivery_fee: deliveryFee,
+          payment_method: paymentMethod,
         }),
       })
 
@@ -251,13 +299,45 @@ export default function CheckoutPage() {
                   {/* Payment */}
                   <div className={styles.paymentSection}>
                     <h3>{tr('paymentMethod')}</h3>
-                    <div className={styles.codSelected}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                      <div>
-                        <strong>{tr('codLabel')}</strong>
-                        <p>{tr('codSub')}</p>
-                      </div>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <div className={styles.paymentList}>
+                      {PAYMENT_METHODS.map(method => {
+                        const selected = paymentMethod === method.id
+                        return (
+                          <button
+                            type="button"
+                            key={method.id}
+                            disabled={!method.active}
+                            onClick={() => method.active && setPaymentMethod(method.id)}
+                            className={`${styles.paymentOption} ${selected ? styles.paymentOptionSelected : ''} ${!method.active ? styles.paymentOptionDisabled : ''}`}
+                          >
+                            {method.icon ? (
+                              <span className={styles.paymentIcon}>{method.icon}</span>
+                            ) : (
+                              <span
+                                className={styles.paymentBadge}
+                                style={{ background: method.badgeColor }}
+                              >
+                                {method.initials}
+                              </span>
+                            )}
+                            <div className={styles.paymentText}>
+                              <strong>{method.labelKey ? tr(method.labelKey) : method.label}</strong>
+                              <p>{method.subKey ? tr(method.subKey) : method.sub}</p>
+                            </div>
+                            {method.active ? (
+                              selected && (
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" strokeWidth="2.5">
+                                  <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                              )
+                            ) : (
+                              <span className={styles.comingSoonTag}>
+                                {tr('comingSoon') || 'Coming soon'}
+                              </span>
+                            )}
+                          </button>
+                        )
+                      })}
                     </div>
                   </div>
 
