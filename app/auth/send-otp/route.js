@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { sendOtp, normalizePhone } from '../../../lib/afromessage'
+import { normalizePhone, toDisplayPhone, generateOtpCode, sendOtpSms } from '../../../lib/smsethiopia'
+import { storeOtp } from '../../../lib/otp'
 import { createServerClient } from '../../../lib/supabase'
 
 export async function POST(request) {
@@ -8,10 +9,13 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Phone number is required' }, { status: 400 })
   }
 
+  // SMSEthiopia wants "251XXXXXXXXX" (no '+'); we still validate/display
+  // with a '+' prefix everywhere else in the app.
   const normalized = normalizePhone(phone)
-  if (!/^\+251[79]\d{8}$/.test(normalized)) {
+  if (!/^251[79]\d{8}$/.test(normalized)) {
     return NextResponse.json({ error: 'Enter a valid Ethiopian phone number' }, { status: 400 })
   }
+  const displayPhone = toDisplayPhone(normalized)
 
   // Look the number up BEFORE sending any SMS — no point texting a code
   // to a number that can't succeed either way.
@@ -19,7 +23,7 @@ export async function POST(request) {
   const { data: existingProfile } = await supabaseAdmin
     .from('profiles')
     .select('id, phone_verified')
-    .eq('phone', normalized)
+    .eq('phone', displayPhone)
     .maybeSingle()
 
   if (mode === 'signin' && !existingProfile?.phone_verified) {
@@ -37,8 +41,10 @@ export async function POST(request) {
   }
 
   try {
-    await sendOtp(normalized)
-    return NextResponse.json({ success: true, phone: normalized })
+    const code = generateOtpCode()
+    await storeOtp(supabaseAdmin, displayPhone, code)
+    await sendOtpSms(normalized, code)
+    return NextResponse.json({ success: true, phone: displayPhone })
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
