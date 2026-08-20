@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { randomBytes } from 'crypto'
-import { verifyOtpCode } from '../../../lib/afromessage'
+import { verifyOtp } from '../../../lib/otp'
 import { createServerClient } from '../../../lib/supabase'
 
 // Supabase Admin API has no getUserByPhone, so we page through listUsers.
@@ -31,12 +31,15 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Phone and code are required' }, { status: 400 })
   }
 
-  const ok = await verifyOtpCode(phone, code)
+  const supabaseAdmin = createServerClient()
+
+  // Code check is now fully app-side (see lib/otp.js) since SMSEthiopia
+  // only sends texts — it has no verify endpoint of its own.
+  const ok = await verifyOtp(supabaseAdmin, phone, code)
   if (!ok) {
     return NextResponse.json({ error: 'Invalid or expired code' }, { status: 400 })
   }
 
-  const supabaseAdmin = createServerClient()
   const tempPassword = randomBytes(24).toString('hex')
 
   const { data: existingProfile } = await supabaseAdmin
